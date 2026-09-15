@@ -1,0 +1,59 @@
+.strip {
+  position: relative;
+  padding: 20px 0;
+  box-shadow: inset 0 1px 0 var(--hairline), inset 0 -1px 0 var(--hairline);
+  background: rgba(255, 253, 250, 0.4);
+  overflow: hidden;
+}
+
+/* Fade the ends so the marquee runs out of the page rather than stopping */
+.strip::before, .strip::after {
+  content: "";
+  position: absolute; top: 0; bottom: 0;
+  width: clamp(40px, 8vw, 130px);
+  z-index: 2;
+  pointer-events: none;
+}
+.strip::before { left: 0;  background: linear-gradient(90deg, var(--ivory), rgba(244,239,231,0)); }
+.strip::after  { right: 0; background: linear-gradient(270deg, var(--ivory), rgba(244,239,231,0)); }
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: slide 44s linear infinite;
+}
+.strip:hover .track { animation-play-state: paused; }
+
+@keyframes slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.row { display: flex; align-items: center; }
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 clamp(20px, 3vw, 40px);
+  font-size: 12.5px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+.item svg { color: var(--amber); opacity: 0.85; }
+
+.sep {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  opacity: 0.4;
+  flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; transform: none; }
+  .row:nth-child(2) { display: none; }
+  .strip { overflow-x: auto; }
+}
