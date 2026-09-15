@@ -5,31 +5,44 @@
   overflow: clip;
 }
 
-/* Warm light pooling behind the sneaker plate — physical, not a decorative blob */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: -14%; right: -8%;
-  width: 62vw; height: 62vw;
-  max-width: 900px; max-height: 900px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 138, 33, 0.13) 0%, rgba(201, 138, 33, 0) 62%);
-  pointer-events: none;
-}
+/* --- Right-side background: the sneaker loop fills the full height, blended in --- */
 
-.grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1.2fr);
-  gap: clamp(28px, 4vw, 64px);
-  align-items: start;
+.media {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: clamp(320px, 56vw, 800px);
+  z-index: 0;
+  /* Alpha-fade the edges to true transparency — lets the page show through
+     underneath instead of painting a colour over it, so it always matches
+     regardless of what's behind it (no banding, no colour mismatch). */
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, #000 32%),
+    linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in, source-over;
+  mask-image:
+    linear-gradient(90deg, transparent 0%, #000 32%),
+    linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
+  mask-composite: intersect;
 }
+.mediaImage, .mediaVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 58% 46%;
+  transform: scale(1.22);
+}
+.mediaVideo {
+  opacity: 0;
+  transition: opacity 1.1s var(--ease);
+}
+.mediaVideo[data-ready="true"] { opacity: 1; }
 
 /* --- Left column --------------------------------------------------------- */
 
 .copy {
   position: relative;
-  z-index: 3;
+  z-index: 1;
   padding-top: clamp(8px, 3vw, 42px);
   max-width: 34rem;
 }
@@ -97,143 +110,6 @@
 }
 .priceTagSide svg { color: var(--amber); }
 
-/* --- Right column: the plate that breaks the grid ------------------------ */
-
-.stage {
-  position: relative;
-  /* deliberate break-out to the right edge of the viewport */
-  margin-right: calc(var(--gut) * -1);
-  min-height: clamp(420px, 54vw, 660px);
-}
-
-.plate {
-  position: relative;
-  border-radius: var(--r-2xl) var(--r-sm) var(--r-2xl) var(--r-2xl);
-  overflow: hidden;
-  aspect-ratio: 4 / 4.45;
-  background: linear-gradient(170deg, #F0E9DE, #E6DCCC);
-  box-shadow: 0 0 0 1px var(--hairline-2), var(--lift-4);
-  transform: translateZ(0);
-}
-.plate img, .plate video {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 54% 58%;
-  transform: scale(1.02);
-  transition: transform 1.4s var(--ease);
-}
-.video { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s var(--ease); }
-.video[data-ready="true"] { opacity: 1; }
-.stage:hover .plate img, .stage:hover .plate video { transform: scale(1.045); }
-
-.plateSheen {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.5),
-    inset 0 0 120px rgba(20,18,15,0.07);
-  background: linear-gradient(200deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 34%);
-}
-
-/* --- Floating chips around the sneaker ----------------------------------- */
-
-.chip {
-  position: absolute;
-  z-index: 4;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px 8px 9px;
-  border-radius: var(--r-pill);
-  font-size: 12px;
-  font-weight: 550;
-  letter-spacing: -0.012em;
-  white-space: nowrap;
-  background: linear-gradient(180deg, rgba(255,253,250,0.96), rgba(248,244,237,0.9));
-  backdrop-filter: blur(12px) saturate(1.4);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.7),
-    0 1px 2px rgba(20,18,15,0.08),
-    0 14px 28px -14px rgba(20,18,15,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.9);
-  animation: bob 7s var(--ease-soft) infinite;
-}
-.chip i {
-  display: grid; place-items: center;
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, var(--amber-lift), var(--amber));
-  color: #fff;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 1px 2px rgba(156,104,16,0.4);
-  flex: none;
-}
-
-.chip1 { top: 8%;  left: -6%;  animation-delay: 0s; }
-.chip2 { top: 39%; right: 2%;  animation-delay: -2.3s; }
-.chip3 { top: 66%; left: -9%;  animation-delay: -4.6s; }
-
-@keyframes bob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-7px); }
-}
-
-/* --- Floating review card overlapping the plate -------------------------- */
-
-.review {
-  position: absolute;
-  z-index: 5;
-  left: -16%;
-  bottom: 4%;
-  width: min(280px, 78%);
-  padding: 16px 18px 15px;
-  border-radius: var(--r-md);
-  background: linear-gradient(180deg, rgba(255,253,250,0.97), rgba(250,246,240,0.94));
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.65),
-    0 2px 4px rgba(20,18,15,0.06),
-    0 28px 56px -22px rgba(20,18,15,0.42),
-    inset 0 1px 0 rgba(255,255,255,0.95);
-}
-.reviewTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.stars { display: inline-flex; gap: 2px; color: var(--amber); }
-.reviewQuote {
-  margin-top: 10px;
-  font-size: 13.5px;
-  line-height: 1.5;
-  letter-spacing: -0.018em;
-  color: var(--ink-soft);
-}
-.reviewFoot {
-  margin-top: 12px;
-  padding-top: 11px;
-  box-shadow: inset 0 1px 0 var(--hairline-2);
-  display: flex; align-items: center; gap: 9px;
-}
-.avatar {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(160deg, #D8CDBB, #B6A991);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(20,18,15,0.15);
-  display: grid; place-items: center;
-  font-size: 10px; font-weight: 700; color: rgba(20,18,15,0.55);
-  flex: none;
-}
-
-/* Placeholder badge — we never dress unverified copy up as real social proof */
-.placeholder {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 7px;
-  border-radius: 5px;
-  background: rgba(20,18,15,0.05);
-  box-shadow: inset 0 0 0 1px var(--hairline-2);
-  font-family: var(--f-mono);
-  font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
 /* --- Scroll cue ---------------------------------------------------------- */
 
 .cue {
@@ -263,33 +139,36 @@
 /* --- Responsive ---------------------------------------------------------- */
 
 @media (max-width: 1060px) {
-  .grid { grid-template-columns: 1fr; gap: 0; }
-  .stage { margin-right: calc(var(--gut) * -1); margin-left: 8%; margin-top: 40px; min-height: 0; }
-  .plate { aspect-ratio: 4 / 4.1; }
-  .review { left: -8%; width: min(268px, 72%); }
-  .chip1 { left: -8%; }
-  .chip3 { left: -10%; top: 62%; }
+  .copy { max-width: 60%; }
+  .media {
+    width: 62vw;
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, #000 34%),
+      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
+    mask-image:
+      linear-gradient(90deg, transparent 0%, #000 34%),
+      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
+  }
   .cue { display: none; }
 }
 
 @media (max-width: 640px) {
   .hero { padding-top: 104px; }
   .headline { font-size: clamp(2.35rem, 11vw, 3rem); }
-  .stage { margin-left: 14%; margin-top: 52px; }
-  .plate {
-    border-radius: var(--r-xl) var(--r-xs) var(--r-xl) var(--r-xl);
-    aspect-ratio: 3 / 3.9;
+  .media {
+    width: 58vw;
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, #000 46%),
+      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
+    mask-image:
+      linear-gradient(90deg, transparent 0%, #000 46%),
+      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
   }
-  /* push the sneaker up and right so the review card sits in clear space */
-  .plate img, .plate video { object-position: 58% 34%; }
-  .review { left: -12%; bottom: -4%; width: 70%; padding: 13px 14px 12px; }
-  .reviewQuote { font-size: 12.5px; }
-  .chip { font-size: 11px; padding: 6px 11px 6px 7px; }
-  .chip i { width: 20px; height: 20px; }
-  .chip1 { top: 3%; left: -13%; }
-  .chip2 { top: 28%; right: 7%; }
-  .chip3 { display: none; }
+  /* the source loop has a black matte border baked into top/bottom ~15% — zoom past it */
+  .mediaImage, .mediaVideo { object-position: 66% 44%; transform: scale(1.32); }
+  .copy { max-width: 66vw; }
   .priceTag { margin-top: 26px; }
+  .sub { max-width: 30ch; }
   .actions .btn { flex: 1 1 auto; justify-content: center; }
 }
 
