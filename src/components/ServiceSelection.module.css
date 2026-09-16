@@ -142,9 +142,10 @@
 .extras {
   margin-top: clamp(44px, 5vw, 72px);
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(16px, 2vw, 26px);
   align-items: start;
+  max-width: 640px;
 }
 
 .panel {
@@ -219,40 +220,9 @@
 }
 .totalNum { font-size: 20px; font-weight: 600; letter-spacing: -0.04em; }
 
-/* --- Bundles ------------------------------------------------------------- */
-
-.bundles { display: grid; gap: 12px; }
-
-.bundle {
-  position: relative;
-  padding: 18px 20px;
-  border-radius: var(--r-md);
-  background: linear-gradient(180deg, var(--paper-lift), var(--paper));
-  box-shadow: 0 0 0 1px var(--hairline-2), var(--lift-1);
-  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
-  display: flex; align-items: center; gap: 14px;
-}
-.bundle:hover { transform: translateX(3px); box-shadow: 0 0 0 1px var(--hairline), var(--lift-2); }
-
-.bundleBody { flex: 1; min-width: 0; }
-.bundleName { font-size: 14px; font-weight: 550; letter-spacing: -0.025em; }
-.bundleDetail { margin-top: 3px; font-size: 11.5px; color: var(--ink-muted); line-height: 1.45; }
-.bundlePrice { text-align: right; flex: none; }
-.bundlePrice b { font-size: 18px; font-weight: 600; letter-spacing: -0.04em; }
-.bundlePrice small { font-size: 11px; color: var(--ink-faint); }
-.bundlePer { display: block; margin-top: 2px; font-size: 10.5px; color: var(--amber-deep); }
-
-.bundleNote {
-  margin-top: 4px;
-  font-size: 11.5px;
-  color: var(--ink-faint);
-  line-height: 1.5;
-}
-
 @media (max-width: 940px) {
   .head { grid-template-columns: 1fr; align-items: start; gap: 18px; }
   .headRight { padding-bottom: 0; }
   .tiers { grid-template-columns: 1fr; }
   .tier--featured { margin-top: 0; }
-  .extras { grid-template-columns: 1fr; }
 }

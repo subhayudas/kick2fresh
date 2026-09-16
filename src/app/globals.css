@@ -234,6 +234,7 @@ section { position: relative; }
 }
 
 .btn svg { flex: none; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
 .btn--solid {
   background: linear-gradient(180deg, #2C2721 0%, var(--ink) 62%);

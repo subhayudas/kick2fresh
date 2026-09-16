@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
-  TIERS, ADDONS, BUNDLES, MATERIALS, PROCESS, TIMING, FAQ, STATS,
+  TIERS, ADDONS, MATERIALS, PROCESS, TIMING, FAQ, STATS,
   GALLERY, REVIEWS_PLACEHOLDER, NAV, TURNAROUND, CITY, type Bi,
 } from "@/lib/content";
 
@@ -33,14 +33,6 @@ export function useLocalizedAddons() {
   const { locale } = useLocale();
   return useMemo(
     () => ADDONS.map((a) => ({ ...a, name: pick(a.name, locale), note: pick(a.note, locale) })),
-    [locale],
-  );
-}
-
-export function useLocalizedBundles() {
-  const { locale } = useLocale();
-  return useMemo(
-    () => BUNDLES.map((b) => ({ ...b, name: pick(b.name, locale), detail: pick(b.detail, locale) })),
     [locale],
   );
 }

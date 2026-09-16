@@ -13,7 +13,6 @@ export type Tier = {
   name: Bi;
   price: number;
   priceLabel: string;
-  from?: boolean;
   tagline: Bi;
   bestFor: Bi;
   blurb: Bi;
@@ -87,7 +86,6 @@ export const TIERS: Tier[] = [
     name: { en: "Expert Restoration", fr: "Restauration Experte" },
     price: 150,
     priceLabel: "$150",
-    from: true,
     tagline: { en: "Bring your shoes back to life.", fr: "Redonnez vie à vos chaussures." },
     bestFor: { en: "Best for serious damage and restoration", fr: "Idéal pour les dommages sérieux et la restauration" },
     blurb: {
@@ -143,43 +141,6 @@ export const ADDONS: AddOn[] = [
     name: { en: "Rush Service", fr: "Service Prioritaire" },
     price: 20,
     note: { en: "Moved to the front of the bench, ready in 48h", fr: "Passe en priorité, prêt en 48h" },
-  },
-];
-
-export type Bundle = {
-  id: string;
-  name: Bi;
-  price: string;
-  unit?: string;
-  detail: Bi;
-  perPair?: string;
-  save?: string;
-};
-
-export const BUNDLES: Bundle[] = [
-  {
-    id: "pack3",
-    name: { en: "3-Pack Bundle", fr: "Forfait 3 paires" },
-    price: "$180",
-    detail: { en: "Three cleans, used whenever you like.", fr: "Trois nettoyages, à utiliser quand vous voulez." },
-    perPair: "$60 / pair",
-    save: "Save $15",
-  },
-  {
-    id: "pack6",
-    name: { en: "6-Pack Bundle", fr: "Forfait 6 paires" },
-    price: "$330",
-    detail: { en: "Built for rotations that get worn hard.", fr: "Conçu pour les rotations qui sont portées intensément." },
-    perPair: "$55 / pair",
-    save: "Save $60",
-  },
-  {
-    id: "monthly",
-    name: { en: "Monthly", fr: "Mensuel" },
-    price: "$79",
-    unit: "/mo",
-    detail: { en: "One Essential Clean and one Premium Clean, every month.", fr: "Un Nettoyage Essentiel et un Nettoyage Premium, chaque mois." },
-    save: "Unlimited value",
   },
 ];
 
@@ -281,8 +242,8 @@ export const FAQ: FaqItem[] = [
   {
     q: { en: "How much does it cost?", fr: "Combien ça coûte ?" },
     a: {
-      en: "Essential Clean starts at $65, Premium Restoration at $95, and Expert Restoration at $150 and up depending on the work needed. Add-ons and bundles are priced separately — every price is listed on this page before you book.",
-      fr: "Le Nettoyage Essentiel commence à 65 $, la Restauration Premium à 95 $, et la Restauration Experte à partir de 150 $ selon le travail requis. Les suppléments et forfaits sont facturés séparément — tous les prix sont indiqués sur cette page avant la réservation.",
+      en: "Essential Clean is $65, Premium Restoration is $95, and Expert Restoration is $150 per pair. Add-ons are priced separately — every price is listed on this page before you book.",
+      fr: "Le Nettoyage Essentiel coûte 65 $, la Restauration Premium 95 $, et la Restauration Experte 150 $ par paire. Les suppléments sont facturés séparément — tous les prix sont indiqués sur cette page avant la réservation.",
     },
   },
   {

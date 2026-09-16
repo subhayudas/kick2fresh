@@ -1,7 +1,7 @@
 "use client";
 
 import s from "./ServiceSelection.module.css";
-import { useLocalizedTiers, useLocalizedAddons, useLocalizedBundles } from "@/lib/useLocalizedContent";
+import { useLocalizedTiers, useLocalizedAddons } from "@/lib/useLocalizedContent";
 import { ArrowRight, Check, Plus, IconSparkle } from "./Icons";
 import Reveal from "./Reveal";
 import { useBooking } from "./BookingProvider";
@@ -12,7 +12,6 @@ export default function ServiceSelection() {
   const { t } = useLocale();
   const tiers = useLocalizedTiers();
   const addons = useLocalizedAddons();
-  const bundles = useLocalizedBundles();
 
   const base = tiers.find((tr) => tr.id === (tier ?? "premium")) ?? tiers[1];
   const extras = addons.filter((a) => addOns.includes(a.id)).reduce((n, a) => n + a.price, 0);
@@ -50,7 +49,7 @@ export default function ServiceSelection() {
 
                 <p className={s.amount}>
                   <b>{tr.priceLabel}</b>
-                  <span>{tr.from ? t.services.cadAndUp : t.services.cadPerPair}</span>
+                  <span>{t.services.cadPerPair}</span>
                 </p>
 
                 <ul className={s.list}>
@@ -77,7 +76,7 @@ export default function ServiceSelection() {
           ))}
         </div>
 
-        {/* ---------- Add-ons + bundles ---------- */}
+        {/* ---------- Add-ons ---------- */}
         <div className={s.extras}>
           <Reveal className={s.panel}>
             <div className={s.panelHead}>
@@ -112,12 +111,8 @@ export default function ServiceSelection() {
               <span className="micro">
                 {base.name}
                 {extras > 0 && ` + ${addOns.length} add-on${addOns.length > 1 ? "s" : ""}`}
-                {base.from && " (from)"}
               </span>
-              <span className={s.totalNum}>
-                ${total}
-                {base.from ? "+" : ""} CAD
-              </span>
+              <span className={s.totalNum}>${total} CAD</span>
               <button
                 type="button"
                 className="btn btn--solid btn--sm"
@@ -127,23 +122,6 @@ export default function ServiceSelection() {
                 <ArrowRight className="btn-arrow" size={13} />
               </button>
             </div>
-          </Reveal>
-
-          <Reveal className={s.bundles} delay={100}>
-            <h3 className={s.panelTitle} style={{ marginBottom: 2 }}>{t.services.bundlesTitle}</h3>
-            {bundles.map((b) => (
-              <div className={s.bundle} key={b.id}>
-                <div className={s.bundleBody}>
-                  <div className={s.bundleName}>{b.name}</div>
-                  <p className={s.bundleDetail}>{b.detail}</p>
-                </div>
-                <div className={s.bundlePrice}>
-                  <b>{b.price}</b>
-                  {b.unit && <small>{b.unit}</small>}
-                  {b.save && <span className={s.bundlePer}>{b.save}</span>}
-                </div>
-              </div>
-            ))}
           </Reveal>
         </div>
       </div>

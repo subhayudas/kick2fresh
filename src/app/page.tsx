@@ -10,7 +10,6 @@ import TrustStack from "@/components/TrustStack";
 import Process from "@/components/Process";
 import Faq from "@/components/Faq";
 import Booking from "@/components/Booking";
-import BundlesReminder from "@/components/BundlesReminder";
 import Footer from "@/components/Footer";
 import StickyMobileCta from "@/components/StickyMobileCta";
 
@@ -29,7 +28,6 @@ export default function Page() {
           <Process />
           <Faq />
           <Booking />
-          <BundlesReminder />
         </main>
         <Footer />
         <StickyMobileCta />
