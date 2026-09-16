@@ -39,7 +39,7 @@ export default function Hero() {
       {/* ---------- Right-side background: the sneaker loop, blended into the ivory ---------- */}
       <div className={s.media} aria-hidden>
         <Image
-          src="/media/hero-loop-poster-clean.jpg"
+          src="/media/hero-loop-poster-detail.jpg"
           alt=""
           fill
           priority
@@ -53,11 +53,11 @@ export default function Hero() {
           loop
           playsInline
           preload="none"
-          poster="/media/hero-loop-poster-clean.jpg"
+          poster="/media/hero-loop-poster-detail.jpg"
           data-ready={videoReady}
           onPlaying={() => setVideoReady(true)}
         >
-          <source src="/media/hero-loop-clean.mp4" type="video/mp4" />
+          <source src="/media/hero-loop-detail.mp4" type="video/mp4" />
         </video>
       </div>
 
