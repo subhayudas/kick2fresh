@@ -63,8 +63,6 @@ Nothing here fabricates customers, partners, addresses or bookings.
 
 | What | Where | Needs |
 |---|---|---|
-| **Testimonials** | `src/components/Testimonials.tsx` → `SLOTS` | Real, attributable customer quotes. Delete the `Placeholder` badge and the amber notice once populated. |
-| **Hero review card** | `src/components/Hero.tsx` | One real quote; remove the `Sample` chip. |
 | **Booking submit** | `src/components/BookingModal.tsx` → the `onSubmit` on `#booking-form` | Scheduling / payment integration. It currently shows a request summary and states plainly that nothing was booked. |
 | **Contact form** | `src/components/Contact.tsx` → `onSubmit` | Inbox or CRM endpoint. Same honesty notice applies. |
 | **Newsletter** | `src/components/Footer.tsx` | Mailing-list endpoint. |

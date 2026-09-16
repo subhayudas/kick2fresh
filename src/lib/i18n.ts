@@ -55,9 +55,9 @@ export const UI = {
     trust: {
       eyebrow: "Reviews",
       title: "They trusted us with their most precious pairs.",
-      subtitle: "5.0 on Google · 44 reviews · All verified since July 2024",
+      subtitle: "5.0 on Google · 52 reviews · All verified since July 2024",
       reviewsLabel: "reviews",
-      placeholder: "Placeholder",
+      placeholder: "Google review",
       materialsTitle: "Different materials, different hands.",
       materialsCopy: "A brush that's right for leather will ruin suede. We pick the chemistry and the pressure per panel, not per pair.",
       cta: "Book Your Clean",
@@ -188,9 +188,9 @@ export const UI = {
     trust: {
       eyebrow: "Avis",
       title: "Ils nous ont confié leurs paires les plus précieuses.",
-      subtitle: "5.0 sur Google · 44 avis · Tous vérifiés depuis juillet 2024",
+      subtitle: "5.0 sur Google · 52 avis · Tous vérifiés depuis juillet 2024",
       reviewsLabel: "avis",
-      placeholder: "Provisoire",
+      placeholder: "Avis Google",
       materialsTitle: "Des matériaux différents, des mains différentes.",
       materialsCopy: "Une brosse adaptée au cuir ruinera le suède. Nous choisissons la chimie et la pression par panneau, pas par paire.",
       cta: "Réservez votre nettoyage",

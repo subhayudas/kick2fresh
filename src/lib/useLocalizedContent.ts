@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   TIERS, ADDONS, MATERIALS, PROCESS, TIMING, FAQ, STATS,
-  GALLERY, REVIEWS_PLACEHOLDER, NAV, TURNAROUND, CITY, type Bi,
+  GALLERY, REVIEWS, NAV, TURNAROUND, CITY, type Bi,
 } from "@/lib/content";
 
 function pick<T extends Bi>(bi: T, locale: "en" | "fr") {
@@ -79,7 +79,7 @@ export function useLocalizedGallery() {
 export function useLocalizedReviews() {
   const { locale } = useLocale();
   return useMemo(
-    () => REVIEWS_PLACEHOLDER.map((r) => ({ quote: pick(r.quote, locale), who: pick(r.who, locale), meta: pick(r.meta, locale) })),
+    () => REVIEWS.map((r) => ({ quote: pick(r.quote, locale), who: pick(r.who, locale), meta: pick(r.meta, locale) })),
     [locale],
   );
 }

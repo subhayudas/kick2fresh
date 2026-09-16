@@ -317,7 +317,7 @@ export const STATS: Stat[] = [
   { value: "4 years", label: { en: "Expertise in Montreal", fr: "D'expertise à Montréal" } },
   { value: "1000+", label: { en: "Pairs restored", fr: "Paires restaurées" } },
   { value: "$500K+", label: { en: "Collections preserved", fr: "En collections préservées" } },
-  { value: "5.0", label: { en: "Google rating · 44 reviews", fr: "Note Google · 44 avis" } },
+  { value: "5.0", label: { en: "Google rating · 52 reviews", fr: "Note Google · 52 avis" } },
 ];
 
 export type GalleryItem = { before: string; after: string; alt: Bi; real: boolean };
@@ -403,21 +403,30 @@ export const GALLERY: GalleryItem[] = [
   },
 ];
 
-export const REVIEWS_PLACEHOLDER = [
+export const REVIEWS = [
   {
-    quote: { en: "Placeholder review slot — paste a real customer quote here.", fr: "Emplacement d'avis provisoire — collez ici une vraie citation client." },
-    who: { en: "Customer name", fr: "Nom du client" },
-    meta: { en: "Service used · Montreal", fr: "Service utilisé · Montréal" },
+    quote: {
+      en: "Amazing guy, thought I had to spend another $500 until they touched it. Exceeded my expectations and they brought them back to life. Always prompt with communication, even with all their orders. Strongly recommend!",
+      fr: "Un gars incroyable — je pensais devoir dépenser 500 $ de plus avant qu'ils s'en occupent. Ils ont dépassé mes attentes et ont redonné vie à mes souliers. Toujours prompts dans leurs communications, même avec toutes leurs commandes. Je recommande fortement !",
+    },
+    who: { en: "Aliw", fr: "Aliw" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
   },
   {
-    quote: { en: "Placeholder review slot — two or three sentences works best.", fr: "Emplacement d'avis provisoire — deux ou trois phrases fonctionnent bien." },
-    who: { en: "Customer name", fr: "Nom du client" },
-    meta: { en: "Service used · Montreal", fr: "Service utilisé · Montréal" },
+    quote: {
+      en: "Revived my shoes! Definitely would recommend their services and their cleaning kit as well. Does wonders if you don't have time to go drop your shoes off at their location but you still want to keep them clean at home.",
+      fr: "Mes souliers ont repris vie ! Je recommande vivement leurs services, ainsi que leur trousse de nettoyage. Elle fait des merveilles si vous n'avez pas le temps de déposer vos souliers à l'atelier, mais que vous voulez quand même les garder propres à la maison.",
+    },
+    who: { en: "Alexandre B.", fr: "Alexandre B." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
   },
   {
-    quote: { en: "Placeholder review slot — keep the customer's own wording.", fr: "Emplacement d'avis provisoire — gardez les mots du client." },
-    who: { en: "Customer name", fr: "Nom du client" },
-    meta: { en: "Service used · Montreal", fr: "Service utilisé · Montréal" },
+    quote: {
+      en: "Very recommended — they really do a miracle job on my shoes. Awesome result, my shoes look brand new again. Loving it, thanks Kicks2Fresh!",
+      fr: "Fortement recommandé, ils font un travail miraculeux sur mes souliers. Résultat impressionnant, on dirait qu'ils sont neufs. J'adore, merci Kicks2Fresh !",
+    },
+    who: { en: "Chico T.", fr: "Chico T." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
   },
 ];
 
