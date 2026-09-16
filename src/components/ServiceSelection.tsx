@@ -1,59 +1,60 @@
 "use client";
 
-import s from "./Pricing.module.css";
-import { TIERS, ADDONS, BUNDLES } from "@/lib/content";
+import s from "./ServiceSelection.module.css";
+import { useLocalizedTiers, useLocalizedAddons, useLocalizedBundles } from "@/lib/useLocalizedContent";
 import { ArrowRight, Check, Plus, IconSparkle } from "./Icons";
 import Reveal from "./Reveal";
 import { useBooking } from "./BookingProvider";
+import { useLocale } from "./LocaleProvider";
 
-export default function Pricing() {
+export default function ServiceSelection() {
   const { openBooking, addOns, toggleAddOn, tier } = useBooking();
+  const { t } = useLocale();
+  const tiers = useLocalizedTiers();
+  const addons = useLocalizedAddons();
+  const bundles = useLocalizedBundles();
 
-  const base = TIERS.find((t) => t.id === (tier ?? "premium")) ?? TIERS[1];
-  const extras = ADDONS.filter((a) => addOns.includes(a.id)).reduce((n, a) => n + a.price, 0);
+  const base = tiers.find((tr) => tr.id === (tier ?? "premium")) ?? tiers[1];
+  const extras = addons.filter((a) => addOns.includes(a.id)).reduce((n, a) => n + a.price, 0);
   const total = base.price + extras;
 
   return (
-    <section className={s.sec} id="pricing">
+    <section className={s.sec} id="services">
       <div className="shell">
         <div className={s.head}>
           <Reveal>
-            <span className="eyebrow">Pricing</span>
-            <h2 className={`h2 ${s.title}`}>
-              No quote funnel. <em>Just prices.</em>
-            </h2>
+            <span className="eyebrow">{t.services.eyebrow}</span>
+            <h2 className={`h2 ${s.title}`}>{t.services.title}</h2>
           </Reveal>
           <Reveal className={s.headRight} delay={80}>
-            <p className="lede">
-              Every service and add-on is listed below in Canadian dollars. Build
-              your order here and it carries straight into booking.
-            </p>
+            <p className="lede">{t.services.subtitle}</p>
           </Reveal>
         </div>
 
-        {/* ---------- Tiers ---------- */}
+        {/* ---------- Three pricing cards, side by side ---------- */}
         <div className={s.tiers}>
-          {TIERS.map((t, i) => (
-            <Reveal key={t.id} delay={i * 90}>
-              <div className={`${s.tier} ${t.featured ? s["tier--featured"] : ""}`}>
-                {t.featured && (
+          {tiers.map((tr, i) => (
+            <Reveal key={tr.id} delay={i * 90}>
+              <div className={`${s.tier} ${tr.featured ? s["tier--featured"] : ""}`}>
+                {tr.featured && (
                   <span className={s.ribbon}>
-                    <IconSparkle size={11} /> Most chosen
+                    <IconSparkle size={11} /> {t.services.recommended}
                   </span>
                 )}
                 <div className={s.tierTop}>
-                  <span className={s.num}>{t.index}</span>
+                  <span className={s.num}>{tr.index}</span>
                 </div>
-                <h3 className={s.tierName}>{t.name}</h3>
-                <p className={s.tierTagline}>{t.tagline}</p>
+                <h3 className={s.tierName}>{tr.name}</h3>
+                <p className={s.tierTagline}>{tr.tagline}</p>
+                <p className={s.bestFor}>{tr.bestFor}</p>
 
                 <p className={s.amount}>
-                  <b>{t.priceLabel}</b>
-                  <span>{t.from ? "CAD and up" : "CAD per pair"}</span>
+                  <b>{tr.priceLabel}</b>
+                  <span>{tr.from ? t.services.cadAndUp : t.services.cadPerPair}</span>
                 </p>
 
                 <ul className={s.list}>
-                  {t.includes.map((inc) => (
+                  {tr.includes.map((inc) => (
                     <li key={inc}>
                       <Check size={13} />
                       {inc}
@@ -64,10 +65,10 @@ export default function Pricing() {
                 <div className={s.tierCta}>
                   <button
                     type="button"
-                    className={`btn ${t.featured ? "btn--amber" : "btn--ghost"}`}
-                    onClick={() => openBooking(t.id)}
+                    className={`btn ${tr.featured ? "btn--amber" : "btn--ghost"}`}
+                    onClick={() => openBooking(tr.id)}
                   >
-                    Choose {t.name.split(" ")[0]}
+                    {t.services.cta}
                     <ArrowRight className="btn-arrow" size={14} />
                   </button>
                 </div>
@@ -80,11 +81,11 @@ export default function Pricing() {
         <div className={s.extras}>
           <Reveal className={s.panel}>
             <div className={s.panelHead}>
-              <h3 className={s.panelTitle}>Add-ons</h3>
-              <span className="meta">Tap to add</span>
+              <h3 className={s.panelTitle}>{t.services.addonsTitle}</h3>
+              <span className="meta">{t.services.addonsNote}</span>
             </div>
 
-            {ADDONS.map((a) => {
+            {addons.map((a) => {
               const on = addOns.includes(a.id);
               return (
                 <button
@@ -122,14 +123,15 @@ export default function Pricing() {
                 className="btn btn--solid btn--sm"
                 onClick={() => openBooking(base.id)}
               >
-                Book this
+                {t.services.cta}
                 <ArrowRight className="btn-arrow" size={13} />
               </button>
             </div>
           </Reveal>
 
           <Reveal className={s.bundles} delay={100}>
-            {BUNDLES.map((b) => (
+            <h3 className={s.panelTitle} style={{ marginBottom: 2 }}>{t.services.bundlesTitle}</h3>
+            {bundles.map((b) => (
               <div className={s.bundle} key={b.id}>
                 <div className={s.bundleBody}>
                   <div className={s.bundleName}>{b.name}</div>
@@ -138,14 +140,10 @@ export default function Pricing() {
                 <div className={s.bundlePrice}>
                   <b>{b.price}</b>
                   {b.unit && <small>{b.unit}</small>}
-                  {b.perPair && <span className={s.bundlePer}>{b.perPair}</span>}
+                  {b.save && <span className={s.bundlePer}>{b.save}</span>}
                 </div>
               </div>
             ))}
-            <p className={s.bundleNote}>
-              Bundles and the monthly plan are arranged when you book — mention the
-              one you want in the notes and we&rsquo;ll set it up.
-            </p>
           </Reveal>
         </div>
       </div>

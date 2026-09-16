@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import s from "./Navbar.module.css";
-import { NAV } from "@/lib/content";
+import { useLocalizedNav } from "@/lib/useLocalizedContent";
 import { ArrowRight, ArrowUpRight, IconShoe } from "./Icons";
 import { useBooking } from "./BookingProvider";
+import { useLocale } from "./LocaleProvider";
 
 export default function Navbar() {
   const [stuck, setStuck] = useState(false);
   const [menu, setMenu] = useState(false);
   const { openBooking } = useBooking();
+  const { locale, toggleLocale, t } = useLocale();
+  const nav = useLocalizedNav();
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY > 24);
@@ -43,7 +46,7 @@ export default function Navbar() {
             </a>
 
             <nav className={s.links} aria-label="Primary">
-              {NAV.map((n) => (
+              {nav.map((n) => (
                 <a key={n.href} href={n.href} className={s.link}>
                   {n.label}
                 </a>
@@ -51,13 +54,23 @@ export default function Navbar() {
             </nav>
 
             <div className={s.right}>
-              <span className={s.phoneLine}>Montreal · Bilingual</span>
+              <span className={s.phoneLine}>{t.nav.phoneLine}</span>
+              <button
+                type="button"
+                className={s.langToggle}
+                onClick={toggleLocale}
+                aria-label="Toggle language"
+              >
+                <span data-on={locale === "en"}>EN</span>
+                <span aria-hidden>/</span>
+                <span data-on={locale === "fr"}>FR</span>
+              </button>
               <button
                 type="button"
                 className="btn btn--solid btn--sm"
                 onClick={() => openBooking()}
               >
-                Book Your Clean
+                {t.nav.bookNow}
                 <ArrowRight className="btn-arrow" size={14} />
               </button>
               <button
@@ -86,7 +99,7 @@ export default function Navbar() {
           className={s.panel}
           onClick={(e) => e.stopPropagation()}
         >
-          {NAV.map((n) => (
+          {nav.map((n) => (
             <a
               key={n.href}
               href={n.href}
@@ -98,6 +111,15 @@ export default function Navbar() {
               <ArrowUpRight size={16} />
             </a>
           ))}
+          <button
+            type="button"
+            className={s.panelLink}
+            onClick={toggleLocale}
+            tabIndex={menu ? 0 : -1}
+          >
+            {locale === "en" ? "Français" : "English"}
+            <ArrowUpRight size={16} />
+          </button>
           <div className={s.panelCta}>
             <button
               type="button"
@@ -108,7 +130,7 @@ export default function Navbar() {
                 openBooking();
               }}
             >
-              Book Your Clean
+              {t.nav.bookNow}
               <ArrowRight className="btn-arrow" size={15} />
             </button>
           </div>

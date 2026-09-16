@@ -1,152 +1,74 @@
-.footer { padding-block: clamp(24px, 3vw, 40px) 0; }
-
-/* --- Final CTA band ------------------------------------------------------ */
-
-.band {
-  position: relative;
-  border-radius: var(--r-2xl) var(--r-2xl) 0 0;
-  background:
-    radial-gradient(100% 90% at 18% 0%, rgba(201,138,33,0.16), rgba(201,138,33,0) 58%),
-    linear-gradient(180deg, #221F18 0%, var(--coal) 62%, #0F0E0A 100%);
-  box-shadow:
-    0 0 0 1px rgba(255,250,240,0.08),
-    0 -30px 70px -50px rgba(20,18,15,0.6);
-  overflow: hidden;
-  padding: clamp(40px, 5vw, 72px) clamp(24px, 3.4vw, 56px) clamp(26px, 3vw, 38px);
+.footer {
+  padding-block: clamp(28px, 4vw, 44px);
+  box-shadow: inset 0 1px 0 var(--hairline);
 }
 
-.bandTop {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: clamp(24px, 4vw, 60px);
-  align-items: end;
-  padding-bottom: clamp(34px, 4vw, 52px);
-  box-shadow: inset 0 -1px 0 rgba(255,250,240,0.1);
+/* room for the fixed mobile CTA bar so it never covers footer content */
+@media (max-width: 720px) {
+  .footer { padding-bottom: 92px; }
 }
 
-.bandTitle {
-  margin-top: 16px;
-  color: #FFFBF3;
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  font-weight: 500;
-  letter-spacing: -0.044em;
-  line-height: 1;
-}
-.bandTitle em { font-style: italic; font-weight: 400; }
-
-.bandRight { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
-.bandCopy { font-size: 14px; line-height: 1.6; color: var(--coal-text); max-width: 34ch; }
-.bandActions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-/* --- Columns ------------------------------------------------------------- */
-
-.cols {
-  padding-top: clamp(28px, 3vw, 44px);
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
-  gap: clamp(24px, 3vw, 44px);
-}
-
-.brand { display: inline-flex; align-items: center; gap: 10px; }
-.mark {
-  position: relative;
-  width: 30px; height: 30px;
-  display: grid; place-items: center;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
-  color: #FFFBF3;
-  box-shadow: inset 0 0 0 1px rgba(255,250,240,0.16), inset 0 1px 0 rgba(255,255,255,0.2);
-  flex: none;
-}
-.word { font-size: 16px; font-weight: 600; letter-spacing: -0.045em; color: #FFFBF3; }
-.word em { font-style: normal; color: var(--amber-lift); }
-
-.brandCopy {
-  margin-top: 16px;
-  max-width: 30ch;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--coal-text);
-}
-
-.colTitle {
-  font-family: var(--f-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255,251,243,0.4);
-  margin-bottom: 14px;
-}
-.colList { display: grid; gap: 9px; }
-.colLink {
-  font-size: 13px;
-  color: rgba(255,251,243,0.68);
-  transition: color 0.25s var(--ease), transform 0.25s var(--ease);
-  width: fit-content;
-}
-.colLink:hover { color: #FFFBF3; transform: translateX(2px); }
-
-/* --- Newsletter ---------------------------------------------------------- */
-
-.news { display: flex; gap: 8px; margin-top: 2px; }
-.newsInput {
-  flex: 1; min-width: 0;
-  padding: 11px 14px;
-  border: none;
-  border-radius: var(--r-pill);
-  background: rgba(255,255,255,0.07);
-  color: #FFFBF3;
-  font-size: 13px;
-  box-shadow: inset 0 0 0 1px rgba(255,250,240,0.14), inset 0 2px 4px rgba(0,0,0,0.3);
-}
-.newsInput::placeholder { color: rgba(255,251,243,0.35); }
-.newsInput:focus {
-  outline: none;
-  box-shadow: inset 0 0 0 1px rgba(231,169,58,0.6), 0 0 0 3px rgba(231,169,58,0.14);
-}
-.newsNote { margin-top: 10px; font-size: 11px; color: rgba(255,251,243,0.38); line-height: 1.45; }
-
-/* --- Base line ----------------------------------------------------------- */
-
-.base {
-  margin-top: clamp(30px, 3.4vw, 46px);
-  padding-top: 20px;
-  box-shadow: inset 0 1px 0 rgba(255,250,240,0.1);
+.row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 18px;
+}
+
+.brand { display: inline-flex; align-items: center; gap: 9px; }
+.mark {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #2C2721, var(--ink));
+  color: var(--paper);
+  flex: none;
+}
+.word { font-size: 14px; font-weight: 600; letter-spacing: -0.045em; }
+.word em { font-style: normal; color: var(--amber); }
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+.meta span { display: inline-flex; align-items: center; gap: 6px; }
+.meta svg { color: var(--amber); }
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.link {
+  padding: 7px 12px;
+  border-radius: var(--r-pill);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.link:hover { color: var(--ink); background: rgba(20,18,15,0.045); }
+
+.base {
+  margin-top: 20px;
+  padding-top: 16px;
+  box-shadow: inset 0 1px 0 var(--hairline-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   font-size: 11.5px;
-  color: rgba(255,251,243,0.4);
+  color: var(--ink-faint);
 }
-.baseRight { display: flex; gap: 18px; flex-wrap: wrap; }
+.baseRight { display: flex; gap: 16px; }
 
-/* Oversized wordmark bleeding off the bottom edge */
-.watermark {
-  margin-top: clamp(16px, 2vw, 28px);
-  margin-bottom: clamp(-26px, -2.6vw, -14px);
-  font-size: clamp(2.4rem, 9.4vw, 8.2rem);
-  font-weight: 600;
-  letter-spacing: -0.055em;
-  line-height: 0.8;
-  text-align: center;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 251, 243, 0.09);
-  user-select: none;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-@media (max-width: 900px) {
-  .bandTop { grid-template-columns: 1fr; align-items: start; gap: 22px; }
-  .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .brand + * { grid-column: 1 / -1; }
-  .colBrand { grid-column: 1 / -1; }
-}
-@media (max-width: 560px) {
-  .cols { grid-template-columns: 1fr; }
-  .bandActions .btn { flex: 1 1 auto; justify-content: center; }
-  .news { flex-direction: column; }
-  .news .btn { justify-content: center; }
+@media (max-width: 640px) {
+  .row { flex-direction: column; align-items: flex-start; }
 }

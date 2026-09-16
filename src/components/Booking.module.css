@@ -1,38 +1,52 @@
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: grid;
-  place-items: center;
-  padding: clamp(12px, 3vw, 32px);
-  background: rgba(20, 18, 15, 0.42);
-  backdrop-filter: blur(8px) saturate(1.1);
-  -webkit-backdrop-filter: blur(8px) saturate(1.1);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.32s var(--ease);
-  overflow-y: auto;
-}
-.overlay[data-open="true"] { opacity: 1; pointer-events: auto; }
+.sec { padding-block: var(--section-y); }
 
-.modal {
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+}
+
+/* --- Left: trust copy ------------------------------------------------------ */
+
+.left { position: sticky; top: 120px; }
+.leftTitle { margin-top: 18px; }
+.leftTitle em { font-style: italic; font-weight: 400; }
+.leftSub { margin-top: 14px; }
+
+.guarantees { margin-top: 28px; display: grid; gap: 12px; }
+.guarantee { display: flex; align-items: center; gap: 11px; font-size: 13px; color: var(--ink-soft); }
+.guarantee svg { flex: none; color: var(--amber); }
+
+.trustBar {
+  margin-top: 30px;
+  padding: 16px 18px;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.avatars { display: flex; flex: none; }
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(160deg, #D8CDBB, #B6A991);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 0 0 2px var(--paper-lift);
+  flex: none;
+}
+.avatar + .avatar { margin-left: -10px; }
+.trustCopy { font-size: 12px; line-height: 1.5; color: var(--ink-muted); }
+
+/* --- Right: the panel housing the form ------------------------------------ */
+
+.panel {
   position: relative;
-  width: min(780px, 100%);
-  max-height: calc(100dvh - clamp(24px, 6vw, 64px));
   display: flex;
   flex-direction: column;
   border-radius: var(--r-xl);
   background: linear-gradient(180deg, var(--paper-lift), var(--paper));
-  box-shadow:
-    0 0 0 1px rgba(20,18,15,0.1),
-    0 40px 90px -30px rgba(20,18,15,0.6),
-    inset 0 1px 0 rgba(255,255,255,0.95);
-  transform: translateY(14px) scale(0.985);
-  opacity: 0;
-  transition: transform 0.42s var(--ease), opacity 0.32s var(--ease);
+  box-shadow: 0 0 0 1px var(--hairline-2), var(--lift-3);
   overflow: hidden;
 }
-.overlay[data-open="true"] .modal { transform: none; opacity: 1; }
 
 /* --- Header -------------------------------------------------------------- */
 
@@ -47,19 +61,6 @@
 .headText { flex: 1; min-width: 0; }
 .title { font-size: 1.15rem; font-weight: 550; letter-spacing: -0.035em; }
 .sub { margin-top: 3px; font-size: 12.5px; color: var(--ink-muted); }
-
-.close {
-  width: 34px; height: 34px;
-  display: grid; place-items: center;
-  border: none; border-radius: 50%;
-  flex: none;
-  cursor: pointer;
-  color: var(--ink-muted);
-  background: linear-gradient(180deg, var(--paper-lift), #F1EBE1);
-  box-shadow: 0 0 0 1px var(--hairline), inset 0 1px 0 rgba(255,255,255,0.9);
-  transition: transform 0.2s var(--ease), color 0.2s var(--ease);
-}
-.close:hover { color: var(--ink); transform: rotate(90deg); }
 
 /* --- Step rail ----------------------------------------------------------- */
 
@@ -164,6 +165,45 @@
 .addGrid .option { padding: 11px 13px; border-radius: var(--r-sm); gap: 10px; }
 .addGrid .optName { display: block; font-size: 12.5px; }
 .addGrid .optPrice { font-size: 12.5px; }
+
+/* --- Pairs selector -------------------------------------------------------- */
+
+.pairsRow { display: flex; flex-wrap: wrap; gap: 8px; }
+.pairBtn {
+  min-width: 42px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--r-sm);
+  text-align: center;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 550;
+  background: linear-gradient(180deg, var(--paper-lift), var(--paper));
+  box-shadow: 0 0 0 1px var(--hairline-2), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: all 0.25s var(--ease);
+}
+.pairBtn[data-on="true"] {
+  color: #fff;
+  background: linear-gradient(180deg, #221F18, var(--coal));
+  box-shadow: 0 0 0 1px rgba(20,18,15,0.25), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+/* --- Delivery toggle -------------------------------------------------------- */
+
+.deliveryRow { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+
+.fileLabel {
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(180deg, #F2ECE2, #F8F4ED);
+  box-shadow: inset 0 0 0 1px var(--hairline), inset 0 2px 4px rgba(20,18,15,0.07);
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  text-align: center;
+}
+.fileLabel[data-has="true"] { color: var(--ink); font-weight: 550; }
 
 /* --- Step 2 fields ------------------------------------------------------- */
 
@@ -270,9 +310,12 @@
 .doneBox svg { flex: none; margin-top: 1px; }
 .doneActions { margin-top: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
+@media (max-width: 940px) {
+  .grid { grid-template-columns: 1fr; gap: 40px; }
+  .left { position: static; }
+}
+
 @media (max-width: 560px) {
-  .overlay { padding: 0; align-items: end; }
-  .modal { border-radius: var(--r-lg) var(--r-lg) 0 0; max-height: 94dvh; width: 100%; }
   .addGrid, .pair { grid-template-columns: 1fr; }
   .rail { padding: 12px 16px; }
   .railStep { font-size: 11px; padding: 8px 10px; }

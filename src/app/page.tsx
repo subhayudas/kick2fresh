@@ -1,38 +1,39 @@
+import { LocaleProvider } from "@/components/LocaleProvider";
 import { BookingProvider } from "@/components/BookingProvider";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import TrustStrip from "@/components/TrustStrip";
-import BeforeAfter from "@/components/BeforeAfter";
-import Expertise from "@/components/Expertise";
-import Services from "@/components/Services";
-import Materials from "@/components/Materials";
-import Pricing from "@/components/Pricing";
+import ProofStrip from "@/components/ProofStrip";
+import ServiceSelection from "@/components/ServiceSelection";
+import Gallery from "@/components/Gallery";
+import TrustStack from "@/components/TrustStack";
 import Process from "@/components/Process";
-import Testimonials from "@/components/Testimonials";
-import BookingPromo from "@/components/BookingPromo";
-import Contact from "@/components/Contact";
+import Faq from "@/components/Faq";
+import Guarantee from "@/components/Guarantee";
+import Booking from "@/components/Booking";
+import BundlesReminder from "@/components/BundlesReminder";
 import Footer from "@/components/Footer";
-import BookingModal from "@/components/BookingModal";
+import StickyMobileCta from "@/components/StickyMobileCta";
 
 export default function Page() {
   return (
-    <BookingProvider>
-      <Navbar />
-      <main id="main">
-        <Hero />
-        <TrustStrip />
-        <BeforeAfter />
-        <Expertise />
-        <Services />
-        <Materials />
-        <Pricing />
-        <Process />
-        <Testimonials />
-        <BookingPromo />
-        <Contact />
-      </main>
-      <Footer />
-      <BookingModal />
-    </BookingProvider>
+    <LocaleProvider>
+      <BookingProvider>
+        <Navbar />
+        <main id="main">
+          <Hero />
+          <ProofStrip />
+          <ServiceSelection />
+          <Gallery />
+          <TrustStack />
+          <Process />
+          <Faq />
+          <Guarantee />
+          <Booking />
+          <BundlesReminder />
+        </main>
+        <Footer />
+        <StickyMobileCta />
+      </BookingProvider>
+    </LocaleProvider>
   );
 }

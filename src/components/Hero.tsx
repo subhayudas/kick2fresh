@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import s from "./Hero.module.css";
-import { ArrowRight, IconShield } from "./Icons";
+import { ArrowRight, IconShield, Star } from "./Icons";
 import { useBooking } from "./BookingProvider";
+import { useLocale } from "./LocaleProvider";
 import Reveal from "./Reveal";
 
 export default function Hero() {
   const { openBooking } = useBooking();
+  const { t } = useLocale();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
 
@@ -59,66 +61,79 @@ export default function Hero() {
         </video>
       </div>
 
+      {/* ---------- Floating before/after result card ---------- */}
+      <div className={`${s.resultCard} card--float`} aria-hidden>
+        <span className={s.resultThumbs}>
+          <span className={s.resultThumb}>
+            <Image src="/media/before.webp" alt="" width={92} height={92} />
+          </span>
+          <span className={s.resultThumb}>
+            <Image src="/media/after.webp" alt="" width={92} height={92} />
+          </span>
+        </span>
+        <span className={s.resultLabel}>
+          {t.hero.realResult}
+          <span>{t.hero.beforeAfterLabel}</span>
+        </span>
+      </div>
+
       <div className="shell-wide">
         {/* ---------- Left: editorial copy ---------- */}
         <div className={s.copy}>
           <Reveal>
-            <span className="eyebrow">Premium Sneaker Care · Montreal</span>
+            <span className="eyebrow eyebrow--bare">
+              <span className={s.liveDot} aria-hidden />
+              {t.hero.eyebrow}
+            </span>
           </Reveal>
 
           <Reveal delay={80}>
-            <h1 className={s.headline}>
-              Bring your kicks{" "}
-              <span className={s.line2}>
-                back to <em>life</em><span className={s.amberDot}>.</span>
-              </span>
-            </h1>
+            <h1 className={s.headline}>{t.hero.headline}</h1>
           </Reveal>
 
           <Reveal delay={160}>
-            <p className={s.sub}>
-              Your favourite shoes deserve expert care. Professional cleaning and
-              restoration for sneakers that deserve a second life.
-            </p>
+            <p className={s.sub}>{t.hero.tagline}</p>
           </Reveal>
 
-          <Reveal delay={230}>
+          <Reveal delay={220}>
+            <div className={s.badges}>
+              <span className={s.badge}>
+                <IconShield size={14} />
+                {t.hero.badge1}
+              </span>
+              <span className={s.badge}>
+                <IconShield size={14} />
+                {t.hero.badge2}
+              </span>
+              <span className={s.badge}>
+                <Star size={13} />
+                {t.hero.badge3}
+              </span>
+            </div>
+          </Reveal>
+
+          <Reveal delay={280}>
             <div className={s.actions}>
               <button
                 type="button"
                 className="btn btn--amber btn--lg"
                 onClick={() => openBooking()}
               >
-                Book Your Clean
+                {t.hero.ctaPrimary}
                 <ArrowRight className="btn-arrow" size={15} />
               </button>
-              <a href="#services" className="btn btn--bare">
-                Explore Services
+              <a href="#results" className="btn btn--bare">
+                {t.hero.ctaSecondary}
                 <ArrowRight className="btn-arrow" size={14} />
                 <span className="btn-underline" aria-hidden />
               </a>
             </div>
           </Reveal>
 
-          <Reveal delay={300}>
-            <div className={s.priceTag}>
-              <span className={s.hole} aria-hidden />
-              <span className={s.priceTagBody}>
-                <b>$65 CAD</b>
-                <span>starting price</span>
-              </span>
-              <span className={s.priceTagRule} aria-hidden />
-              <span className={s.priceTagSide}>
-                <IconShield size={14} />
-                3–5 day turnaround
-              </span>
-            </div>
-          </Reveal>
-
-          <Reveal delay={360}>
+          <Reveal delay={340}>
             <div className={s.cue}>
               <span className={s.cueRail} aria-hidden />
-              Scroll to see the difference
+              {t.hero.scrollCue}
             </div>
           </Reveal>
         </div>

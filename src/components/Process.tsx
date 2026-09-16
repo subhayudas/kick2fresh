@@ -3,15 +3,19 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import s from "./Process.module.css";
-import { PROCESS } from "@/lib/content";
-import { ArrowRight } from "./Icons";
+import { useLocalizedProcess, useLocalizedTiming } from "@/lib/useLocalizedContent";
+import { ArrowRight, IconClock } from "./Icons";
 import Reveal from "./Reveal";
 import { useBooking } from "./BookingProvider";
+import { useLocale } from "./LocaleProvider";
 
 export default function Process() {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(0);
   const [paused, setPaused] = useState(false);
   const { openBooking } = useBooking();
+  const { t } = useLocale();
+  const process = useLocalizedProcess();
+  const timing = useLocalizedTiming();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -19,9 +23,9 @@ export default function Process() {
   useEffect(() => {
     if (paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setStep((i) => (i + 1) % PROCESS.length), 3600);
+    const id = window.setInterval(() => setStep((i) => (i + 1) % process.length), 3600);
     return () => window.clearInterval(id);
-  }, [paused]);
+  }, [paused, process.length]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -39,23 +43,18 @@ export default function Process() {
     return () => io.disconnect();
   }, []);
 
-  const progress = ((step + 1) / PROCESS.length) * 100;
+  const progress = ((step + 1) / process.length) * 100;
 
   return (
     <section className={s.sec}>
       <div className="shell">
         <div className={s.head}>
           <Reveal>
-            <span className="eyebrow">How it works</span>
-            <h2 className={`h2 ${s.title}`}>
-              Our easy &amp; <em>fast</em> process.
-            </h2>
+            <span className="eyebrow">{t.process.eyebrow}</span>
+            <h2 className={`h2 ${s.title}`}>{t.process.title}</h2>
           </Reveal>
           <Reveal className={s.headRight} delay={80}>
-            <p className="lede">
-              Hassle-free sneaker care in just a few steps. Two screens to book,
-              then we take it from there.
-            </p>
+            <p className="lede">{t.process.subtitle}</p>
           </Reveal>
         </div>
 
@@ -87,24 +86,24 @@ export default function Process() {
               <div className={`${s.hud} ${s.hudStatus}`} aria-hidden>
                 <div className={s.hudRow}>
                   <span className={s.pulse} />
-                  <span className={s.hudLabel}>{PROCESS[step].title}</span>
+                  <span className={s.hudLabel}>{process[step].title}</span>
                 </div>
                 <div className={s.bar}>
                   <span className={s.barFill} style={{ width: `${progress}%` }} />
                 </div>
                 <div className={s.barMeta}>
-                  <span>Step {PROCESS[step].n}</span>
-                  <span>of 04</span>
+                  <span>{t.process.step} {process[step].n}</span>
+                  <span>{t.process.of}</span>
                 </div>
               </div>
 
               <div className={`${s.hud} ${s.hudPair}`} aria-hidden>
                 <div className={s.pairTop}>
-                  <span className="meta">Order</span>
-                  <span className={s.chipTiny}>On the bench</span>
+                  <span className="meta">{t.process.order}</span>
+                  <span className={s.chipTiny}>{t.process.onBench}</span>
                 </div>
                 <div className={s.pairName}>Premium Restoration</div>
-                <div className={s.pairMeta}>1 pair · suede &amp; leather · $95</div>
+                <div className={s.pairMeta}>{t.process.pairMeta}</div>
               </div>
             </div>
           </Reveal>
@@ -112,7 +111,7 @@ export default function Process() {
           {/* ---------- Right: numbered rail ---------- */}
           <Reveal className={s.rail} delay={100}>
             <ol onMouseLeave={() => setPaused(false)}>
-              {PROCESS.map((p, i) => (
+              {process.map((p, i) => (
                 <li key={p.n}>
                   <button
                     type="button"
@@ -135,13 +134,21 @@ export default function Process() {
 
             <div className={s.railCta}>
               <button type="button" className="btn btn--solid btn--lg" onClick={() => openBooking()}>
-                Start your booking
+                {t.process.ctaPrimary}
                 <ArrowRight className="btn-arrow" size={15} />
               </button>
-              <a href="#contact" className="btn btn--ghost btn--lg">Ask a question first</a>
+              <a href="#faq" className="btn btn--ghost btn--lg">{t.process.ctaSecondary}</a>
             </div>
           </Reveal>
         </div>
+
+        <Reveal className={`${s.timing} card`} delay={60}>
+          <span className={s.timingItem}><IconClock size={14} />{timing.standard}</span>
+          <span className={s.timingSep} aria-hidden />
+          <span className={s.timingItem}><IconClock size={14} />{timing.priority}</span>
+          <span className={s.timingSep} aria-hidden />
+          <span className={s.timingItem}><IconClock size={14} />{timing.pickup}</span>
+        </Reveal>
       </div>
     </section>
   );
