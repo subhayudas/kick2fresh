@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import {
-  TIERS, ADDONS, BUNDLES, MATERIALS, PROCESS, TIMING, FAQ, STATS, GUARANTEE,
+  TIERS, ADDONS, BUNDLES, MATERIALS, PROCESS, TIMING, FAQ, STATS,
   GALLERY, REVIEWS_PLACEHOLDER, NAV, TURNAROUND, CITY, type Bi,
 } from "@/lib/content";
 
@@ -77,11 +77,6 @@ export function useLocalizedFaq() {
 export function useLocalizedStats() {
   const { locale } = useLocale();
   return useMemo(() => STATS.map((s) => ({ ...s, label: pick(s.label, locale) })), [locale]);
-}
-
-export function useLocalizedGuarantee() {
-  const { locale } = useLocale();
-  return useMemo(() => ({ headline: pick(GUARANTEE.headline, locale), subtitle: pick(GUARANTEE.subtitle, locale) }), [locale]);
 }
 
 export function useLocalizedGallery() {

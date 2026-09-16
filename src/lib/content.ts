@@ -347,14 +347,6 @@ export const STATS: Stat[] = [
   { value: "5.0", label: { en: "Google rating · 44 reviews", fr: "Note Google · 44 avis" } },
 ];
 
-export const GUARANTEE = {
-  headline: {
-    en: "0 pairs damaged in 4 years. If the result isn't visible, we redo it for free.",
-    fr: "0 paire endommagée en 4 ans. Si le résultat n'est pas visible, nous le refaisons gratuitement.",
-  },
-  subtitle: { en: "Our commitment, not a slogan.", fr: "Notre engagement, pas un slogan." },
-};
-
 export type GalleryItem = { before: string; after: string; alt: Bi; real: boolean };
 
 export const GALLERY: GalleryItem[] = [

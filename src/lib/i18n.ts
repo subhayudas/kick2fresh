@@ -75,7 +75,6 @@ export const UI = {
       title: "Questions, answered.",
       subtitle: "Everything you'd want to know before you book.",
     },
-    guarantee: { eyebrow: "Our guarantee" },
     booking: {
       eyebrow: "Booking",
       title: "Your collection deserves this level of attention.",
@@ -203,7 +202,6 @@ export const UI = {
       title: "Vos questions, nos réponses.",
       subtitle: "Tout ce que vous voulez savoir avant de réserver.",
     },
-    guarantee: { eyebrow: "Notre garantie" },
     booking: {
       eyebrow: "Réservation",
       title: "Votre collection mérite ce niveau d'attention.",

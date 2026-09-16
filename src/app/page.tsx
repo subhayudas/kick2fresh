@@ -8,7 +8,6 @@ import Gallery from "@/components/Gallery";
 import TrustStack from "@/components/TrustStack";
 import Process from "@/components/Process";
 import Faq from "@/components/Faq";
-import Guarantee from "@/components/Guarantee";
 import Booking from "@/components/Booking";
 import BundlesReminder from "@/components/BundlesReminder";
 import Footer from "@/components/Footer";
@@ -27,7 +26,6 @@ export default function Page() {
           <TrustStack />
           <Process />
           <Faq />
-          <Guarantee />
           <Booking />
           <BundlesReminder />
         </main>
