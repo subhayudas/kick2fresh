@@ -211,31 +211,43 @@ export const MATERIALS: Material[] = [
     id: "nubuck",
     label: { en: "Nubuck", fr: "Nubuck" },
     copy: { en: "Specific protocol", fr: "Protocole spécifique" },
+    image: "/media/materials/nubuck.jpg",
+    alt: { en: "Macro shot of the soft brushed nap of nubuck leather", fr: "Gros plan du grain doux et brossé du nubuck" },
   },
   {
     id: "mesh",
     label: { en: "Mesh", fr: "Mesh" },
     copy: { en: "Specific protocol", fr: "Protocole spécifique" },
+    image: "/media/materials/mesh.jpg",
+    alt: { en: "Macro shot of woven, breathable sneaker mesh fabric", fr: "Gros plan du tissu mesh tissé et respirant d'un sneaker" },
   },
   {
     id: "canvas",
     label: { en: "Canvas", fr: "Toile" },
     copy: { en: "Specific protocol", fr: "Protocole spécifique" },
+    image: "/media/materials/canvas.jpg",
+    alt: { en: "Macro shot of woven cotton canvas sneaker fabric", fr: "Gros plan de la toile de coton tissée d'un sneaker" },
   },
   {
     id: "vinyl",
     label: { en: "Vinyl", fr: "Vinyle" },
     copy: { en: "Specific protocol", fr: "Protocole spécifique" },
+    image: "/media/materials/vinyl.jpg",
+    alt: { en: "Macro shot of glossy white vinyl sneaker material", fr: "Gros plan du vinyle blanc brillant d'un sneaker" },
   },
   {
     id: "technical",
     label: { en: "Technical Fabric", fr: "Tissu technique" },
     copy: { en: "Specific protocol", fr: "Protocole spécifique" },
+    image: "/media/materials/technical.jpg",
+    alt: { en: "Macro shot of technical performance ripstop fabric", fr: "Gros plan d'un tissu technique ripstop performant" },
   },
   {
     id: "patent",
     label: { en: "Patent Leather", fr: "Cuir verni" },
     copy: { en: "Specific protocol", fr: "Protocole spécifique" },
+    image: "/media/materials/patent.jpg",
+    alt: { en: "Macro shot of glossy black patent leather with sharp reflections", fr: "Gros plan du cuir verni noir brillant aux reflets nets" },
   },
 ];
 
