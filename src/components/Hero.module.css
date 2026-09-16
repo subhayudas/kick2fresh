@@ -60,7 +60,7 @@
   font-weight: 400;
   letter-spacing: -0.04em;
 }
-.headline .amberDot { color: var(--amber); }
+.headline .blueDot { color: var(--blue); }
 
 .sub {
   margin-top: 22px;
@@ -109,7 +109,7 @@
   color: var(--ink);
   white-space: nowrap;
 }
-.badge svg { color: var(--amber); flex: none; }
+.badge svg { color: var(--blue); flex: none; }
 
 .actions {
   margin-top: 30px;
@@ -176,7 +176,7 @@
 .cueRail::after {
   content: "";
   position: absolute; inset: 0;
-  background: var(--amber);
+  background: var(--blue);
   animation: sweep 2.6s var(--ease-soft) infinite;
 }
 @keyframes sweep {

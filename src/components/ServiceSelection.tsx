@@ -64,7 +64,7 @@ export default function ServiceSelection() {
                 <div className={s.tierCta}>
                   <button
                     type="button"
-                    className={`btn ${tr.featured ? "btn--amber" : "btn--ghost"}`}
+                    className={`btn ${tr.featured ? "btn--blue" : "btn--ghost"}`}
                     onClick={() => openBooking(tr.id)}
                   >
                     {t.services.cta}

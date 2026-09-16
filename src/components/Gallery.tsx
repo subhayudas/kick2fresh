@@ -164,7 +164,7 @@ export default function Gallery() {
         </Reveal>
 
         <div className={s.ctaRow}>
-          <button type="button" className="btn btn--amber btn--lg" onClick={() => openBooking()}>
+          <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking()}>
             {t.gallery.cta}
             <ArrowRight className="btn-arrow" size={15} />
           </button>

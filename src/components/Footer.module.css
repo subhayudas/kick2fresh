@@ -18,15 +18,12 @@
 
 .brand { display: inline-flex; align-items: center; gap: 9px; }
 .mark {
-  width: 26px; height: 26px;
-  display: grid; place-items: center;
+  width: 30px; height: 30px;
   border-radius: 8px;
-  background: linear-gradient(180deg, #2C2721, var(--ink));
-  color: var(--paper);
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--hairline);
   flex: none;
 }
-.word { font-size: 14px; font-weight: 600; letter-spacing: -0.045em; }
-.word em { font-style: normal; color: var(--amber); }
 
 .meta {
   display: flex;
@@ -37,7 +34,7 @@
   color: var(--ink-muted);
 }
 .meta span { display: inline-flex; align-items: center; gap: 6px; }
-.meta svg { color: var(--amber); }
+.meta svg { color: var(--blue); }
 
 .links {
   display: flex;
@@ -53,7 +50,7 @@
   color: var(--ink-muted);
   transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
 }
-.link:hover { color: var(--ink); background: rgba(20,18,15,0.045); }
+.link:hover { color: var(--ink); background: rgba(18, 20, 31,0.045); }
 
 .base {
   margin-top: 20px;

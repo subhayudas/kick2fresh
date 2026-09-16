@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import s from "./Navbar.module.css";
 import { useLocalizedNav } from "@/lib/useLocalizedContent";
-import { ArrowRight, ArrowUpRight, IconShoe } from "./Icons";
+import { ArrowRight, ArrowUpRight } from "./Icons";
 import { useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
 
@@ -37,12 +37,7 @@ export default function Navbar() {
         <div className="shell-wide">
           <div className={s.bar}>
             <a href="#top" className={s.logo} aria-label="Kicks2Fresh — home">
-              <span className={s.mark} aria-hidden>
-                <IconShoe size={17} />
-              </span>
-              <span className={s.word}>
-                Kicks<em>2</em>Fresh
-              </span>
+              <img src="/logo.jpg" alt="Kicks2Fresh" className={s.mark} />
             </a>
 
             <nav className={s.links} aria-label="Primary">
@@ -122,7 +117,7 @@ export default function Navbar() {
           <div className={s.panelCta}>
             <button
               type="button"
-              className="btn btn--amber btn--lg"
+              className="btn btn--blue btn--lg"
               tabIndex={menu ? 0 : -1}
               onClick={() => {
                 setMenu(false);

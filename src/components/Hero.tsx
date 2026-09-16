@@ -116,7 +116,7 @@ export default function Hero() {
             <div className={s.actions}>
               <button
                 type="button"
-                className="btn btn--amber btn--lg"
+                className="btn btn--blue btn--lg"
                 onClick={() => openBooking()}
               >
                 {t.hero.ctaPrimary}

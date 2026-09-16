@@ -11,7 +11,7 @@ export default function StickyMobileCta() {
 
   return (
     <div className={s.bar}>
-      <button type="button" className="btn btn--amber btn--lg" onClick={() => openBooking()}>
+      <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking()}>
         {t.stickyCta.bookNow}
         <ArrowRight className="btn-arrow" size={15} />
       </button>

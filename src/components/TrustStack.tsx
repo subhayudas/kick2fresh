@@ -90,7 +90,7 @@ export default function TrustStack() {
         </div>
 
         <div className={s.ctaRow}>
-          <button type="button" className="btn btn--amber btn--lg" onClick={() => openBooking()}>
+          <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking()}>
             {t.trust.cta}
             <ArrowRight className="btn-arrow" size={15} />
           </button>

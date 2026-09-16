@@ -38,14 +38,14 @@
   display: grid; place-items: center;
   width: 24px; height: 24px;
   border-radius: 50%;
-  background: rgba(20,18,15,0.045);
+  background: rgba(18, 20, 31,0.045);
   color: var(--ink-muted);
   transition: transform 0.3s var(--ease), background-color 0.3s var(--ease), color 0.3s var(--ease);
 }
 .item[data-open="true"] .qIcon {
   transform: rotate(180deg);
-  background: var(--amber-wash);
-  color: var(--amber-deep);
+  background: var(--blue-wash);
+  color: var(--blue-deep);
 }
 
 .a {

@@ -408,7 +408,7 @@ export default function Booking() {
                   {step < 5 ? (
                     <button
                       type="button"
-                      className="btn btn--amber btn--lg"
+                      className="btn btn--blue btn--lg"
                       disabled={!canContinue}
                       onClick={() => setStep((v) => (v + 1) as Step)}
                     >
@@ -416,7 +416,7 @@ export default function Booking() {
                       <ArrowRight className="btn-arrow" size={15} />
                     </button>
                   ) : (
-                    <button type="submit" form="booking-form" className="btn btn--amber btn--lg">
+                    <button type="submit" form="booking-form" className="btn btn--blue btn--lg">
                       {t.booking.confirm}
                       <ArrowRight className="btn-arrow" size={15} />
                     </button>

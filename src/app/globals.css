@@ -1,34 +1,35 @@
 /* ==========================================================================
    KICKS2FRESH — Design System
-   Editorial + modern skeuomorphic. Warm ivory canvas, charcoal ink,
-   restrained amber accent. Tactile surfaces, real depth, no gradients-as-decor.
+   Editorial + modern skeuomorphic. Cool ivory canvas, deep navy ink,
+   confident blue accent (matched to the brand mark). Tactile surfaces,
+   real depth, no gradients-as-decor.
    ========================================================================== */
 
 :root {
   /* --- Canvas & ink ------------------------------------------------------ */
-  --ivory:        #F4EFE7;
-  --ivory-deep:   #EBE4D9;
-  --paper:        #FBF8F3;
-  --paper-lift:   #FFFDFA;
+  --ivory:        #EEF2FA;
+  --ivory-deep:   #E1E8F5;
+  --paper:        #F7FAFD;
+  --paper-lift:   #FFFFFF;
 
-  --ink:          #14120F;
-  --ink-soft:     #2A2621;
-  --ink-muted:    #6B6355;
-  --ink-faint:    #9A917F;
-  --hairline:     rgba(20, 18, 15, 0.10);
-  --hairline-2:   rgba(20, 18, 15, 0.06);
+  --ink:          #12141F;
+  --ink-soft:     #242838;
+  --ink-muted:    #5B6478;
+  --ink-faint:    #8B93A8;
+  --hairline:     rgba(18, 20, 31, 0.10);
+  --hairline-2:   rgba(18, 20, 31, 0.06);
 
   /* --- Accent ------------------------------------------------------------ */
-  --amber:        #C98A21;
-  --amber-lift:   #E7A93A;
-  --amber-deep:   #9C6810;
-  --amber-wash:   rgba(201, 138, 33, 0.10);
+  --blue:        #2568E8;
+  --blue-lift:   #4F8CFF;
+  --blue-deep:   #15337D;
+  --blue-wash:   rgba(37, 104, 232, 0.10);
 
   /* --- Dark surfaces ----------------------------------------------------- */
-  --coal:         #17150F;
-  --coal-lift:    #211E17;
-  --coal-line:    rgba(255, 250, 240, 0.12);
-  --coal-text:    rgba(255, 251, 243, 0.62);
+  --coal:         #0E1730;
+  --coal-lift:    #16213F;
+  --coal-line:    rgba(230, 238, 255, 0.12);
+  --coal-text:    rgba(230, 238, 255, 0.62);
 
   /* --- Radii ------------------------------------------------------------- */
   --r-xs: 8px;
@@ -42,26 +43,26 @@
   /* --- Skeuomorphic elevation -------------------------------------------- */
   /* Layered: contact shadow + ambient + inner top highlight */
   --lift-1:
-    0 1px 1px rgba(20, 18, 15, 0.05),
-    0 2px 5px rgba(20, 18, 15, 0.05),
+    0 1px 1px rgba(18, 20, 31, 0.05),
+    0 2px 5px rgba(18, 20, 31, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.75);
   --lift-2:
-    0 1px 2px rgba(20, 18, 15, 0.06),
-    0 6px 16px -6px rgba(20, 18, 15, 0.14),
+    0 1px 2px rgba(18, 20, 31, 0.06),
+    0 6px 16px -6px rgba(18, 20, 31, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
   --lift-3:
-    0 2px 4px rgba(20, 18, 15, 0.05),
-    0 14px 32px -12px rgba(20, 18, 15, 0.20),
-    0 40px 70px -40px rgba(20, 18, 15, 0.28),
+    0 2px 4px rgba(18, 20, 31, 0.05),
+    0 14px 32px -12px rgba(18, 20, 31, 0.20),
+    0 40px 70px -40px rgba(18, 20, 31, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
   --lift-4:
-    0 4px 8px rgba(20, 18, 15, 0.06),
-    0 24px 50px -18px rgba(20, 18, 15, 0.26),
-    0 70px 110px -60px rgba(20, 18, 15, 0.35),
+    0 4px 8px rgba(18, 20, 31, 0.06),
+    0 24px 50px -18px rgba(18, 20, 31, 0.26),
+    0 70px 110px -60px rgba(18, 20, 31, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
   --press-in:
-    inset 0 2px 4px rgba(20, 18, 15, 0.16),
+    inset 0 2px 4px rgba(18, 20, 31, 0.16),
     inset 0 -1px 0 rgba(255, 255, 255, 0.4);
 
   /* --- Type -------------------------------------------------------------- */
@@ -103,7 +104,7 @@ body {
   overflow-x: hidden;
   /* faint paper grain — physicality without texture files */
   background-image:
-    radial-gradient(rgba(20, 18, 15, 0.022) 1px, transparent 1px);
+    radial-gradient(rgba(18, 20, 31, 0.022) 1px, transparent 1px);
   background-size: 3px 3px;
 }
 
@@ -115,10 +116,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 
-::selection { background: var(--amber); color: #fff; }
+::selection { background: var(--blue); color: #fff; }
 
 :focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--blue);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -161,11 +162,11 @@ section { position: relative; }
   content: "";
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: var(--amber);
-  box-shadow: 0 0 0 3px var(--amber-wash);
+  background: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-wash);
 }
 .eyebrow--bare::before { display: none; }
-.eyebrow--dark { color: rgba(255, 251, 243, 0.55); }
+.eyebrow--dark { color: rgba(245, 248, 255, 0.55); }
 
 .display {
   font-size: clamp(2.6rem, 6.2vw, 4.6rem);
@@ -208,7 +209,7 @@ section { position: relative; }
   color: var(--ink-faint);
 }
 
-.accent { color: var(--amber); }
+.accent { color: var(--blue); }
 .italic-note { font-style: italic; letter-spacing: -0.02em; }
 
 /* ==========================================================================
@@ -237,53 +238,53 @@ section { position: relative; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
 
 .btn--solid {
-  background: linear-gradient(180deg, #2C2721 0%, var(--ink) 62%);
+  background: linear-gradient(180deg, #262B3D 0%, var(--ink) 62%);
   color: var(--paper);
   box-shadow:
-    0 1px 1px rgba(20, 18, 15, 0.2),
-    0 6px 14px -6px rgba(20, 18, 15, 0.5),
+    0 1px 1px rgba(18, 20, 31, 0.2),
+    0 6px 14px -6px rgba(18, 20, 31, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
     inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 .btn--solid:hover {
   transform: translateY(-1.5px);
   box-shadow:
-    0 1px 1px rgba(20, 18, 15, 0.2),
-    0 12px 24px -8px rgba(20, 18, 15, 0.55),
+    0 1px 1px rgba(18, 20, 31, 0.2),
+    0 12px 24px -8px rgba(18, 20, 31, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 .btn--solid:active {
   transform: translateY(1px);
   box-shadow:
-    0 1px 1px rgba(20, 18, 15, 0.2),
-    0 2px 5px -2px rgba(20, 18, 15, 0.45),
+    0 1px 1px rgba(18, 20, 31, 0.2),
+    0 2px 5px -2px rgba(18, 20, 31, 0.45),
     inset 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-.btn--amber {
-  background: linear-gradient(180deg, var(--amber-lift) 0%, var(--amber) 58%, var(--amber-deep) 100%);
+.btn--blue {
+  background: linear-gradient(180deg, var(--blue-lift) 0%, var(--blue) 58%, var(--blue-deep) 100%);
   color: #fff;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
   box-shadow:
-    0 1px 1px rgba(120, 78, 10, 0.28),
-    0 8px 18px -7px rgba(156, 104, 16, 0.6),
+    0 1px 1px rgba(14, 30, 74, 0.28),
+    0 8px 18px -7px rgba(21, 51, 125, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(90, 58, 4, 0.45);
+    inset 0 -1px 0 rgba(9, 20, 50, 0.45);
 }
-.btn--amber:hover {
+.btn--blue:hover {
   transform: translateY(-1.5px);
   box-shadow:
-    0 1px 1px rgba(120, 78, 10, 0.28),
-    0 14px 26px -8px rgba(156, 104, 16, 0.65),
+    0 1px 1px rgba(14, 30, 74, 0.28),
+    0 14px 26px -8px rgba(21, 51, 125, 0.65),
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(90, 58, 4, 0.45);
+    inset 0 -1px 0 rgba(9, 20, 50, 0.45);
 }
-.btn--amber:active {
+.btn--blue:active {
   transform: translateY(1px);
   box-shadow:
-    0 1px 1px rgba(120, 78, 10, 0.3),
-    inset 0 2px 6px rgba(90, 58, 4, 0.55);
+    0 1px 1px rgba(14, 30, 74, 0.3),
+    inset 0 2px 6px rgba(9, 20, 50, 0.55);
 }
 
 .btn--ghost {
@@ -291,16 +292,16 @@ section { position: relative; }
   color: var(--ink);
   box-shadow:
     0 0 0 1px var(--hairline),
-    0 1px 2px rgba(20, 18, 15, 0.05),
-    0 6px 14px -8px rgba(20, 18, 15, 0.18),
+    0 1px 2px rgba(18, 20, 31, 0.05),
+    0 6px 14px -8px rgba(18, 20, 31, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 .btn--ghost:hover {
   transform: translateY(-1.5px);
   box-shadow:
-    0 0 0 1px rgba(20, 18, 15, 0.16),
-    0 1px 2px rgba(20, 18, 15, 0.05),
-    0 12px 22px -10px rgba(20, 18, 15, 0.24),
+    0 0 0 1px rgba(18, 20, 31, 0.16),
+    0 1px 2px rgba(18, 20, 31, 0.05),
+    0 12px 22px -10px rgba(18, 20, 31, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 .btn--ghost:active { transform: translateY(1px); box-shadow: 0 0 0 1px var(--hairline), var(--press-in); }
@@ -325,7 +326,7 @@ section { position: relative; }
 
 .btn--onDark {
   background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
-  color: #FFFBF3;
+  color: #F5F8FF;
   box-shadow:
     0 0 0 1px var(--coal-line),
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
@@ -350,7 +351,7 @@ section { position: relative; }
 }
 
 .card--float {
-  background: linear-gradient(180deg, rgba(255,253,250,0.97) 0%, rgba(251,248,243,0.94) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255,0.97) 0%, rgba(247, 250, 253,0.94) 100%);
   backdrop-filter: blur(14px) saturate(1.3);
   -webkit-backdrop-filter: blur(14px) saturate(1.3);
   border-radius: var(--r-md);
@@ -359,10 +360,10 @@ section { position: relative; }
 
 .card--dark {
   background: linear-gradient(180deg, var(--coal-lift) 0%, var(--coal) 100%);
-  color: #FFFBF3;
+  color: #F5F8FF;
   border-radius: var(--r-md);
   box-shadow:
-    0 0 0 1px rgba(255, 250, 240, 0.08),
+    0 0 0 1px rgba(245, 248, 255, 0.08),
     0 20px 40px -20px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
@@ -384,7 +385,7 @@ section { position: relative; }
   border-radius: inherit;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 0 90px rgba(20, 18, 15, 0.06);
+    inset 0 0 90px rgba(18, 20, 31, 0.06);
 }
 
 /* ==========================================================================

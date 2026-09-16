@@ -2,7 +2,7 @@
 
 import s from "./Footer.module.css";
 import { useLocalizedNav, useLocalizedStrings, useLocalizedStats } from "@/lib/useLocalizedContent";
-import { IconPin, IconShoe, Star } from "./Icons";
+import { IconPin, Star } from "./Icons";
 import { useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
 
@@ -19,8 +19,7 @@ export default function Footer() {
       <div className="shell-wide">
         <div className={s.row}>
           <a href="#top" className={s.brand} aria-label="Kicks2Fresh — home">
-            <span className={s.mark} aria-hidden><IconShoe size={15} /></span>
-            <span className={s.word}>Kicks<em>2</em>Fresh</span>
+            <img src="/logo.jpg" alt="Kicks2Fresh" className={s.mark} />
           </a>
 
           <div className={s.meta}>

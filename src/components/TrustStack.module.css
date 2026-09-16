@@ -23,7 +23,7 @@
 }
 .scoreNum { font-size: clamp(2.2rem, 3.4vw, 2.8rem); font-weight: 550; letter-spacing: -0.04em; line-height: 1; }
 .scoreRight { display: flex; flex-direction: column; gap: 5px; }
-.stars { display: inline-flex; gap: 3px; color: var(--amber); }
+.stars { display: inline-flex; gap: 3px; color: var(--blue); }
 .scoreMeta { font-size: 12.5px; color: var(--ink-muted); }
 
 /* --- Review cards ------------------------------------------------------- */
@@ -39,7 +39,7 @@
 .placeholder {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 8px; border-radius: 6px;
-  background: rgba(20,18,15,0.05);
+  background: rgba(18, 20, 31,0.05);
   box-shadow: inset 0 0 0 1px var(--hairline-2);
   font-family: var(--f-mono);
   font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase;
@@ -60,10 +60,10 @@
 }
 .avatar {
   width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(160deg, #D8CDBB, #B6A991);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(20,18,15,0.15);
+  background: linear-gradient(160deg, #C7D0E3, #A3AEC7);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(18, 20, 31,0.15);
   display: grid; place-items: center;
-  font-size: 10px; font-weight: 700; color: rgba(20,18,15,0.5);
+  font-size: 10px; font-weight: 700; color: rgba(18, 20, 31,0.5);
   flex: none;
 }
 .who { font-size: 12.5px; font-weight: 550; letter-spacing: -0.015em; }
@@ -96,7 +96,7 @@
 .mTile--photo::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(10,9,7,0) 40%, rgba(10,9,7,0.75) 100%);
+  background: linear-gradient(180deg, rgba(10, 11, 18,0) 40%, rgba(10, 11, 18,0.75) 100%);
 }
 .mTile--plain {
   align-items: center;
@@ -107,9 +107,9 @@
 }
 .mBody { position: relative; z-index: 1; padding: 14px; }
 .mTile--plain .mBody { padding: 0; }
-.mLabel { font-size: 13px; font-weight: 550; letter-spacing: -0.02em; color: #FFFBF3; }
+.mLabel { font-size: 13px; font-weight: 550; letter-spacing: -0.02em; color: #F5F8FF; }
 .mTile--plain .mLabel { color: var(--ink); }
-.mCopy { margin-top: 3px; font-size: 10.5px; line-height: 1.35; color: rgba(255,251,243,0.75); }
+.mCopy { margin-top: 3px; font-size: 10.5px; line-height: 1.35; color: rgba(245, 248, 255,0.75); }
 .mTile--plain .mCopy { color: var(--ink-muted); }
 
 .ctaRow { margin-top: clamp(28px, 3.2vw, 44px); display: flex; justify-content: center; }
