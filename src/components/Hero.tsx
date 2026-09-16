@@ -39,7 +39,7 @@ export default function Hero() {
       {/* ---------- Right-side background: the sneaker loop, blended into the ivory ---------- */}
       <div className={s.media} aria-hidden>
         <Image
-          src="/media/hero-sneaker.webp"
+          src="/media/hero-loop-poster-blue.webp"
           alt=""
           fill
           priority
@@ -53,11 +53,11 @@ export default function Hero() {
           loop
           playsInline
           preload="none"
-          poster="/media/hero-loop-poster.webp"
+          poster="/media/hero-loop-poster-blue.webp"
           data-ready={videoReady}
           onPlaying={() => setVideoReady(true)}
         >
-          <source src="/media/hero-loop.mp4" type="video/mp4" />
+          <source src="/media/hero-loop-blue.mp4" type="video/mp4" />
         </video>
       </div>
 
@@ -65,10 +65,10 @@ export default function Hero() {
       <div className={`${s.resultCard} card--float`} aria-hidden>
         <span className={s.resultThumbs}>
           <span className={s.resultThumb}>
-            <Image src="/media/before.webp" alt="" width={92} height={92} />
+            <Image src="/paire-01-avant.jpg" alt="" width={92} height={92} />
           </span>
           <span className={s.resultThumb}>
-            <Image src="/media/after.webp" alt="" width={92} height={92} />
+            <Image src="/paire-01-apres.jpg" alt="" width={92} height={92} />
           </span>
         </span>
         <span className={s.resultLabel}>

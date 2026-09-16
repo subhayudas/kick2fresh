@@ -44,8 +44,8 @@ export const UI = {
     gallery: {
       eyebrow: "The transformation",
       title: "The before. The after. The difference.",
-      subtitle: "Illustrative results while we build our real customer gallery — proprietary Kicks2Fresh protocol.",
-      caption: "Placeholder imagery generated for preview — real, unedited customer photos replace these before launch.",
+      subtitle: "Real customer pairs, restored using our proprietary Kicks2Fresh protocol.",
+      caption: "Real, unedited customer photos — every before and after shown here came out of our workshop.",
       cta: "Book Your Clean",
       before: "Before",
       after: "After",
@@ -177,8 +177,8 @@ export const UI = {
     gallery: {
       eyebrow: "La transformation",
       title: "L'avant. L'après. La différence.",
-      subtitle: "Résultats illustratifs pendant que nous préparons notre vraie galerie clients — protocole exclusif Kicks2Fresh.",
-      caption: "Images provisoires générées pour l'aperçu — de vraies photos clients non retouchées les remplaceront avant le lancement.",
+      subtitle: "De vraies paires clients, restaurées avec notre protocole exclusif Kicks2Fresh.",
+      caption: "Photos clients réelles et non retouchées — chaque avant/après montré ici sort directement de notre atelier.",
       cta: "Réservez votre nettoyage",
       before: "Avant",
       after: "Après",

@@ -19,7 +19,7 @@ export default function Footer() {
       <div className="shell-wide">
         <div className={s.row}>
           <a href="#top" className={s.brand} aria-label="Kicks2Fresh — home">
-            <img src="/logo.jpg" alt="Kicks2Fresh" className={s.mark} />
+            <img src="/LOGO-Kicks2Fresh.png" alt="Kicks2Fresh" className={s.mark} />
           </a>
 
           <div className={s.meta}>
