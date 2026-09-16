@@ -66,7 +66,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       // Target the form panel itself (not the section) so mobile lands straight on the form,
       // not on the trust copy that stacks above it once the grid collapses to one column.
       const target = document.getElementById("booking-panel") ?? document.getElementById("booking");
-      target?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      if (!target) {
+        window.location.href = "/#booking";
+        return;
+      }
+      target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
     }, 0);
   }, [setTier]);
 

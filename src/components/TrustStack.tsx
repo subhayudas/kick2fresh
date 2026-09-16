@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import s from "./TrustStack.module.css";
 import { Star, ArrowRight } from "./Icons";
 import Reveal from "./Reveal";
@@ -60,6 +61,13 @@ export default function TrustStack() {
             </Reveal>
           ))}
         </div>
+
+        <Reveal className={s.viewAllRow}>
+          <Link href="/reviews" className="btn btn--ghost btn--sm">
+            {t.trust.viewAll}
+            <ArrowRight className="btn-arrow" size={14} />
+          </Link>
+        </Reveal>
 
         <Reveal className={s.materialsIntro}>
           <h3 className={s.materialsTitle}>{t.trust.materialsTitle}</h3>

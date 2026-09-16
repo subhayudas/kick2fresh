@@ -1,0 +1,92 @@
+/* --- Hero ------------------------------------------------------------ */
+
+.hero { padding-top: clamp(120px, 14vw, 168px); padding-bottom: clamp(40px, 4.6vw, 64px); }
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--ink-muted);
+  margin-bottom: clamp(24px, 3vw, 40px);
+  transition: color 0.2s var(--ease-soft), gap 0.2s var(--ease-soft);
+}
+.back:hover { color: var(--ink); gap: 9px; }
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.55fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: end;
+}
+
+.title { margin-top: 16px; }
+.lede { margin-top: 14px; max-width: 52ch; }
+
+.scoreCard {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.scoreTop { display: flex; align-items: baseline; gap: 14px; }
+.scoreNum { font-size: clamp(2.4rem, 3.6vw, 3rem); font-weight: 550; letter-spacing: -0.04em; line-height: 1; }
+.stars { display: inline-flex; gap: 3px; color: var(--blue); }
+.scoreMeta { font-size: 12.5px; color: var(--ink-muted); line-height: 1.5; }
+.scoreCta { align-self: flex-start; margin-top: 6px; }
+
+/* --- Review grid ------------------------------------------------------- */
+
+.listSec { padding-bottom: clamp(72px, 9vw, 120px); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 20px);
+}
+
+.card { padding: 20px 22px; display: flex; flex-direction: column; }
+.cardTop { display: flex; align-items: center; }
+.card .stars { color: var(--blue); }
+
+.quote {
+  margin-top: 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  flex: 1;
+}
+
+.foot {
+  margin-top: 16px; padding-top: 14px;
+  box-shadow: inset 0 1px 0 var(--hairline-2);
+  display: flex; align-items: center; gap: 10px;
+}
+.avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(160deg, #C7D0E3, #A3AEC7);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(18, 20, 31,0.15);
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; color: rgba(18, 20, 31,0.55);
+  text-transform: uppercase;
+  flex: none;
+}
+.who { font-size: 12.5px; font-weight: 550; letter-spacing: -0.015em; display: block; }
+.meta { display: block; font-size: 10.5px; color: var(--ink-muted); margin-top: 1px; }
+
+.note {
+  margin-top: clamp(24px, 3vw, 36px);
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.ctaRow { margin-top: clamp(32px, 3.6vw, 48px); display: flex; justify-content: center; }
+
+@media (max-width: 940px) {
+  .heroGrid { grid-template-columns: 1fr; align-items: start; }
+  .scoreCard { width: 100%; }
+  .grid { grid-template-columns: 1fr; }
+}

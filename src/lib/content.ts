@@ -403,7 +403,12 @@ export const GALLERY: GalleryItem[] = [
   },
 ];
 
-export const REVIEWS = [
+export type Review = { quote: Bi; who: Bi; meta: Bi };
+
+/** All real, attributed Google reviews with written text (43 of 52 total — the
+ * remaining 9 are 5-star ratings left without a comment). Sourced from the
+ * Kicks2Fresh Google Business Profile. */
+export const ALL_REVIEWS: Review[] = [
   {
     quote: {
       en: "Amazing guy, thought I had to spend another $500 until they touched it. Exceeded my expectations and they brought them back to life. Always prompt with communication, even with all their orders. Strongly recommend!",
@@ -428,13 +433,307 @@ export const REVIEWS = [
     who: { en: "Chico T.", fr: "Chico T." },
     meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
   },
+  {
+    quote: {
+      en: "Never thought about getting shoes cleaned until I saw this company. 100% recommended. They brought my shoes back to looking like new.",
+      fr: "Je n'avais jamais pensé faire nettoyer mes souliers avant de découvrir cette entreprise. 100 % recommandé. Ils ont redonné à mes souliers un look neuf.",
+    },
+    who: { en: "Shaun C.", fr: "Shaun C." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Never thought my shoes would be so clean after this service WOW! Looking like I just bought them. Thank you again!",
+      fr: "Je n'aurais jamais cru que mes souliers pourraient être aussi propres après ce service, wow ! On dirait que je viens de les acheter. Merci encore !",
+    },
+    who: { en: "Joseph N.", fr: "Joseph N." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Good service, appreciated!", fr: "Bon service, apprécié !" },
+    who: { en: "Marko Z.", fr: "Marko Z." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Service 5/5. Very friendly.", fr: "Service 5/5. Très sympathique." },
+    who: { en: "Momo J.", fr: "Momo J." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Impeccable service from start to finish. He cleaned over 25 pairs of shoes for me.",
+      fr: "Service impeccable du début à la fin. Il a nettoyé plus de 25 paires de souliers pour moi.",
+    },
+    who: { en: "Yannick L.", fr: "Yannick L." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Very satisfied with the service. I picked up my collection and everything is absolutely impeccable. The sneakers are super clean, well-treated, and handled with care. A huge saving of time and money for me.",
+      fr: "Très satisfait du service. J'ai récupéré ma collection et tout est absolument impeccable. Les sneakers sont super propres, bien traités et manipulés avec soin. Un énorme gain de temps et d'argent pour moi.",
+    },
+    who: { en: "Hussein", fr: "Hussein" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Excellent shoe cleaning service! My shoes came out looking brand new, both clean and smelling great. Professional, quick, and meticulous work. You can tell they take their time and know what they're doing. I 100% recommend them to anyone who wants to give their shoes a second life.",
+      fr: "Excellent service de nettoyage de chaussures ! Mes souliers sont ressortis comme neufs, propres et sentant bon. Un travail professionnel, rapide et minutieux. On sent qu'ils prennent le temps et savent ce qu'ils font. Je les recommande à 100 % à quiconque veut donner une seconde vie à ses chaussures.",
+    },
+    who: { en: "Sophia Z.", fr: "Sophia Z." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Impeccable service at Kicks2Fresh! My shoes were really dirty, and they came out looking almost brand new.",
+      fr: "Service impeccable chez Kicks2Fresh ! Mes souliers étaient vraiment sales, et ils sont ressortis presque comme neufs.",
+    },
+    who: { en: "Soumia Z.", fr: "Soumia Z." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Fast service and I'm really satisfied with the result, they're brand new!!",
+      fr: "Service rapide et je suis vraiment satisfaite du résultat, ils sont comme neufs !!",
+    },
+    who: { en: "Selma S.", fr: "Selma S." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I bought the kit, and it's super simple and quick to use. I cleaned my J12 and Jordan 1 in under 10 minutes. I highly recommend it!",
+      fr: "J'ai acheté la trousse, elle est super simple et rapide à utiliser. J'ai nettoyé mes J12 et Jordan 1 en moins de 10 minutes. Je la recommande fortement !",
+    },
+    who: { en: "Nilsc", fr: "Nilsc" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Impeccable service! My shoes came back looking brand new, clean, and well-maintained. You can really see the attention to detail and professionalism. I recommend them 100%!",
+      fr: "Service impeccable ! Mes souliers sont revenus comme neufs, propres et bien entretenus. On voit vraiment le souci du détail et le professionnalisme. Je les recommande à 100 % !",
+    },
+    who: { en: "Fnk SoG", fr: "Fnk SoG" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I love her work, it's truly top-notch! My shoes look brand new, like new. I'll definitely be back if needed!",
+      fr: "J'adore son travail, c'est vraiment top ! Mes souliers ont l'air neufs. Je reviendrai certainement au besoin !",
+    },
+    who: { en: "Soukaina E.", fr: "Soukaina E." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Good people who do things right. Literally miracle workers when it comes to saving shoes I thought were beyond saving.",
+      fr: "De bonnes personnes qui font les choses correctement. Littéralement des faiseurs de miracles pour sauver des souliers que je croyais irrécupérables.",
+    },
+    who: { en: "Ian G.", fr: "Ian G." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Thank you so much for the impeccable cleaning of my shoes! They look brand new. I really appreciate your careful and efficient work.",
+      fr: "Merci beaucoup pour le nettoyage impeccable de mes souliers ! Ils ont l'air neufs. J'apprécie vraiment votre travail soigné et efficace.",
+    },
+    who: { en: "Youssef T.", fr: "Youssef T." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "The kit is extremely effective; clean shoes in no time! I'm extremely satisfied with my purchase. 100% recommended.",
+      fr: "La trousse est extrêmement efficace, des souliers propres en un rien de temps ! Je suis extrêmement satisfait de mon achat. 100 % recommandé.",
+    },
+    who: { en: "Raphaël A.", fr: "Raphaël A." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Kicks2Fresh cleaned our team's shoes and we're thrilled! Attention to detail, efficiency, and professionalism were all there! Kicks2Fresh surpasses its competitors on several levels.",
+      fr: "Kicks2Fresh a nettoyé les souliers de notre équipe et nous sommes ravis ! Souci du détail, efficacité et professionnalisme étaient tous au rendez-vous ! Kicks2Fresh surpasse ses concurrents sur plusieurs points.",
+    },
+    who: { en: "Vitruvius Nettoyage", fr: "Vitruvius Nettoyage" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Incredible, my shoes look brand new! It's truly high-quality work, and the service was fast.",
+      fr: "Incroyable, mes souliers ont l'air neufs ! C'est vraiment un travail de qualité, et le service était rapide.",
+    },
+    who: { en: "Kaaws", fr: "Kaaws" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I bought the kit and cleaned all my shoes with it right away. They're all clean now, I give it a 10/10.",
+      fr: "J'ai acheté la trousse et j'ai tout de suite nettoyé tous mes souliers avec. Ils sont tous propres maintenant, je lui donne un 10/10.",
+    },
+    who: { en: "Cap Cut", fr: "Cap Cut" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Excellent service, the shoes become like new and the price is very reasonable, plus he has a kit that you can buy.",
+      fr: "Excellent service, les souliers redeviennent comme neufs et le prix est très raisonnable, en plus il a une trousse qu'on peut acheter.",
+    },
+    who: { en: "Sandro A.", fr: "Sandro A." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Top-notch, fast, and efficient service every time.", fr: "Service haut de gamme, rapide et efficace à chaque fois." },
+    who: { en: "Kevin A.", fr: "Kevin A." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I am very satisfied with the service; the cleaning was professional and the staff were pleasant.",
+      fr: "Je suis très satisfait du service ; le nettoyage était professionnel et le personnel agréable.",
+    },
+    who: { en: "Aksil B.", fr: "Aksil B." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I highly recommend their impeccable and fast service. Personally, I'm very satisfied and then some. All the best to you!",
+      fr: "Je recommande fortement leur service impeccable et rapide. Personnellement, je suis très satisfait, et même plus. Tout le meilleur à vous !",
+    },
+    who: { en: "Amine S.", fr: "Amine S." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "A kit that stands out from the rest. Probably the best on the market, affordable and effective. I'm very happy with my purchase.",
+      fr: "Une trousse qui se démarque du lot. Probablement la meilleure sur le marché, abordable et efficace. Je suis très content de mon achat.",
+    },
+    who: { en: "Raphaël Archontakis", fr: "Raphaël Archontakis" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I bought the kit, followed the instructions very easily, and ended up with a nearly new pair.",
+      fr: "J'ai acheté la trousse, suivi les instructions très facilement, et je me suis retrouvé avec une paire presque neuve.",
+    },
+    who: { en: "Louis B.", fr: "Louis B." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "After 2 years of use, my shoes are like new again. Thank you Kicks2Fresh!",
+      fr: "Après 2 ans d'utilisation, mes souliers sont redevenus comme neufs. Merci Kicks2Fresh !",
+    },
+    who: { en: "Jayden", fr: "Jayden" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I was sure my shoes were ruined, but Kicks2Fresh made me believe the impossible. I'll be back soon!",
+      fr: "J'étais certain que mes souliers étaient ruinés, mais Kicks2Fresh m'a fait croire à l'impossible. Je reviens bientôt !",
+    },
+    who: { en: "Éliott C.", fr: "Éliott C." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "I bought their kit and it's definitely become part of my Sunday routine every week.",
+      fr: "J'ai acheté leur trousse et elle fait maintenant partie de ma routine du dimanche, chaque semaine.",
+    },
+    who: { en: "Manuel L.", fr: "Manuel L." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Impeccable and high-quality service!", fr: "Service impeccable et de grande qualité !" },
+    who: { en: "Aymen B.", fr: "Aymen B." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Excellent shoe cleaning service, I recommend it to everyone.",
+      fr: "Excellent service de nettoyage de chaussures, je le recommande à tout le monde.",
+    },
+    who: { en: "Kamushummus", fr: "Kamushummus" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Never seen a pair so clean after this cleaning!",
+      fr: "Je n'avais jamais vu une paire aussi propre après ce nettoyage !",
+    },
+    who: { en: "Damien M.", fr: "Damien M." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "The service was quick and clean, honestly, nothing to complain about.",
+      fr: "Le service était rapide et soigné, honnêtement, rien à redire.",
+    },
+    who: { en: "Maxim N.", fr: "Maxim N." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "Quick and efficient cleaning, 10/10, I highly recommend it!",
+      fr: "Nettoyage rapide et efficace, 10/10, je le recommande fortement !",
+    },
+    who: { en: "Adiel G.", fr: "Adiel G." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Very good service and excellent result.", fr: "Très bon service et excellent résultat." },
+    who: { en: "Fahed", fr: "Fahed" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Very good service, very professional. 10/10", fr: "Très bon service, très professionnel. 10/10" },
+    who: { en: "Juan David R.", fr: "Juan David R." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Like new.", fr: "Comme neuf." },
+    who: { en: "Carlos L.", fr: "Carlos L." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Excellent service and excellent cleaning!", fr: "Excellent service et excellent nettoyage !" },
+    who: { en: "RM", fr: "RM" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "My shoes look brand new now!", fr: "Mes souliers ont l'air neufs maintenant !" },
+    who: { en: "Félix T.", fr: "Félix T." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Professional cleaning, the result is clean.", fr: "Nettoyage professionnel, le résultat est impeccable." },
+    who: { en: "Appear Aura", fr: "Appear Aura" },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: { en: "Very effective and easy to use!", fr: "Très efficace et facile à utiliser !" },
+    who: { en: "Emmanuel V.", fr: "Emmanuel V." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
+  {
+    quote: {
+      en: "The staff's professionalism was excellent. Communication was very good throughout the entire process, with clear and precise instructions.",
+      fr: "Le professionnalisme du personnel était excellent. La communication a été très bonne tout au long du processus, avec des instructions claires et précises.",
+    },
+    who: { en: "Eloick V.", fr: "Eloick V." },
+    meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
+  },
 ];
 
+/** Homepage preview — first three of the full list. */
+export const REVIEWS: Review[] = ALL_REVIEWS.slice(0, 3);
+
+export const GOOGLE_REVIEWS_URL = "https://share.google/oqODbfzrQtjJMrgnu";
+export const GOOGLE_REVIEW_TOTAL = 52;
+export const GOOGLE_REVIEW_UNWRITTEN = GOOGLE_REVIEW_TOTAL - ALL_REVIEWS.length;
+
 export const NAV: { href: string; label: Bi }[] = [
-  { href: "#services", label: { en: "Services", fr: "Services" } },
-  { href: "#results", label: { en: "Results", fr: "Résultats" } },
-  { href: "#reviews", label: { en: "Reviews", fr: "Avis" } },
-  { href: "#faq", label: { en: "FAQ", fr: "FAQ" } },
+  { href: "/#services", label: { en: "Services", fr: "Services" } },
+  { href: "/#results", label: { en: "Results", fr: "Résultats" } },
+  { href: "/#reviews", label: { en: "Reviews", fr: "Avis" } },
+  { href: "/#faq", label: { en: "FAQ", fr: "FAQ" } },
 ];
 
 export const TURNAROUND: Bi = { en: "5–7 days", fr: "5 à 7 jours" };

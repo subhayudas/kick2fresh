@@ -32,7 +32,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(12px, 1.6vw, 20px);
-  margin-bottom: clamp(40px, 4.6vw, 64px);
+  margin-bottom: clamp(20px, 2.4vw, 32px);
 }
 .reviewCard { padding: 20px 22px; }
 .reviewTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -68,6 +68,8 @@
 }
 .who { font-size: 12.5px; font-weight: 550; letter-spacing: -0.015em; }
 .meta { display: block; font-size: 10.5px; color: var(--ink-muted); margin-top: 1px; }
+
+.viewAllRow { display: flex; justify-content: center; margin-bottom: clamp(40px, 4.6vw, 64px); }
 
 /* --- Materials grid -------------------------------------------------------- */
 

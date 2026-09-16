@@ -18,7 +18,7 @@ export default function Footer() {
     <footer className={s.footer}>
       <div className="shell-wide">
         <div className={s.row}>
-          <a href="#top" className={s.brand} aria-label="Kicks2Fresh — home">
+          <a href="/#top" className={s.brand} aria-label="Kicks2Fresh — home">
             <img src="/LOGO-Kicks2Fresh.png" alt="Kicks2Fresh" className={s.mark} />
           </a>
 
