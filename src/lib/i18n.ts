@@ -9,7 +9,13 @@ export type Locale = "en" | "fr";
 
 export const UI = {
   en: {
-    nav: { bookNow: "Book Now", phoneLine: "Montreal · Bilingual" },
+    nav: { bookNow: "Book Now" },
+    languagePicker: {
+      title: "Choose your language",
+      subtitle: "You can switch anytime from the navbar.",
+      english: "English",
+      french: "Français",
+    },
     hero: {
       eyebrow: "Montreal · 1000+ pairs cleaned · 0 damaged",
       headline: "Premium sneaker cleaning and restoration in Montreal.",
@@ -136,7 +142,13 @@ export const UI = {
     stickyCta: { bookNow: "Book Now" },
   },
   fr: {
-    nav: { bookNow: "Réserver", phoneLine: "Montréal · Bilingue" },
+    nav: { bookNow: "Réserver" },
+    languagePicker: {
+      title: "Choisissez votre langue",
+      subtitle: "Vous pourrez changer à tout moment depuis le menu.",
+      english: "English",
+      french: "Français",
+    },
     hero: {
       eyebrow: "Montréal · 1000+ paires nettoyées · 0 dommage",
       headline: "Nettoyage et restauration de sneakers premium à Montréal.",

@@ -54,7 +54,6 @@ export default function Navbar() {
             </nav>
 
             <div className={s.right}>
-              <span className={s.phoneLine}>{t.nav.phoneLine}</span>
               <button
                 type="button"
                 className={s.langToggle}

@@ -1,5 +1,6 @@
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { BookingProvider } from "@/components/BookingProvider";
+import LanguagePicker from "@/components/LanguagePicker";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ProofStrip from "@/components/ProofStrip";
@@ -16,6 +17,7 @@ import StickyMobileCta from "@/components/StickyMobileCta";
 export default function Page() {
   return (
     <LocaleProvider>
+      <LanguagePicker />
       <BookingProvider>
         <Navbar />
         <main id="main">
