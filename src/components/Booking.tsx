@@ -8,8 +8,18 @@ import { useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
 import Reveal from "./Reveal";
 
-const PAIR_OPTIONS = [1, 2, 3, 4, 5, 6, 7];
-type Step = 1 | 2 | 3 | 4 | 5;
+const PAIR_BUTTONS = [1, 2, 3, 4, 5, 6];
+
+/** Navigation stack entry. Pushed on every forward step, popped on Back —
+ *  this lets Back retrace the exact path taken through the per-pair loop. */
+type Stage =
+  | { kind: "pairs" }
+  | { kind: "service"; pairIndex: number }
+  | { kind: "addons"; pairIndex: number }
+  | { kind: "quoteCount" }
+  | { kind: "quoteForm" }
+  | { kind: "schedule" }
+  | { kind: "contact" };
 
 function pad(n: number) {
   return n.toString().padStart(2, "0");
@@ -96,37 +106,72 @@ function Calendar({
 }
 
 export default function Booking() {
-  const { pairs, setPairs, pairTiers, setPairTier, addOns, toggleAddOn } = useBooking();
+  const { pairs, setPairs, pairTiers, setPairTier, pairAddOns, togglePairAddOn } = useBooking();
   const { t, locale } = useLocale();
   const tiers = useLocalizedTiers();
   const addons = useLocalizedAddons();
 
-  const [step, setStep] = useState<Step>(1);
+  const [history, setHistory] = useState<Stage[]>([{ kind: "pairs" }]);
+  const stage = history[history.length - 1];
+
   const [done, setDone] = useState(false);
+  const [submissionType, setSubmissionType] = useState<"booking" | "quote" | null>(null);
+
   const [date, setDate] = useState<string | null>(null);
   const [time, setTime] = useState<"morning" | "afternoon" | "evening">("morning");
-  const [delivery, setDelivery] = useState<"pickup" | "dropoff">("dropoff");
   const [photoCount, setPhotoCount] = useState(0);
 
-  const groupCount = pairs <= 6 ? pairs : 1;
-  const groupIndexes = Array.from({ length: groupCount }, (_, i) => i);
-  const groupTiers = groupIndexes.map((i) => tiers.find((tr) => tr.id === pairTiers[i]) ?? tiers[1]);
-  const extras = addons.filter((a) => addOns.includes(a.id));
-  const addonsPerPair = extras.reduce((n, a) => n + a.price, 0);
-  const servicesTotal = pairs <= 6
-    ? groupTiers.reduce((n, tr) => n + tr.price, 0)
-    : groupTiers[0].price * pairs;
-  const total = servicesTotal + addonsPerPair * pairs;
+  const [quotePairCount, setQuotePairCount] = useState("");
+  const [quotePickup, setQuotePickup] = useState<"pickup" | "dropoff">("pickup");
 
-  const stepTitles: Record<Step, string> = {
-    1: t.booking.pairsQuestion,
-    2: t.booking.serviceQuestion,
-    3: t.booking.addonsQuestion,
-    4: t.booking.dateQuestion,
-    5: t.booking.contactQuestion,
-  };
+  function goTo(next: Stage) {
+    setHistory((prev) => [...prev, next]);
+  }
+  function goBack() {
+    setHistory((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
+  }
+  function resetAll() {
+    setHistory([{ kind: "pairs" }]);
+    setDone(false);
+    setSubmissionType(null);
+    setDate(null);
+    setTime("morning");
+    setPhotoCount(0);
+    setQuotePairCount("");
+    setQuotePickup("pickup");
+  }
 
-  const canContinue = step !== 4 || date !== null;
+  function advanceAfterAddons(pairIndex: number) {
+    if (pairIndex + 1 < pairs) goTo({ kind: "service", pairIndex: pairIndex + 1 });
+    else goTo({ kind: "schedule" });
+  }
+
+  const inQuoteBranch = history.some((st) => st.kind === "quoteCount" || st.kind === "quoteForm");
+  const totalSteps = inQuoteBranch ? 3 : 2 * Math.min(Math.max(pairs, 1), 6) + 3;
+  const stepNumber = history.length;
+
+  const groupIndexes = !inQuoteBranch && pairs <= 6 ? Array.from({ length: pairs }, (_, i) => i) : [];
+  const pairSummaries = groupIndexes.map((i) => {
+    const tr = tiers.find((tr) => tr.id === pairTiers[i]) ?? tiers[1];
+    const ids = pairAddOns[i] ?? [];
+    const items = addons.filter((a) => ids.includes(a.id));
+    const addonsTotal = items.reduce((n, a) => n + a.price, 0);
+    return { pairNum: i + 1, tier: tr, items, subtotal: tr.price + addonsTotal };
+  });
+  const total = pairSummaries.reduce((n, p) => n + p.subtotal, 0);
+
+  const quoteCountValid = /^\d+$/.test(quotePairCount.trim()) && Number(quotePairCount) > 0;
+
+  let title = "";
+  switch (stage.kind) {
+    case "pairs": title = t.booking.pairsQuestion; break;
+    case "service": title = `${t.booking.pairLabel} ${stage.pairIndex + 1}: ${t.booking.serviceQuestion}`; break;
+    case "addons": title = `${t.booking.pairLabel} ${stage.pairIndex + 1}: ${t.booking.addonsQuestion}`; break;
+    case "quoteCount": title = t.booking.quoteCountTitle; break;
+    case "quoteForm": title = t.booking.quoteFormTitle; break;
+    case "schedule": title = t.booking.dateQuestion; break;
+    case "contact": title = t.booking.contactQuestion; break;
+  }
 
   return (
     <section className={s.sec} id="booking">
@@ -157,24 +202,26 @@ export default function Booking() {
             {done ? (
               <div className={s.done}>
                 <span className={s.doneMark} aria-hidden><Check size={26} /></span>
-                <h2 className={s.doneTitle}>{t.booking.doneTitle}</h2>
-                <p className={s.doneCopy}>{t.booking.doneCopy}</p>
-
-                <p className={s.doneBox}>
-                  <IconShield size={16} />
-                  <span>
-                    {t.booking.doneStep1} · {t.booking.doneStep2} · {t.booking.doneStep3}
-                    <br />
-                    {t.booking.donePrep}
-                  </span>
+                <h2 className={s.doneTitle}>
+                  {submissionType === "quote" ? t.booking.quoteDoneTitle : t.booking.doneTitle}
+                </h2>
+                <p className={s.doneCopy}>
+                  {submissionType === "quote" ? t.booking.quoteDoneCopy : t.booking.doneCopy}
                 </p>
 
+                {submissionType !== "quote" && (
+                  <p className={s.doneBox}>
+                    <IconShield size={16} />
+                    <span>
+                      {t.booking.doneStep1} · {t.booking.doneStep2} · {t.booking.doneStep3}
+                      <br />
+                      {t.booking.donePrep}
+                    </span>
+                  </p>
+                )}
+
                 <div className={s.doneActions}>
-                  <button
-                    type="button"
-                    className="btn btn--ghost"
-                    onClick={() => { setDone(false); setStep(1); }}
-                  >
+                  <button type="button" className="btn btn--ghost" onClick={resetAll}>
                     {t.booking.doneChange}
                   </button>
                 </div>
@@ -183,88 +230,173 @@ export default function Booking() {
               <>
                 <div className={s.head}>
                   <div className={s.headText}>
-                    <h3 className={s.title}>{stepTitles[step]}</h3>
-                    <p className={s.sub}>{t.booking.stepWord} {step} {t.booking.of5}</p>
+                    <h3 className={s.title}>{title}</h3>
+                    <p className={s.sub}>{t.booking.stepWord} {stepNumber} {t.booking.ofWord} {totalSteps}</p>
                   </div>
                 </div>
 
                 <div className={s.progress}>
-                  {([1, 2, 3, 4, 5] as Step[]).map((n) => (
-                    <span key={n} className={s.dot} data-on={n <= step} />
+                  {Array.from({ length: totalSteps }, (_, i) => i + 1).map((n) => (
+                    <span key={n} className={s.dot} data-on={n <= stepNumber} />
                   ))}
                 </div>
 
                 <div className={s.body}>
-                  {step === 1 && (
+                  {stage.kind === "pairs" && (
                     <div className={s.pairsRow}>
-                      {PAIR_OPTIONS.map((n) => (
+                      {PAIR_BUTTONS.map((n) => (
                         <button
                           key={n}
                           type="button"
                           className={s.pairBtn}
-                          data-on={pairs === n}
-                          aria-pressed={pairs === n}
-                          onClick={() => setPairs(n)}
+                          onClick={() => { setPairs(n); goTo({ kind: "service", pairIndex: 0 }); }}
                         >
-                          {n === 7 ? "7+" : n}
+                          {n}
                         </button>
                       ))}
+                      <button
+                        type="button"
+                        className={s.pairBtn}
+                        onClick={() => { setPairs(7); goTo({ kind: "quoteCount" }); }}
+                      >
+                        7+
+                      </button>
                     </div>
                   )}
 
-                  {step === 2 && (
-                    <div className={s.pairGroups}>
-                      {groupIndexes.map((i) => (
-                        <div className={s.pairGroup} key={i}>
-                          {pairs > 6 ? null : (
-                            <p className={s.pairGroupLabel}>{t.booking.pairLabel} {i + 1}</p>
-                          )}
-                          <div className={s.options}>
-                            {tiers.map((tr) => (
-                              <button
-                                key={tr.id}
-                                type="button"
-                                className={s.option}
-                                data-on={pairTiers[i] === tr.id}
-                                aria-pressed={pairTiers[i] === tr.id}
-                                onClick={() => setPairTier(i, tr.id)}
-                              >
-                                <span className={s.tick} aria-hidden><Check size={12} /></span>
-                                <span className={s.optText}>
-                                  <span className={s.optName}>{tr.name}</span>
-                                  <span className={s.optMeta}>{tr.tagline}</span>
-                                </span>
-                                <span className={s.optPrice}>{tr.priceLabel}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {step === 3 && (
-                    <div className={s.addGrid}>
-                      {addons.map((a) => (
+                  {stage.kind === "service" && (
+                    <div className={s.options}>
+                      {tiers.map((tr) => (
                         <button
-                          key={a.id}
+                          key={tr.id}
                           type="button"
                           className={s.option}
-                          data-on={addOns.includes(a.id)}
-                          aria-pressed={addOns.includes(a.id)}
-                          onClick={() => toggleAddOn(a.id)}
+                          data-on={pairTiers[stage.pairIndex] === tr.id}
+                          aria-pressed={pairTiers[stage.pairIndex] === tr.id}
+                          onClick={() => {
+                            setPairTier(stage.pairIndex, tr.id);
+                            goTo({ kind: "addons", pairIndex: stage.pairIndex });
+                          }}
                         >
                           <span className={s.tick} aria-hidden><Check size={12} /></span>
                           <span className={s.optText}>
-                            <span className={s.optName}>{a.name}</span>
+                            <span className={s.optName}>{tr.name}</span>
+                            <span className={s.optMeta}>{tr.tagline}</span>
                           </span>
-                          <span className={s.optPrice}>+${a.price}</span>
+                          <span className={s.optPrice}>{tr.priceLabel}</span>
                         </button>
                       ))}
                     </div>
                   )}
 
-                  {step === 4 && (
+                  {stage.kind === "addons" && (
+                    <div className={s.addGrid}>
+                      {addons.map((a) => {
+                        const on = (pairAddOns[stage.pairIndex] ?? []).includes(a.id);
+                        return (
+                          <button
+                            key={a.id}
+                            type="button"
+                            className={s.option}
+                            data-on={on}
+                            aria-pressed={on}
+                            onClick={() => togglePairAddOn(stage.pairIndex, a.id)}
+                          >
+                            <span className={s.tick} aria-hidden><Check size={12} /></span>
+                            <span className={s.optText}>
+                              <span className={s.optName}>{a.name}</span>
+                            </span>
+                            <span className={s.optPrice}>+${a.price}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {stage.kind === "quoteCount" && (
+                    <>
+                      <div className={s.field}>
+                        <label className={s.label} htmlFor="b-quote-count">{t.booking.quoteCountLabel}</label>
+                        <input
+                          className={s.input}
+                          id="b-quote-count"
+                          type="number"
+                          inputMode="numeric"
+                          min={7}
+                          value={quotePairCount}
+                          onChange={(e) => setQuotePairCount(e.target.value)}
+                          placeholder="7"
+                        />
+                      </div>
+                      <p className={s.footNote}>{t.booking.quoteCountNote}</p>
+                    </>
+                  )}
+
+                  {stage.kind === "quoteForm" && (
+                    <form
+                      id="quote-form"
+                      className={s.fields}
+                      onSubmit={(e) => { e.preventDefault(); setSubmissionType("quote"); setDone(true); }}
+                    >
+                      <p className={s.footNote}>{t.booking.quoteFormIntro}</p>
+                      <div className={s.pair}>
+                        <div className={s.field}>
+                          <label className={s.label} htmlFor="q-name">{t.booking.name}</label>
+                          <input className={s.input} id="q-name" name="name" type="text"
+                                 autoComplete="name" required />
+                        </div>
+                        <div className={s.field}>
+                          <label className={s.label} htmlFor="q-phone">{t.booking.phone}</label>
+                          <input className={s.input} id="q-phone" name="phone" type="tel"
+                                 autoComplete="tel" placeholder="(514) 000-0000" required />
+                        </div>
+                      </div>
+
+                      <div className={s.field}>
+                        <label className={s.label} htmlFor="q-email">{t.booking.email}</label>
+                        <input className={s.input} id="q-email" name="email" type="email"
+                               autoComplete="email" placeholder="you@example.com" required />
+                      </div>
+
+                      <div className={s.gap}>
+                        <p className={s.sectionLabel}>{t.booking.pickupPreference}</p>
+                        <div className={s.deliveryRow}>
+                          <button
+                            type="button"
+                            className={s.option}
+                            data-on={quotePickup === "pickup"}
+                            aria-pressed={quotePickup === "pickup"}
+                            onClick={() => setQuotePickup("pickup")}
+                          >
+                            <span className={s.tick} aria-hidden><Check size={12} /></span>
+                            <span className={s.optText}>
+                              <span className={s.optName}>{t.booking.pickup}</span>
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            className={s.option}
+                            data-on={quotePickup === "dropoff"}
+                            aria-pressed={quotePickup === "dropoff"}
+                            onClick={() => setQuotePickup("dropoff")}
+                          >
+                            <span className={s.tick} aria-hidden><Check size={12} /></span>
+                            <span className={s.optText}>
+                              <span className={s.optName}>{t.booking.dropoff}</span>
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className={s.field}>
+                        <label className={s.label} htmlFor="q-notes">{t.booking.notes}</label>
+                        <textarea className={s.textarea} id="q-notes" name="notes"
+                                  placeholder={t.booking.notesPlaceholder} />
+                      </div>
+                    </form>
+                  )}
+
+                  {stage.kind === "schedule" && (
                     <>
                       <Calendar value={date} onChange={setDate} locale={locale} />
 
@@ -293,44 +425,14 @@ export default function Booking() {
                           ))}
                         </div>
                       </div>
-
-                      <div className={s.gap}>
-                        <p className={s.sectionLabel}>{t.booking.delivery}</p>
-                        <div className={s.deliveryRow}>
-                          <button
-                            type="button"
-                            className={s.option}
-                            data-on={delivery === "pickup"}
-                            aria-pressed={delivery === "pickup"}
-                            onClick={() => setDelivery("pickup")}
-                          >
-                            <span className={s.tick} aria-hidden><Check size={12} /></span>
-                            <span className={s.optText}>
-                              <span className={s.optName}>{t.booking.pickup}</span>
-                            </span>
-                          </button>
-                          <button
-                            type="button"
-                            className={s.option}
-                            data-on={delivery === "dropoff"}
-                            aria-pressed={delivery === "dropoff"}
-                            onClick={() => setDelivery("dropoff")}
-                          >
-                            <span className={s.tick} aria-hidden><Check size={12} /></span>
-                            <span className={s.optText}>
-                              <span className={s.optName}>{t.booking.dropoff}</span>
-                            </span>
-                          </button>
-                        </div>
-                      </div>
                     </>
                   )}
 
-                  {step === 5 && (
+                  {stage.kind === "contact" && (
                     <form
                       id="booking-form"
                       className={s.fields}
-                      onSubmit={(e) => { e.preventDefault(); setDone(true); }}
+                      onSubmit={(e) => { e.preventDefault(); setSubmissionType("booking"); setDone(true); }}
                     >
                       <div className={s.pair}>
                         <div className={s.field}>
@@ -375,47 +477,74 @@ export default function Booking() {
                     </form>
                   )}
 
-                  {/* Running summary — always visible, never hidden behind a step */}
-                  <div className={s.summary}>
-                    {groupTiers.map((tr, i) => (
-                      <div className={s.sumRow} key={i}>
-                        <span>
-                          {pairs > 6 ? `${t.booking.allPairsLabel} × ${pairs}` : `${t.booking.pairLabel} ${i + 1}`} — {tr.name}
-                        </span>
-                        <span>${pairs > 6 ? tr.price * pairs : tr.price}</span>
+                  {/* Running price summary — hidden on the custom-quote branch */}
+                  {!inQuoteBranch && (
+                    <div className={s.summary}>
+                      {pairSummaries.map((p) => (
+                        <div className={s.sumRow} key={p.pairNum}>
+                          <span>{t.booking.pairLabel} {p.pairNum} — {p.tier.name}{p.items.length > 0 && ` + ${p.items.length}`}</span>
+                          <span>${p.subtotal}</span>
+                        </div>
+                      ))}
+                      <div className={s.sumTotal}>
+                        <span className="micro">{t.booking.estimatedTotal}</span>
+                        <b>${total} CAD</b>
                       </div>
-                    ))}
-                    {extras.map((a) => (
-                      <div className={s.sumRow} key={a.id}>
-                        <span>{a.name} × {pairs}</span>
-                        <span>+${a.price * pairs}</span>
-                      </div>
-                    ))}
-                    <div className={s.sumTotal}>
-                      <span className="micro">{t.booking.estimatedTotal}</span>
-                      <b>${total} CAD</b>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className={s.foot}>
-                  {step > 1 && (
-                    <button type="button" className="btn btn--ghost" onClick={() => setStep((v) => (v - 1) as Step)}>
+                  {history.length > 1 && (
+                    <button type="button" className="btn btn--ghost" onClick={goBack}>
                       {t.booking.back}
                     </button>
                   )}
                   <p className={s.footNote}>{t.booking.footNote}</p>
-                  {step < 5 ? (
+
+                  {stage.kind === "addons" && (
                     <button
                       type="button"
                       className="btn btn--blue btn--lg"
-                      disabled={!canContinue}
-                      onClick={() => setStep((v) => (v + 1) as Step)}
+                      onClick={() => advanceAfterAddons(stage.pairIndex)}
+                    >
+                      {(pairAddOns[stage.pairIndex] ?? []).length > 0 ? t.booking.continue : t.booking.noAddons}
+                      <ArrowRight className="btn-arrow" size={15} />
+                    </button>
+                  )}
+
+                  {stage.kind === "quoteCount" && (
+                    <button
+                      type="button"
+                      className="btn btn--blue btn--lg"
+                      disabled={!quoteCountValid}
+                      onClick={() => goTo({ kind: "quoteForm" })}
                     >
                       {t.booking.continue}
                       <ArrowRight className="btn-arrow" size={15} />
                     </button>
-                  ) : (
+                  )}
+
+                  {stage.kind === "quoteForm" && (
+                    <button type="submit" form="quote-form" className="btn btn--blue btn--lg">
+                      {t.booking.requestQuote}
+                      <ArrowRight className="btn-arrow" size={15} />
+                    </button>
+                  )}
+
+                  {stage.kind === "schedule" && (
+                    <button
+                      type="button"
+                      className="btn btn--blue btn--lg"
+                      disabled={date === null}
+                      onClick={() => goTo({ kind: "contact" })}
+                    >
+                      {t.booking.continue}
+                      <ArrowRight className="btn-arrow" size={15} />
+                    </button>
+                  )}
+
+                  {stage.kind === "contact" && (
                     <button type="submit" form="booking-form" className="btn btn--blue btn--lg">
                       {t.booking.confirm}
                       <ArrowRight className="btn-arrow" size={15} />
