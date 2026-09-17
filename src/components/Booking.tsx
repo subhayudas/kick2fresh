@@ -161,10 +161,17 @@ export default function Booking() {
   const total = pairSummaries.reduce((n, p) => n + p.subtotal, 0);
 
   let title = "";
+  let pairBadge: string | null = null;
   switch (stage.kind) {
     case "pairs": title = t.booking.pairsQuestion; break;
-    case "service": title = `${t.booking.pairLabel} ${stage.pairIndex + 1}: ${t.booking.serviceQuestion}`; break;
-    case "addons": title = `${t.booking.pairLabel} ${stage.pairIndex + 1}: ${t.booking.addonsQuestion}`; break;
+    case "service":
+      title = t.booking.serviceQuestion;
+      pairBadge = `${t.booking.pairLabel} ${stage.pairIndex + 1}`;
+      break;
+    case "addons":
+      title = t.booking.addonsQuestion;
+      pairBadge = `${t.booking.pairLabel} ${stage.pairIndex + 1}`;
+      break;
     case "quoteCount": title = t.booking.quoteCountTitle; break;
     case "quoteForm": title = t.booking.quoteFormTitle; break;
     case "schedule": title = t.booking.dateQuestion; break;
@@ -232,6 +239,12 @@ export default function Booking() {
                     <p className={s.sub}>{t.booking.stepWord} {stepNumber} {t.booking.ofWord} {totalSteps}</p>
                   </div>
                 </div>
+
+                {pairBadge && (
+                  <div className={s.pairBadgeRow}>
+                    <span className={s.pairBadge}>{pairBadge}</span>
+                  </div>
+                )}
 
                 <div className={s.progress}>
                   <div className={s.progressTrack}>
@@ -312,6 +325,19 @@ export default function Booking() {
                           </button>
                         );
                       })}
+                    </div>
+                  )}
+
+                  {stage.kind === "addons" && (
+                    <div className={s.inlineCta}>
+                      <button
+                        type="button"
+                        className="btn btn--blue btn--lg"
+                        onClick={() => advanceAfterAddons(stage.pairIndex)}
+                      >
+                        {(pairAddOns[stage.pairIndex] ?? []).length > 0 ? t.booking.continue : t.booking.noAddons}
+                        <ArrowRight className="btn-arrow" size={15} />
+                      </button>
                     </div>
                   )}
 
@@ -487,8 +513,8 @@ export default function Booking() {
                     </form>
                   )}
 
-                  {/* Running price summary — hidden on the custom-quote branch */}
-                  {!inQuoteBranch && (
+                  {/* Price summary — only shown alongside the date/time step, not on every question */}
+                  {stage.kind === "schedule" && (
                     <div className={s.summary}>
                       {pairSummaries.map((p) => (
                         <div className={s.sumRow} key={p.pairNum}>
@@ -504,62 +530,52 @@ export default function Booking() {
                   )}
                 </div>
 
-                <div className={s.foot}>
-                  {history.length > 1 && (
-                    <button type="button" className="btn btn--ghost" onClick={goBack}>
-                      {t.booking.back}
-                    </button>
-                  )}
-                  <p className={s.footNote}>{t.booking.footNote}</p>
+                {stage.kind !== "pairs" && (
+                  <div className={s.foot}>
+                    {history.length > 1 && (
+                      <button type="button" className="btn btn--ghost" onClick={goBack}>
+                        {t.booking.back}
+                      </button>
+                    )}
 
-                  {stage.kind === "addons" && (
-                    <button
-                      type="button"
-                      className="btn btn--blue btn--lg"
-                      onClick={() => advanceAfterAddons(stage.pairIndex)}
-                    >
-                      {(pairAddOns[stage.pairIndex] ?? []).length > 0 ? t.booking.continue : t.booking.noAddons}
-                      <ArrowRight className="btn-arrow" size={15} />
-                    </button>
-                  )}
+                    {stage.kind === "quoteCount" && (
+                      <button
+                        type="button"
+                        className="btn btn--blue btn--lg"
+                        onClick={() => goTo({ kind: "quoteForm" })}
+                      >
+                        {t.booking.continue}
+                        <ArrowRight className="btn-arrow" size={15} />
+                      </button>
+                    )}
 
-                  {stage.kind === "quoteCount" && (
-                    <button
-                      type="button"
-                      className="btn btn--blue btn--lg"
-                      onClick={() => goTo({ kind: "quoteForm" })}
-                    >
-                      {t.booking.continue}
-                      <ArrowRight className="btn-arrow" size={15} />
-                    </button>
-                  )}
+                    {stage.kind === "quoteForm" && (
+                      <button type="submit" form="quote-form" className="btn btn--blue btn--lg">
+                        {t.booking.requestQuote}
+                        <ArrowRight className="btn-arrow" size={15} />
+                      </button>
+                    )}
 
-                  {stage.kind === "quoteForm" && (
-                    <button type="submit" form="quote-form" className="btn btn--blue btn--lg">
-                      {t.booking.requestQuote}
-                      <ArrowRight className="btn-arrow" size={15} />
-                    </button>
-                  )}
+                    {stage.kind === "schedule" && (
+                      <button
+                        type="button"
+                        className="btn btn--blue btn--lg"
+                        disabled={date === null}
+                        onClick={() => goTo({ kind: "contact" })}
+                      >
+                        {t.booking.continue}
+                        <ArrowRight className="btn-arrow" size={15} />
+                      </button>
+                    )}
 
-                  {stage.kind === "schedule" && (
-                    <button
-                      type="button"
-                      className="btn btn--blue btn--lg"
-                      disabled={date === null}
-                      onClick={() => goTo({ kind: "contact" })}
-                    >
-                      {t.booking.continue}
-                      <ArrowRight className="btn-arrow" size={15} />
-                    </button>
-                  )}
-
-                  {stage.kind === "contact" && (
-                    <button type="submit" form="booking-form" className="btn btn--blue btn--lg">
-                      {t.booking.confirm}
-                      <ArrowRight className="btn-arrow" size={15} />
-                    </button>
-                  )}
-                </div>
+                    {stage.kind === "contact" && (
+                      <button type="submit" form="booking-form" className="btn btn--blue btn--lg">
+                        {t.booking.confirm}
+                        <ArrowRight className="btn-arrow" size={15} />
+                      </button>
+                    )}
+                  </div>
+                )}
               </>
             )}
           </Reveal>

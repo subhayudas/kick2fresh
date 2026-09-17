@@ -150,7 +150,6 @@ export const UI = {
       donePrep: "Prepare a few photos of your sneakers if possible — it helps us.",
       doneClose: "Close",
       doneChange: "Change my selection",
-      footNote: "No commitment · Response within 1 hour · Montreal, QC",
     },
     footer: {
       tagline: "Professional sneaker cleaning and restoration in Montreal.",
@@ -306,7 +305,6 @@ export const UI = {
       donePrep: "Préparez quelques photos de vos sneakers si possible — ça nous aide.",
       doneClose: "Fermer",
       doneChange: "Modifier ma sélection",
-      footNote: "Sans engagement · Réponse en moins d'une heure · Montréal, QC",
     },
     footer: {
       tagline: "Nettoyage et restauration professionnels de sneakers à Montréal.",
