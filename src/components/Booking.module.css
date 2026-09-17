@@ -59,27 +59,28 @@
   flex: none;
 }
 .headText { flex: 1; min-width: 0; }
-.title { font-size: 1.15rem; font-weight: 550; letter-spacing: -0.035em; }
-.sub { margin-top: 3px; font-size: 12.5px; color: var(--ink-muted); }
+.title { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.035em; }
+.sub { margin-top: 4px; font-size: 13px; color: var(--ink-muted); }
 
-/* --- Step progress --------------------------------------------------------- */
+/* --- Step progress: one bar that fills up, not a row of many dots so it --- */
+/* --- stays legible even when a per-pair loop adds many steps ------------- */
 
 .progress {
-  display: flex;
-  gap: 6px;
   padding: 14px 22px;
   box-shadow: inset 0 -1px 0 var(--hairline-2);
   flex: none;
 }
-.dot {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
+.progressTrack {
+  height: 8px;
+  border-radius: 4px;
   background: rgba(18, 20, 31,0.08);
-  transition: background 0.35s var(--ease);
+  overflow: hidden;
 }
-.dot[data-on="true"] {
-  background: linear-gradient(180deg, var(--blue-lift), var(--blue));
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--blue-lift), var(--blue));
+  transition: width 0.4s var(--ease);
 }
 
 /* --- Body ---------------------------------------------------------------- */
@@ -94,12 +95,12 @@
 .sectionLabel + * { margin-top: 0; }
 .gap { margin-top: 22px; }
 
-.options { display: grid; gap: 9px; }
+.options { display: grid; gap: 10px; }
 
 .option {
-  display: flex; align-items: center; gap: 13px;
+  display: flex; align-items: center; gap: 14px;
   width: 100%;
-  padding: 14px 15px;
+  padding: 16px;
   border: none;
   border-radius: var(--r-md);
   text-align: left;
@@ -116,7 +117,7 @@
   background: linear-gradient(180deg, #1A1E2C, var(--coal));
   color: #F5F8FF;
   box-shadow:
-    0 0 0 1px rgba(18, 20, 31,0.25),
+    0 0 0 2px var(--blue),
     0 10px 22px -10px rgba(18, 20, 31,0.5),
     inset 0 1px 0 rgba(255,255,255,0.14);
 }
@@ -137,15 +138,15 @@
 }
 
 .optText { flex: 1; min-width: 0; }
-.optName { display: block; font-size: 13.5px; font-weight: 550; letter-spacing: -0.025em; }
-.optMeta { display: block; margin-top: 2px; font-size: 11.5px; opacity: 0.65; }
-.optPrice { font-size: 14.5px; font-weight: 600; letter-spacing: -0.035em; flex: none; }
+.optName { display: block; font-size: 14.5px; font-weight: 600; letter-spacing: -0.025em; }
+.optMeta { display: block; margin-top: 2px; font-size: 12px; opacity: 0.65; }
+.optPrice { font-size: 15.5px; font-weight: 700; letter-spacing: -0.035em; flex: none; }
 
 /* add-on grid is tighter */
 .addGrid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
-.addGrid .option { padding: 11px 13px; border-radius: var(--r-sm); gap: 10px; }
-.addGrid .optName { display: block; font-size: 12.5px; }
-.addGrid .optPrice { font-size: 12.5px; }
+.addGrid .option { padding: 13px; border-radius: var(--r-sm); gap: 11px; }
+.addGrid .optName { display: block; font-size: 13px; }
+.addGrid .optPrice { font-size: 13px; }
 
 /* --- Per-pair service groups (step 2) -------------------------------------- */
 
@@ -219,27 +220,58 @@
   box-shadow: 0 0 0 1px rgba(18, 20, 31,0.25), inset 0 1px 0 rgba(255,255,255,0.14);
 }
 
-/* --- Pairs selector -------------------------------------------------------- */
+/* --- Pairs selector: big, simple tap tiles ---------------------------------- */
 
-.pairsRow { display: flex; flex-wrap: wrap; gap: 8px; }
+.pairsRow { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 9px; }
 .pairBtn {
-  min-width: 42px;
-  padding: 10px 12px;
+  display: flex; align-items: center; justify-content: center;
+  aspect-ratio: 1;
+  padding: 8px;
   border: none;
-  border-radius: var(--r-sm);
-  text-align: center;
+  border-radius: var(--r-md);
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 550;
   background: linear-gradient(180deg, var(--paper-lift), var(--paper));
   box-shadow: 0 0 0 1px var(--hairline-2), inset 0 1px 0 rgba(255,255,255,0.9);
   transition: all 0.25s var(--ease);
 }
+.pairBtn:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px var(--hairline), var(--lift-2); }
+.pairNum { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; }
+.pairBtn--more {
+  border: 1.6px dashed var(--hairline);
+  background: transparent;
+  color: var(--ink-muted);
+}
+.pairBtn--more .pairNum { font-size: 17px; }
 .pairBtn[data-on="true"] {
   color: #fff;
   background: linear-gradient(180deg, #1A1E2C, var(--coal));
-  box-shadow: 0 0 0 1px rgba(18, 20, 31,0.25), inset 0 1px 0 rgba(255,255,255,0.14);
+  box-shadow: 0 0 0 2px var(--blue), inset 0 1px 0 rgba(255,255,255,0.14);
 }
+
+/* --- Exact-count stepper (7+ path) — tap +/− instead of typing ------------- */
+
+.stepper {
+  display: flex; align-items: center; justify-content: center;
+  gap: 22px;
+  padding: 22px 0;
+}
+.stepperBtn {
+  display: grid; place-items: center;
+  width: 52px; height: 52px;
+  border: none; border-radius: 50%;
+  cursor: pointer;
+  color: var(--blue);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  background: linear-gradient(180deg, var(--paper-lift), var(--paper));
+  box-shadow: 0 0 0 1px var(--hairline-2), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: all 0.2s var(--ease);
+}
+.stepperBtn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 0 0 1px var(--hairline), var(--lift-1); }
+.stepperBtn:active:not(:disabled) { transform: scale(0.94); }
+.stepperBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+.stepperValue { min-width: 74px; text-align: center; font-size: 36px; font-weight: 700; letter-spacing: -0.03em; }
 
 /* --- Delivery toggle -------------------------------------------------------- */
 

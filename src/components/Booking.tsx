@@ -121,7 +121,7 @@ export default function Booking() {
   const [time, setTime] = useState<"morning" | "afternoon" | "evening">("morning");
   const [photoCount, setPhotoCount] = useState(0);
 
-  const [quotePairCount, setQuotePairCount] = useState("");
+  const [quotePairCount, setQuotePairCount] = useState(7);
   const [quotePickup, setQuotePickup] = useState<"pickup" | "dropoff">("pickup");
 
   function goTo(next: Stage) {
@@ -137,7 +137,7 @@ export default function Booking() {
     setDate(null);
     setTime("morning");
     setPhotoCount(0);
-    setQuotePairCount("");
+    setQuotePairCount(7);
     setQuotePickup("pickup");
   }
 
@@ -159,8 +159,6 @@ export default function Booking() {
     return { pairNum: i + 1, tier: tr, items, subtotal: tr.price + addonsTotal };
   });
   const total = pairSummaries.reduce((n, p) => n + p.subtotal, 0);
-
-  const quoteCountValid = /^\d+$/.test(quotePairCount.trim()) && Number(quotePairCount) > 0;
 
   let title = "";
   switch (stage.kind) {
@@ -236,9 +234,9 @@ export default function Booking() {
                 </div>
 
                 <div className={s.progress}>
-                  {Array.from({ length: totalSteps }, (_, i) => i + 1).map((n) => (
-                    <span key={n} className={s.dot} data-on={n <= stepNumber} />
-                  ))}
+                  <div className={s.progressTrack}>
+                    <div className={s.progressFill} style={{ width: `${(stepNumber / totalSteps) * 100}%` }} />
+                  </div>
                 </div>
 
                 <div className={s.body}>
@@ -249,17 +247,21 @@ export default function Booking() {
                           key={n}
                           type="button"
                           className={s.pairBtn}
+                          data-on={pairs === n}
+                          aria-pressed={pairs === n}
                           onClick={() => { setPairs(n); goTo({ kind: "service", pairIndex: 0 }); }}
                         >
-                          {n}
+                          <span className={s.pairNum}>{n}</span>
                         </button>
                       ))}
                       <button
                         type="button"
-                        className={s.pairBtn}
+                        className={`${s.pairBtn} ${s["pairBtn--more"]}`}
+                        data-on={pairs === 7}
+                        aria-pressed={pairs === 7}
                         onClick={() => { setPairs(7); goTo({ kind: "quoteCount" }); }}
                       >
-                        7+
+                        <span className={s.pairNum}>7+</span>
                       </button>
                     </div>
                   )}
@@ -315,18 +317,26 @@ export default function Booking() {
 
                   {stage.kind === "quoteCount" && (
                     <>
-                      <div className={s.field}>
-                        <label className={s.label} htmlFor="b-quote-count">{t.booking.quoteCountLabel}</label>
-                        <input
-                          className={s.input}
-                          id="b-quote-count"
-                          type="number"
-                          inputMode="numeric"
-                          min={7}
-                          value={quotePairCount}
-                          onChange={(e) => setQuotePairCount(e.target.value)}
-                          placeholder="7"
-                        />
+                      <p className={s.sectionLabel}>{t.booking.quoteCountLabel}</p>
+                      <div className={s.stepper}>
+                        <button
+                          type="button"
+                          className={s.stepperBtn}
+                          aria-label={t.booking.quoteCountDecrease}
+                          disabled={quotePairCount <= 7}
+                          onClick={() => setQuotePairCount((n) => Math.max(7, n - 1))}
+                        >
+                          −
+                        </button>
+                        <span className={s.stepperValue}>{quotePairCount}</span>
+                        <button
+                          type="button"
+                          className={s.stepperBtn}
+                          aria-label={t.booking.quoteCountIncrease}
+                          onClick={() => setQuotePairCount((n) => n + 1)}
+                        >
+                          +
+                        </button>
                       </div>
                       <p className={s.footNote}>{t.booking.quoteCountNote}</p>
                     </>
@@ -517,7 +527,6 @@ export default function Booking() {
                     <button
                       type="button"
                       className="btn btn--blue btn--lg"
-                      disabled={!quoteCountValid}
                       onClick={() => goTo({ kind: "quoteForm" })}
                     >
                       {t.booking.continue}
