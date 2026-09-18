@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import s from "./Booking.module.css";
 import { useLocalizedTiers, useLocalizedAddons } from "@/lib/useLocalizedContent";
 import { ArrowRight, Check, Chevron, IconClock, IconGlobe, IconShield } from "./Icons";
@@ -118,11 +118,43 @@ export default function Booking() {
   const [submissionType, setSubmissionType] = useState<"booking" | "quote" | null>(null);
 
   const [date, setDate] = useState<string | null>(null);
-  const [time, setTime] = useState<"morning" | "afternoon" | "evening">("morning");
+  const [time, setTime] = useState<string | null>(null);
+  const [slots, setSlots] = useState<string[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsError, setSlotsError] = useState(false);
   const [photoCount, setPhotoCount] = useState(0);
 
   const [quotePairCount, setQuotePairCount] = useState(7);
   const [quotePickup, setQuotePickup] = useState<"pickup" | "dropoff">("pickup");
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+
+  useEffect(() => {
+    if (!date) return;
+    let cancelled = false;
+    setSlotsLoading(true);
+    setSlotsError(false);
+    setTime(null);
+    fetch(`/api/availability?date=${date}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("availability request failed");
+        return res.json();
+      })
+      .then((data: { slots?: string[] }) => {
+        if (cancelled) return;
+        setSlots(data.slots ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setSlotsError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setSlotsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [date]);
 
   function goTo(next: Stage) {
     setHistory((prev) => [...prev, next]);
@@ -135,10 +167,15 @@ export default function Booking() {
     setDone(false);
     setSubmissionType(null);
     setDate(null);
-    setTime("morning");
+    setTime(null);
+    setSlots([]);
+    setSlotsLoading(false);
+    setSlotsError(false);
     setPhotoCount(0);
     setQuotePairCount(7);
     setQuotePickup("pickup");
+    setSubmitting(false);
+    setSubmitError(false);
   }
 
   function advanceAfterAddons(pairIndex: number) {
@@ -436,31 +473,34 @@ export default function Booking() {
                     <>
                       <Calendar value={date} onChange={setDate} locale={locale} />
 
-                      <div className={s.gap}>
-                        <p className={s.sectionLabel}>{t.booking.time}</p>
-                        <div className={s.timeRow}>
-                          {(
-                            [
-                              ["morning", t.booking.timeMorning],
-                              ["afternoon", t.booking.timeAfternoon],
-                              ["evening", t.booking.timeEvening],
-                            ] as const
-                          ).map(([tm, label]) => (
-                            <button
-                              key={tm}
-                              type="button"
-                              className={s.option}
-                              data-on={time === tm}
-                              aria-pressed={time === tm}
-                              onClick={() => setTime(tm)}
-                            >
-                              <span className={s.optText}>
-                                <span className={s.optName}>{label}</span>
-                              </span>
-                            </button>
-                          ))}
+                      {date && (
+                        <div className={s.gap}>
+                          <p className={s.sectionLabel}>{t.booking.time}</p>
+                          {slotsLoading && <p className={s.footNote}>{t.booking.timeSlotsLoading}</p>}
+                          {!slotsLoading && slotsError && <p className={s.footNote}>{t.booking.timeSlotsError}</p>}
+                          {!slotsLoading && !slotsError && slots.length === 0 && (
+                            <p className={s.footNote}>{t.booking.timeSlotsEmpty}</p>
+                          )}
+                          {!slotsLoading && !slotsError && slots.length > 0 && (
+                            <div className={s.timeRow}>
+                              {slots.map((slot) => (
+                                <button
+                                  key={slot}
+                                  type="button"
+                                  className={s.option}
+                                  data-on={time === slot}
+                                  aria-pressed={time === slot}
+                                  onClick={() => setTime(slot)}
+                                >
+                                  <span className={s.optText}>
+                                    <span className={s.optName}>{slot}</span>
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      </div>
+                      )}
                     </>
                   )}
 
@@ -468,7 +508,41 @@ export default function Booking() {
                     <form
                       id="booking-form"
                       className={s.fields}
-                      onSubmit={(e) => { e.preventDefault(); setSubmissionType("booking"); setDone(true); }}
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        const form = new FormData(e.currentTarget);
+                        setSubmitting(true);
+                        setSubmitError(false);
+                        try {
+                          const res = await fetch("/api/book", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              name: form.get("name"),
+                              email: form.get("email"),
+                              phone: form.get("phone"),
+                              notes: form.get("notes"),
+                              date,
+                              time,
+                              pairs: pairSummaries.map((p) => ({
+                                pairNum: p.pairNum,
+                                tierName: p.tier.name,
+                                addonNames: p.items.map((i) => i.name),
+                                subtotal: p.subtotal,
+                              })),
+                              total,
+                            }),
+                          });
+                          const data = await res.json();
+                          if (!res.ok || !data.ok) throw new Error(data.error ?? "booking failed");
+                          setSubmissionType("booking");
+                          setDone(true);
+                        } catch {
+                          setSubmitError(true);
+                        } finally {
+                          setSubmitting(false);
+                        }
+                      }}
                     >
                       <div className={s.pair}>
                         <div className={s.field}>
@@ -510,6 +584,8 @@ export default function Booking() {
                         <textarea className={s.textarea} id="b-notes" name="notes"
                                   placeholder={t.booking.notesPlaceholder} />
                       </div>
+
+                      {submitError && <p className={s.footNote}>{t.booking.submitError}</p>}
                     </form>
                   )}
 
@@ -560,7 +636,7 @@ export default function Booking() {
                       <button
                         type="button"
                         className="btn btn--blue btn--lg"
-                        disabled={date === null}
+                        disabled={date === null || time === null}
                         onClick={() => goTo({ kind: "contact" })}
                       >
                         {t.booking.continue}
@@ -569,8 +645,8 @@ export default function Booking() {
                     )}
 
                     {stage.kind === "contact" && (
-                      <button type="submit" form="booking-form" className="btn btn--blue btn--lg">
-                        {t.booking.confirm}
+                      <button type="submit" form="booking-form" className="btn btn--blue btn--lg" disabled={submitting}>
+                        {submitting ? t.booking.submitting : t.booking.confirm}
                         <ArrowRight className="btn-arrow" size={15} />
                       </button>
                     )}
