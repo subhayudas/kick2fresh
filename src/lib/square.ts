@@ -95,6 +95,19 @@ export async function searchAvailability(startAtUtc: string, endAtUtc: string) {
   return (body.availabilities ?? []) as { start_at: string }[];
 }
 
+/** Re-checks that an exact start time is still free right before booking it — Square's
+ *  CreateBooking does not reject overlapping bookings on its own, so the caller must. */
+export async function isSlotStillAvailable(startAtUtc: string) {
+  // Square rejects a start_at_range shorter than 1 hour, so the window must be
+  // at least that even though we only care about the single exact timestamp.
+  const windowEnd = new Date(new Date(startAtUtc).getTime() + 65 * 60_000).toISOString();
+  const availabilities = await searchAvailability(startAtUtc, windowEnd);
+  const targetMs = new Date(startAtUtc).getTime();
+  // Compare parsed instants, not raw strings — Square omits milliseconds
+  // (e.g. "...T14:00:00Z") while ours always includes them ("...000Z").
+  return availabilities.some((a) => new Date(a.start_at).getTime() === targetMs);
+}
+
 async function getServiceVariationDetails(): Promise<{ version: number; durationMinutes: number }> {
   const body = await squareFetch(`/v2/catalog/object/${process.env.SQUARE_DROPOFF_SERVICE_VARIATION_ID}`);
   const variation = body.object.item_variation_data;

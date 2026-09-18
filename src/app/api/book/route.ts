@@ -4,6 +4,7 @@ import {
   createBooking,
   createDropoffOrder,
   findOrCreateCustomer,
+  isSlotStillAvailable,
   isSquareConfigured,
   type PairSelection,
 } from "@/lib/square";
@@ -57,6 +58,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const startAtUtc = zonedHourToUtcIso(body.date, hour, BUSINESS_TIMEZONE);
+
+    // Square's CreateBooking does not reject overlapping appointments on its own —
+    // re-check right before writing, closing the window between page load and submit.
+    const stillAvailable = await isSlotStillAvailable(startAtUtc);
+    if (!stillAvailable) {
+      return NextResponse.json(
+        { ok: false, code: "SLOT_TAKEN", error: "That time was just booked by someone else — please pick another." },
+        { status: 409 },
+      );
+    }
 
     const noteLines = body.pairs.map(
       (p) =>

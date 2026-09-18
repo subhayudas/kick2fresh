@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import s from "./Booking.module.css";
 import { useLocalizedTiers, useLocalizedAddons } from "@/lib/useLocalizedContent";
 import { ArrowRight, Check, Chevron, IconClock, IconGlobe, IconShield } from "./Icons";
@@ -129,14 +129,14 @@ export default function Booking() {
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [slotTaken, setSlotTaken] = useState(false);
 
-  useEffect(() => {
-    if (!date) return;
+  const refreshSlots = useCallback((forDate: string, { resetTime = true } = {}) => {
     let cancelled = false;
     setSlotsLoading(true);
     setSlotsError(false);
-    setTime(null);
-    fetch(`/api/availability?date=${date}`)
+    if (resetTime) setTime(null);
+    fetch(`/api/availability?date=${forDate}`)
       .then((res) => {
         if (!res.ok) throw new Error("availability request failed");
         return res.json();
@@ -154,7 +154,12 @@ export default function Booking() {
     return () => {
       cancelled = true;
     };
-  }, [date]);
+  }, []);
+
+  useEffect(() => {
+    if (!date) return;
+    return refreshSlots(date);
+  }, [date, refreshSlots]);
 
   function goTo(next: Stage) {
     setHistory((prev) => [...prev, next]);
@@ -176,6 +181,7 @@ export default function Booking() {
     setQuotePickup("pickup");
     setSubmitting(false);
     setSubmitError(false);
+    setSlotTaken(false);
   }
 
   function advanceAfterAddons(pairIndex: number) {
@@ -473,6 +479,8 @@ export default function Booking() {
                     <>
                       <Calendar value={date} onChange={setDate} locale={locale} />
 
+                      {slotTaken && <p className={s.footNote}>{t.booking.slotTaken}</p>}
+
                       {date && (
                         <div className={s.gap}>
                           <p className={s.sectionLabel}>{t.booking.time}</p>
@@ -490,7 +498,7 @@ export default function Booking() {
                                   className={s.option}
                                   data-on={time === slot}
                                   aria-pressed={time === slot}
-                                  onClick={() => setTime(slot)}
+                                  onClick={() => { setTime(slot); setSlotTaken(false); }}
                                 >
                                   <span className={s.optText}>
                                     <span className={s.optName}>{slot}</span>
@@ -513,6 +521,7 @@ export default function Booking() {
                         const form = new FormData(e.currentTarget);
                         setSubmitting(true);
                         setSubmitError(false);
+                        setSlotTaken(false);
                         try {
                           const res = await fetch("/api/book", {
                             method: "POST",
@@ -534,7 +543,15 @@ export default function Booking() {
                             }),
                           });
                           const data = await res.json();
-                          if (!res.ok || !data.ok) throw new Error(data.error ?? "booking failed");
+                          if (!res.ok || !data.ok) {
+                            if (data.code === "SLOT_TAKEN" && date) {
+                              setSlotTaken(true);
+                              refreshSlots(date);
+                              goBack();
+                              return;
+                            }
+                            throw new Error(data.error ?? "booking failed");
+                          }
                           setSubmissionType("booking");
                           setDone(true);
                         } catch {
