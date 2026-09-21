@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
   if (!isSquareConfigured()) {
     return NextResponse.json(
-      { ok: false, error: "Online booking isn't connected yet — please call or text us to confirm your drop-off." },
+      { ok: false, error: "Online booking isn't connected yet. Please call or text us to confirm your drop-off." },
       { status: 503 },
     );
   }
@@ -59,19 +59,19 @@ export async function POST(req: NextRequest) {
   try {
     const startAtUtc = zonedHourToUtcIso(body.date, hour, BUSINESS_TIMEZONE);
 
-    // Square's CreateBooking does not reject overlapping appointments on its own —
+    // Square's CreateBooking does not reject overlapping appointments on its own -
     // re-check right before writing, closing the window between page load and submit.
     const stillAvailable = await isSlotStillAvailable(startAtUtc);
     if (!stillAvailable) {
       return NextResponse.json(
-        { ok: false, code: "SLOT_TAKEN", error: "That time was just booked by someone else — please pick another." },
+        { ok: false, code: "SLOT_TAKEN", error: "That time was just booked by someone else. Please pick another." },
         { status: 409 },
       );
     }
 
     const noteLines = body.pairs.map(
       (p) =>
-        `Pair ${p.pairNum}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""} — $${p.subtotal} CAD`,
+        `Pair ${p.pairNum}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}, $${p.subtotal} CAD`,
     );
     const sellerNote = [...noteLines, `Total: $${body.total} CAD`].join("\n");
     const customerNote = body.notes?.trim() || undefined;

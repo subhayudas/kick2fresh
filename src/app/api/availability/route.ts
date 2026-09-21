@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   const hours = candidateHours();
 
   if (!isSquareConfigured()) {
-    // Square credentials not wired up yet — fall back to the full hourly range
+    // Square credentials not wired up yet, fall back to the full hourly range
     // so the form stays usable while setup finishes.
     return NextResponse.json({ configured: false, slots: hours.map(hourLabel) });
   }

@@ -1,7 +1,7 @@
 /**
  * Single source of truth for Kicks2Fresh business content.
  * Prices in CAD. Editing here updates pricing, services and the booking flow.
- * Every visitor-facing string is bilingual ({ en, fr }) — see src/lib/i18n.ts
+ * Every visitor-facing string is bilingual ({ en, fr }), see src/lib/i18n.ts
  * and src/lib/useLocalizedContent.ts for how components consume it.
  */
 
@@ -242,29 +242,29 @@ export const FAQ: FaqItem[] = [
   {
     q: { en: "How much does it cost?", fr: "Combien ça coûte ?" },
     a: {
-      en: "Essential Clean is $65, Premium Restoration is $95, and Expert Restoration is $150 per pair. Add-ons are priced separately — every price is listed on this page before you book.",
-      fr: "Le Nettoyage Essentiel coûte 65 $, la Restauration Premium 95 $, et la Restauration Experte 150 $ par paire. Les suppléments sont facturés séparément — tous les prix sont indiqués sur cette page avant la réservation.",
+      en: "Essential Clean is $65, Premium Restoration is $95, and Expert Restoration is $150 per pair. Add-ons are priced separately. Every price is listed on this page before you book.",
+      fr: "Le Nettoyage Essentiel coûte 65 $, la Restauration Premium 95 $, et la Restauration Experte 150 $ par paire. Les suppléments sont facturés séparément. Tous les prix sont indiqués sur cette page avant la réservation.",
     },
   },
   {
     q: { en: "Do you accept single pairs?", fr: "Acceptez-vous une seule paire ?" },
     a: {
-      en: "Yes — single pairs are welcome at drop-off any time. Free home pickup kicks in from 7 pairs.",
-      fr: "Oui — une seule paire est acceptée en tout temps pour le dépôt. Le ramassage à domicile gratuit s'applique à partir de 7 paires.",
+      en: "Yes, single pairs are welcome at drop-off any time. Free home pickup kicks in from 7 pairs.",
+      fr: "Oui, une seule paire est acceptée en tout temps pour le dépôt. Le ramassage à domicile gratuit s'applique à partir de 7 paires.",
     },
   },
   {
     q: { en: "What materials do you accept?", fr: "Quels matériaux acceptez-vous ?" },
     a: {
-      en: "All of them — leather, suede, nubuck, mesh, canvas, vinyl, technical fabric and patent leather each get their own protocol.",
-      fr: "Tous — cuir, suède, nubuck, mesh, toile, vinyle, tissu technique et cuir verni ont chacun leur propre protocole.",
+      en: "All of them: leather, suede, nubuck, mesh, canvas, vinyl, technical fabric and patent leather each get their own protocol.",
+      fr: "Tous : cuir, suède, nubuck, mesh, toile, vinyle, tissu technique et cuir verni ont chacun leur propre protocole.",
     },
   },
   {
     q: { en: "Do you accept luxury sneakers?", fr: "Acceptez-vous les sneakers de luxe ?" },
     a: {
-      en: "Yes. We've preserved over $500K in collections — luxury and collector pairs are handled with extra care and logged individually.",
-      fr: "Oui. Nous avons préservé plus de 500 000 $ en collections — les paires de luxe et de collection sont traitées avec un soin particulier et enregistrées individuellement.",
+      en: "Yes. We've preserved over $500K in collections. Luxury and collector pairs are handled with extra care and logged individually.",
+      fr: "Oui. Nous avons préservé plus de 500 000 $ en collections. Les paires de luxe et de collection sont traitées avec un soin particulier et enregistrées individuellement.",
     },
   },
   {
@@ -277,8 +277,8 @@ export const FAQ: FaqItem[] = [
   {
     q: { en: "Do you pick up?", fr: "Faites-vous du ramassage ?" },
     a: {
-      en: "Yes — free pickup from 7 pairs, anywhere across Montreal. Fewer pairs than that, drop off at the workshop.",
-      fr: "Oui — ramassage gratuit à partir de 7 paires, partout à Montréal. Pour moins de paires, déposez-les à l'atelier.",
+      en: "Yes, free pickup from 7 pairs, anywhere across Montreal. Fewer pairs than that, drop off at the workshop.",
+      fr: "Oui, ramassage gratuit à partir de 7 paires, partout à Montréal. Pour moins de paires, déposez-les à l'atelier.",
     },
   },
   {
@@ -291,22 +291,22 @@ export const FAQ: FaqItem[] = [
   {
     q: { en: "How does payment work?", fr: "Comment fonctionne le paiement ?" },
     a: {
-      en: "We confirm your quote within 1 hour of booking. Nothing is charged until you agree to it — no commitment before that.",
-      fr: "Nous confirmons votre devis dans l'heure suivant la réservation. Rien n'est facturé avant votre accord — aucun engagement avant ça.",
+      en: "We confirm your quote within 1 hour of booking. Nothing is charged until you agree to it. No commitment before that.",
+      fr: "Nous confirmons votre devis dans l'heure suivant la réservation. Rien n'est facturé avant votre accord. Aucun engagement avant ça.",
     },
   },
   {
     q: { en: "Where are you located?", fr: "Où êtes-vous situés ?" },
     a: {
-      en: "Montreal, QC — we serve the greater Montreal area for pickup, and our private workshop handles drop-offs.",
-      fr: "Montréal, QC — nous desservons le grand Montréal pour le ramassage, et notre atelier privé reçoit les dépôts.",
+      en: "Montreal, QC. We serve the greater Montreal area for pickup, and our private workshop handles drop-offs.",
+      fr: "Montréal, QC. Nous desservons le grand Montréal pour le ramassage, et notre atelier privé reçoit les dépôts.",
     },
   },
   {
     q: { en: "Can I see photos before treatment?", fr: "Puis-je voir des photos avant le traitement ?" },
     a: {
-      en: "Yes — we send a diagnostic with expected results before any work begins, so you know exactly what to expect.",
-      fr: "Oui — nous envoyons un diagnostic avec les résultats attendus avant de commencer, afin que vous sachiez exactement à quoi vous attendre.",
+      en: "Yes, we send a diagnostic with expected results before any work begins, so you know exactly what to expect.",
+      fr: "Oui, nous envoyons un diagnostic avec les résultats attendus avant de commencer, afin que vous sachiez exactement à quoi vous attendre.",
     },
   },
 ];
@@ -405,14 +405,14 @@ export const GALLERY: GalleryItem[] = [
 
 export type Review = { quote: Bi; who: Bi; meta: Bi };
 
-/** All real, attributed Google reviews with written text (43 of 52 total — the
+/** All real, attributed Google reviews with written text (43 of 52 total, the
  * remaining 9 are 5-star ratings left without a comment). Sourced from the
  * Kicks2Fresh Google Business Profile. */
 export const ALL_REVIEWS: Review[] = [
   {
     quote: {
       en: "Amazing guy, thought I had to spend another $500 until they touched it. Exceeded my expectations and they brought them back to life. Always prompt with communication, even with all their orders. Strongly recommend!",
-      fr: "Un gars incroyable — je pensais devoir dépenser 500 $ de plus avant qu'ils s'en occupent. Ils ont dépassé mes attentes et ont redonné vie à mes souliers. Toujours prompts dans leurs communications, même avec toutes leurs commandes. Je recommande fortement !",
+      fr: "Un gars incroyable. Je pensais devoir dépenser 500 $ de plus avant qu'ils s'en occupent. Ils ont dépassé mes attentes et ont redonné vie à mes souliers. Toujours prompts dans leurs communications, même avec toutes leurs commandes. Je recommande fortement !",
     },
     who: { en: "Aliw", fr: "Aliw" },
     meta: { en: "Google review · Montreal", fr: "Avis Google · Montréal" },
@@ -427,7 +427,7 @@ export const ALL_REVIEWS: Review[] = [
   },
   {
     quote: {
-      en: "Very recommended — they really do a miracle job on my shoes. Awesome result, my shoes look brand new again. Loving it, thanks Kicks2Fresh!",
+      en: "Very recommended. They really do a miracle job on my shoes. Awesome result, my shoes look brand new again. Loving it, thanks Kicks2Fresh!",
       fr: "Fortement recommandé, ils font un travail miraculeux sur mes souliers. Résultat impressionnant, on dirait qu'ils sont neufs. J'adore, merci Kicks2Fresh !",
     },
     who: { en: "Chico T.", fr: "Chico T." },
@@ -722,7 +722,7 @@ export const ALL_REVIEWS: Review[] = [
   },
 ];
 
-/** Homepage preview — first three of the full list. */
+/** Homepage preview, first three of the full list. */
 export const REVIEWS: Review[] = ALL_REVIEWS.slice(0, 3);
 
 export const GOOGLE_REVIEWS_URL = "https://share.google/oqODbfzrQtjJMrgnu";

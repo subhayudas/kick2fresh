@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KICKS2FRESH — Design System
+   KICKS2FRESH, Design System
    Editorial + modern skeuomorphic. Cool ivory canvas, deep navy ink,
    confident blue accent (matched to the brand mark). Tactile surfaces,
    real depth, no gradients-as-decor.
@@ -102,7 +102,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  /* faint paper grain — physicality without texture files */
+  /* faint paper grain, physicality without texture files */
   background-image:
     radial-gradient(rgba(18, 20, 31, 0.022) 1px, transparent 1px);
   background-size: 3px 3px;
@@ -145,7 +145,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 section { position: relative; }
 
 /* ==========================================================================
-   Type scale — editorial, restrained
+   Type scale, editorial, restrained
    ========================================================================== */
 
 .eyebrow {
@@ -213,7 +213,7 @@ section { position: relative; }
 .italic-note { font-style: italic; letter-spacing: -0.02em; }
 
 /* ==========================================================================
-   Buttons — tactile, physical press
+   Buttons, tactile, physical press
    ========================================================================== */
 
 .btn {
@@ -341,7 +341,7 @@ section { position: relative; }
 .btn:hover .btn-arrow { transform: translateX(3px); }
 
 /* ==========================================================================
-   Surfaces — the recurring tactile card
+   Surfaces, the recurring tactile card
    ========================================================================== */
 
 .card {

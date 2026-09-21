@@ -164,7 +164,7 @@
 .addGrid .optPrice { font-size: 13px; }
 
 /* Primary action sits right under the choices it belongs to, not tucked in
-   a far-away footer bar — easier to see it's the next thing to tap. */
+   a far-away footer bar, easier to see it's the next thing to tap. */
 .inlineCta { display: flex; justify-content: center; margin-top: 18px; }
 
 /* --- Per-pair service groups (step 2) -------------------------------------- */
@@ -267,7 +267,7 @@
   box-shadow: 0 0 0 2px var(--blue), inset 0 1px 0 rgba(255,255,255,0.14);
 }
 
-/* --- Exact-count stepper (7+ path) — tap +/− instead of typing ------------- */
+/* --- Exact-count stepper (7+ path), tap +/− instead of typing ------------- */
 
 .stepper {
   display: flex; align-items: center; justify-content: center;

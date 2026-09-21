@@ -27,7 +27,7 @@ function loadEnvLocal() {
       if (!(key in process.env)) process.env[key] = value;
     }
   } catch {
-    // No .env.local found — assume the variables are already in the environment.
+    // No .env.local found, assume the variables are already in the environment.
   }
 }
 loadEnvLocal();

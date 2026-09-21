@@ -1,6 +1,6 @@
 /**
  * Wall-clock <-> UTC conversion for a single IANA time zone, DST-safe.
- * No dependency needed — Intl.DateTimeFormat already knows the zone's rules.
+ * No dependency needed, Intl.DateTimeFormat already knows the zone's rules.
  */
 
 export const BUSINESS_TIMEZONE = process.env.SQUARE_TIMEZONE || "America/Toronto";

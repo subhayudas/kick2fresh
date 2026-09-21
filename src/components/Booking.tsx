@@ -10,7 +10,7 @@ import Reveal from "./Reveal";
 
 const PAIR_BUTTONS = [1, 2, 3, 4, 5, 6];
 
-/** Navigation stack entry. Pushed on every forward step, popped on Back —
+/** Navigation stack entry. Pushed on every forward step, popped on Back -
  *  this lets Back retrace the exact path taken through the per-pair loop. */
 type Stage =
   | { kind: "pairs" }
@@ -595,12 +595,12 @@ export default function Booking() {
                     </form>
                   )}
 
-                  {/* Price summary — only shown alongside the date/time step, not on every question */}
+                  {/* Price summary, only shown alongside the date/time step, not on every question */}
                   {stage.kind === "schedule" && (
                     <div className={s.summary}>
                       {pairSummaries.map((p) => (
                         <div className={s.sumRow} key={p.pairNum}>
-                          <span>{t.booking.pairLabel} {p.pairNum} — {p.tier.name}{p.items.length > 0 && ` + ${p.items.length}`}</span>
+                          <span>{t.booking.pairLabel} {p.pairNum}: {p.tier.name}{p.items.length > 0 && ` + ${p.items.length}`}</span>
                           <span>${p.subtotal}</span>
                         </div>
                       ))}

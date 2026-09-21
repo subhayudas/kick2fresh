@@ -51,7 +51,7 @@ export default function TrustStack() {
                 </div>
                 <p className={s.reviewQuote}>&ldquo;{r.quote}&rdquo;</p>
                 <div className={s.reviewFoot}>
-                  <span className={s.avatar} aria-hidden>—</span>
+                  <span className={s.avatar} aria-hidden>-</span>
                   <span>
                     <span className={s.who}>{r.who}</span>
                     <span className={s.meta}>{r.meta}</span>

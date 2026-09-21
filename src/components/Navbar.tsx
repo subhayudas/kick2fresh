@@ -36,7 +36,7 @@ export default function Navbar() {
       <header className={s.wrap} data-stuck={stuck}>
         <div className="shell-wide">
           <div className={s.bar}>
-            <a href="/#top" className={s.logo} aria-label="Kicks2Fresh — home">
+            <a href="/#top" className={s.logo} aria-label="Kicks2Fresh home">
               <img src="/LOGO-Kicks2Fresh.png" alt="Kicks2Fresh" className={s.mark} />
             </a>
 

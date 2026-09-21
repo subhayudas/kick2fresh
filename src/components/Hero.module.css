@@ -12,7 +12,7 @@
   top: 0; right: 0; bottom: 0;
   width: clamp(320px, 56vw, 800px);
   z-index: 0;
-  /* Alpha-fade the edges to true transparency — lets the page show through
+  /* Alpha-fade the edges to true transparency, lets the page show through
      underneath instead of painting a colour over it, so it always matches
      regardless of what's behind it (no banding, no colour mismatch). */
   -webkit-mask-image:

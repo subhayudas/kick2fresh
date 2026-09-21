@@ -57,7 +57,7 @@ export const Star = ({ className, size = 14 }: P) => (
   </svg>
 );
 
-/* Service glyphs — brush, droplet, tool, sole */
+/* Service glyphs, brush, droplet, tool, sole */
 export const IconBrush = ({ className, size = 20 }: P) => (
   <svg {...base(size)} className={className}>
     <path d="M8.5 14.5 4 19c-.7.9.3 2 1.3 1.4L10 18" />

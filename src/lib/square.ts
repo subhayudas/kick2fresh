@@ -1,5 +1,5 @@
 /**
- * Server-only Square client. Uses fetch directly against Square's REST API —
+ * Server-only Square client. Uses fetch directly against Square's REST API -
  * no SDK dependency. Requires SQUARE_ACCESS_TOKEN / SQUARE_LOCATION_ID /
  * SQUARE_TEAM_MEMBER_ID / SQUARE_DROPOFF_SERVICE_VARIATION_ID (see .env.example
  * and scripts/setup-square-catalog.mjs).
@@ -95,7 +95,7 @@ export async function searchAvailability(startAtUtc: string, endAtUtc: string) {
   return (body.availabilities ?? []) as { start_at: string }[];
 }
 
-/** Re-checks that an exact start time is still free right before booking it — Square's
+/** Re-checks that an exact start time is still free right before booking it, Square's
  *  CreateBooking does not reject overlapping bookings on its own, so the caller must. */
 export async function isSlotStillAvailable(startAtUtc: string) {
   // Square rejects a start_at_range shorter than 1 hour, so the window must be
@@ -103,7 +103,7 @@ export async function isSlotStillAvailable(startAtUtc: string) {
   const windowEnd = new Date(new Date(startAtUtc).getTime() + 65 * 60_000).toISOString();
   const availabilities = await searchAvailability(startAtUtc, windowEnd);
   const targetMs = new Date(startAtUtc).getTime();
-  // Compare parsed instants, not raw strings — Square omits milliseconds
+  // Compare parsed instants, not raw strings, Square omits milliseconds
   // (e.g. "...T14:00:00Z") while ours always includes them ("...000Z").
   return availabilities.some((a) => new Date(a.start_at).getTime() === targetMs);
 }
@@ -159,7 +159,7 @@ export async function createDropoffOrder(input: {
   idempotencyKey: string;
 }) {
   const lineItems = input.pairs.map((p) => ({
-    name: `Pair ${p.pairNum} — ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}`,
+    name: `Pair ${p.pairNum}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}`,
     quantity: "1",
     base_price_money: { amount: Math.round(p.subtotal * 100), currency: "CAD" },
   }));
