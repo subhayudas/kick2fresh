@@ -399,20 +399,6 @@
 }
 .doneTitle { font-size: 1.4rem; font-weight: 550; letter-spacing: -0.04em; }
 .doneCopy { margin: 12px auto 0; max-width: 42ch; font-size: 13.5px; line-height: 1.6; color: var(--ink-muted); }
-.doneBox {
-  margin: 22px auto 0;
-  max-width: 460px;
-  padding: 15px 17px;
-  border-radius: var(--r-md);
-  background: rgba(37, 104, 232,0.07);
-  box-shadow: inset 0 0 0 1px rgba(37, 104, 232,0.22);
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--blue-deep);
-  text-align: left;
-  display: flex; gap: 11px;
-}
-.doneBox svg { flex: none; margin-top: 1px; }
 .doneActions { margin-top: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
 @media (max-width: 940px) {

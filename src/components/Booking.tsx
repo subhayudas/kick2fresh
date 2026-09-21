@@ -257,17 +257,6 @@ export default function Booking() {
                   {submissionType === "quote" ? t.booking.quoteDoneCopy : t.booking.doneCopy}
                 </p>
 
-                {submissionType !== "quote" && (
-                  <p className={s.doneBox}>
-                    <IconShield size={16} />
-                    <span>
-                      {t.booking.doneStep1} · {t.booking.doneStep2} · {t.booking.doneStep3}
-                      <br />
-                      {t.booking.donePrep}
-                    </span>
-                  </p>
-                )}
-
                 <div className={s.doneActions}>
                   <button type="button" className="btn btn--ghost" onClick={resetAll}>
                     {t.booking.doneChange}
