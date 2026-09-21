@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
+import { GOOGLE_ADS_ID } from "@/lib/googleAds";
 import "./globals.css";
 
 const sans = Inter({
@@ -81,6 +83,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a className="skip-link" href="#main">Skip to content</a>
         {children}
+        {GOOGLE_ADS_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-ads-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.gtag = gtag;
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');`}
+            </Script>
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

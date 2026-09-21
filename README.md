@@ -84,6 +84,31 @@ of friction:
 Selection state lives in `BookingProvider` and is shared with the pricing
 section, so toggling an add-on in either place updates both.
 
+## Google Ads conversion tracking
+
+When a booking is confirmed (Square accepted it and the "you're booked" screen
+shows), the site sends a Google Ads `conversion` event with the booking total as
+its value (CAD) and the Square booking id as `transaction_id`, so Google
+de-duplicates repeats. Quote requests and failed or slot-taken submissions send
+nothing. The code is in `src/lib/googleAds.ts` (helper), `src/app/layout.tsx`
+(loads the Google tag) and `src/components/Booking.tsx` (fires the event).
+
+1. In Google Ads: **Goals → Conversions → New conversion action → Website**, create a
+   **Book** / "New Booking" action, and choose *use different value for each conversion*
+   (Google fills it from the booking total). Count: **One** per click is right for bookings.
+2. Open the action's **Tag setup → Install the tag yourself → Event snippet**. It contains
+   `'send_to': 'AW-123456789/AbC-dEfGhIjK'`: the part before `/` is the ID, after it the label.
+3. Set `NEXT_PUBLIC_GOOGLE_ADS_ID` and `NEXT_PUBLIC_GOOGLE_ADS_BOOKING_LABEL` in the
+   hosting provider's environment variables (and `.env.local` to test locally). These are
+   inlined at build time, so redeploy after changing them. With them unset, no tag loads.
+4. Check it: Google Ads → the conversion action's status moves to *Recording conversions*
+   after a real booking (can take a few hours), or use Tag Assistant / the browser's
+   Network tab for a request to `googleadservices.com/pagead/conversion` or
+   `google.com/pagead/1p-conversion` after submitting a test booking.
+
+Note: the tag sets cookies, so if visitors from Quebec/EU need consent (Law 25, GDPR),
+add a consent banner and gate the tag on it.
+
 ## Square booking setup
 
 The drop-off step and the contact form are wired to Square, but need your
