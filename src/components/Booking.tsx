@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import s from "./Booking.module.css";
 import { useLocalizedTiers, useLocalizedAddons } from "@/lib/useLocalizedContent";
 import { trackBookingConversion } from "@/lib/googleAds";
+import { trackBookingSchedule } from "@/lib/metaPixel";
 import { ArrowRight, Check, Chevron, IconClock, IconGlobe, IconShield } from "./Icons";
 import { useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
@@ -543,6 +544,7 @@ export default function Booking() {
                             throw new Error(data.error ?? "booking failed");
                           }
                           trackBookingConversion({ transactionId: data.bookingId, value: total });
+                          trackBookingSchedule({ value: total });
                           setSubmissionType("booking");
                           setDone(true);
                         } catch {

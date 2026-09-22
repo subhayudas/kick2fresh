@@ -109,6 +109,29 @@ nothing. The code is in `src/lib/googleAds.ts` (helper), `src/app/layout.tsx`
 Note: the tag sets cookies, so if visitors from Quebec/EU need consent (Law 25, GDPR),
 add a consent banner and gate the tag on it.
 
+## Meta Pixel tracking
+
+The Meta Pixel base code loads on every page (fires `PageView`), and when a
+booking is confirmed the site also sends a `Schedule` event (Meta's standard
+event for booking an appointment) with the booking total as its value (CAD).
+Quote requests and failed or slot-taken submissions send nothing. The code is
+in `src/lib/metaPixel.ts` (helper), `src/app/layout.tsx` (loads the pixel) and
+`src/components/Booking.tsx` (fires the event).
+
+1. In Meta Events Manager: **Data Sources → your pixel → Settings** to find the
+   pixel ID (or **Connect data sources → Web → create a pixel** if you don't
+   have one yet).
+2. Set `NEXT_PUBLIC_META_PIXEL_ID` in the hosting provider's environment
+   variables (and `.env.local` to test locally). This is inlined at build
+   time, so redeploy after changing it. With it unset, no pixel loads.
+3. Check it: install the [Meta Pixel Helper](https://chromewebstore.google.com/detail/meta-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc)
+   Chrome extension, or Events Manager → **Test events**, and confirm `PageView`
+   fires on load and `Schedule` fires after a test booking.
+
+Note: like the Google Ads tag, this sets cookies, so if visitors from
+Quebec/EU need consent (Law 25, GDPR), add a consent banner and gate both
+tags on it.
+
 ## Square booking setup
 
 The drop-off step and the contact form are wired to Square, but need your
