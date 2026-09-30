@@ -5,6 +5,7 @@ import s from "./Booking.module.css";
 import { useLocalizedTiers, useLocalizedAddons } from "@/lib/useLocalizedContent";
 import { trackBookingConversion } from "@/lib/googleAds";
 import { trackBookingSchedule } from "@/lib/metaPixel";
+import { trackEvent } from "@/lib/analytics";
 import { ArrowRight, Check, Chevron, IconClock, IconGlobe, IconShield } from "./Icons";
 import { useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
@@ -195,6 +196,17 @@ export default function Booking() {
   const totalSteps = inQuoteBranch ? 3 : 2 * Math.min(Math.max(pairs, 1), 6) + 3;
   const stepNumber = history.length;
 
+  // Fires once per step entered (forward or back) so a GA4 funnel exploration
+  // on this event can show exactly where visitors stop progressing.
+  useEffect(() => {
+    if (done) return;
+    trackEvent("booking_step_view", {
+      step: stage.kind,
+      step_number: stepNumber,
+      total_steps: totalSteps,
+    });
+  }, [stage, stepNumber, totalSteps, done]);
+
   const groupIndexes = !inQuoteBranch && pairs <= 6 ? Array.from({ length: pairs }, (_, i) => i) : [];
   const pairSummaries = groupIndexes.map((i) => {
     const tr = tiers.find((tr) => tr.id === pairTiers[i]) ?? tiers[1];
@@ -296,7 +308,11 @@ export default function Booking() {
                           className={s.pairBtn}
                           data-on={pairs === n}
                           aria-pressed={pairs === n}
-                          onClick={() => { setPairs(n); goTo({ kind: "service", pairIndex: 0 }); }}
+                          onClick={() => {
+                            trackEvent("booking_pairs_selected", { pairs: n });
+                            setPairs(n);
+                            goTo({ kind: "service", pairIndex: 0 });
+                          }}
                         >
                           <span className={s.pairNum}>{n}</span>
                         </button>
@@ -306,7 +322,11 @@ export default function Booking() {
                         className={`${s.pairBtn} ${s["pairBtn--more"]}`}
                         data-on={pairs === 7}
                         aria-pressed={pairs === 7}
-                        onClick={() => { setPairs(7); goTo({ kind: "quoteCount" }); }}
+                        onClick={() => {
+                          trackEvent("booking_quote_started");
+                          setPairs(7);
+                          goTo({ kind: "quoteCount" });
+                        }}
                       >
                         <span className={s.pairNum}>7+</span>
                       </button>
@@ -323,6 +343,7 @@ export default function Booking() {
                           data-on={pairTiers[stage.pairIndex] === tr.id}
                           aria-pressed={pairTiers[stage.pairIndex] === tr.id}
                           onClick={() => {
+                            trackEvent("booking_service_selected", { pair: stage.pairIndex + 1, tier: tr.id });
                             setPairTier(stage.pairIndex, tr.id);
                             goTo({ kind: "addons", pairIndex: stage.pairIndex });
                           }}
@@ -349,7 +370,14 @@ export default function Booking() {
                             className={s.option}
                             data-on={on}
                             aria-pressed={on}
-                            onClick={() => togglePairAddOn(stage.pairIndex, a.id)}
+                            onClick={() => {
+                              trackEvent("booking_addon_toggled", {
+                                pair: stage.pairIndex + 1,
+                                addon: a.id,
+                                on: !on,
+                              });
+                              togglePairAddOn(stage.pairIndex, a.id);
+                            }}
                           >
                             <span className={s.tick} aria-hidden><Check size={12} /></span>
                             <span className={s.optText}>
@@ -406,7 +434,12 @@ export default function Booking() {
                     <form
                       id="quote-form"
                       className={s.fields}
-                      onSubmit={(e) => { e.preventDefault(); setSubmissionType("quote"); setDone(true); }}
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        trackEvent("booking_quote_submitted", { pairs: quotePairCount, pickup: quotePickup });
+                        setSubmissionType("quote");
+                        setDone(true);
+                      }}
                     >
                       <p className={s.footNote}>{t.booking.quoteFormIntro}</p>
                       <div className={s.pair}>
@@ -468,7 +501,11 @@ export default function Booking() {
 
                   {stage.kind === "schedule" && (
                     <>
-                      <Calendar value={date} onChange={setDate} locale={locale} />
+                      <Calendar
+                        value={date}
+                        onChange={(iso) => { trackEvent("booking_date_selected"); setDate(iso); }}
+                        locale={locale}
+                      />
 
                       {slotTaken && <p className={s.footNote}>{t.booking.slotTaken}</p>}
 
@@ -489,7 +526,11 @@ export default function Booking() {
                                   className={s.option}
                                   data-on={time === slot}
                                   aria-pressed={time === slot}
-                                  onClick={() => { setTime(slot); setSlotTaken(false); }}
+                                  onClick={() => {
+                                    trackEvent("booking_time_selected");
+                                    setTime(slot);
+                                    setSlotTaken(false);
+                                  }}
                                 >
                                   <span className={s.optText}>
                                     <span className={s.optName}>{slot}</span>
@@ -536,6 +577,7 @@ export default function Booking() {
                           const data = await res.json();
                           if (!res.ok || !data.ok) {
                             if (data.code === "SLOT_TAKEN" && date) {
+                              trackEvent("booking_slot_taken");
                               setSlotTaken(true);
                               refreshSlots(date);
                               goBack();
@@ -544,10 +586,12 @@ export default function Booking() {
                             throw new Error(data.error ?? "booking failed");
                           }
                           trackBookingConversion({ transactionId: data.bookingId, value: total });
-                          trackBookingSchedule({ value: total });
+                          trackBookingSchedule({ value: total, eventId: data.bookingId });
+                          trackEvent("booking_confirmed", { value: total, pairs });
                           setSubmissionType("booking");
                           setDone(true);
                         } catch {
+                          trackEvent("booking_submit_error");
                           setSubmitError(true);
                         } finally {
                           setSubmitting(false);
@@ -619,7 +663,14 @@ export default function Booking() {
                 {stage.kind !== "pairs" && (
                   <div className={s.foot}>
                     {history.length > 1 && (
-                      <button type="button" className="btn btn--ghost" onClick={goBack}>
+                      <button
+                        type="button"
+                        className="btn btn--ghost"
+                        onClick={() => {
+                          trackEvent("booking_back", { from: stage.kind });
+                          goBack();
+                        }}
+                      >
                         {t.booking.back}
                       </button>
                     )}

@@ -132,6 +132,76 @@ Note: like the Google Ads tag, this sets cookies, so if visitors from
 Quebec/EU need consent (Law 25, GDPR), add a consent banner and gate both
 tags on it.
 
+## Meta Conversions API
+
+A server-side backstop for the `Schedule` event above: browser pixels lose a
+real chunk of events to ad blockers and Safari's tracking prevention, so the
+`/api/book` route also reports the same booking directly to Meta's servers,
+right after Square confirms it (same fire-and-forget try as the browser
+event - a Meta hiccup never fails a real booking). It shares the Square
+booking id as `event_id` with the browser's `Schedule` event, so Meta
+deduplicates the two into a single conversion rather than double-counting.
+The code is in `src/lib/metaCapi.ts` (helper, called from
+`src/app/api/book/route.ts`).
+
+1. In Meta Events Manager: **Data Sources → your pixel → Settings →
+   Conversions API → Set up manually → Generate access token**.
+2. Set `META_CAPI_ACCESS_TOKEN` in the hosting provider's environment
+   variables (and `.env.local` to test locally) - **no** `NEXT_PUBLIC_`
+   prefix, this one must stay server-only. Redeploy after changing it. With
+   it unset, no server-side event is sent.
+3. Check it: Events Manager → **Test events**, paste the code shown there as
+   `testEventCode` into a one-off call to `sendBookingScheduleCapiEvent`
+   (never in the real booking flow - it would mark real conversions as test
+   data), or just watch the Overview tab for `Schedule` events tagged
+   "Browser + Server" after a real booking.
+
+## GA4 analytics
+
+GA4 loads sitewide (automatic page views) and the booking form fires custom
+events at every step and key interaction: `booking_step_view` (once per step
+entered, forward or back, with `step`, `step_number`, `total_steps`),
+`booking_pairs_selected`, `booking_quote_started`, `booking_service_selected`,
+`booking_addon_toggled`, `booking_date_selected`, `booking_time_selected`,
+`booking_back`, `booking_slot_taken`, `booking_submit_error`,
+`booking_quote_submitted`, and `booking_confirmed` (with `value` and `pairs`).
+It shares the same Google tag loader as Google Ads conversion tracking, just
+configured with a second id. The code is in `src/lib/analytics.ts` (helper),
+`src/app/layout.tsx` (loads the tag) and `src/components/Booking.tsx` (fires
+the events).
+
+1. In Google Analytics: **Admin → Data Streams → your web stream** to find the
+   Measurement ID (or **Add stream → Web → create one** if you don't have one yet).
+2. Set `NEXT_PUBLIC_GA4_MEASUREMENT_ID` in the hosting provider's environment
+   variables (and `.env.local` to test locally). Inlined at build time, so
+   redeploy after changing it. With it unset, no GA4 config is sent.
+3. Check it: GA4 → **Reports → Realtime** while clicking through a test
+   booking, then build a **Explore → Funnel exploration** on the
+   `booking_step_view` steps to see where visitors drop off.
+
+Note: like the other tags, this sets cookies, so if visitors from Quebec/EU
+need consent (Law 25, GDPR), add a consent banner and gate all tags on it.
+
+## Microsoft Clarity
+
+Heatmaps and session recordings, loaded sitewide. Autocaptures every click,
+scroll and page interaction with no extra event code, which complements the
+specific GA4 booking-form events above with a visual "watch someone actually
+use the form" view. The code is in `src/lib/clarity.ts` (helper) and
+`src/app/layout.tsx` (loads the tag).
+
+1. In Microsoft Clarity: **create a project** for the site, then
+   **Settings → Setup** to find the project id.
+2. Set `NEXT_PUBLIC_CLARITY_PROJECT_ID` in the hosting provider's environment
+   variables (and `.env.local` to test locally). Inlined at build time, so
+   redeploy after changing it. With it unset, nothing loads.
+3. Check it: Clarity → **Recordings** or **Heatmaps** a few minutes after
+   browsing the live site.
+
+Note: session recordings can capture form input. Clarity masks text inputs by
+default - leave that on, and add a consent banner alongside the other tags if
+Quebec/EU visitors need one.
+
 ## Square booking setup
 
 The drop-off step and the contact form are wired to Square, but need your
