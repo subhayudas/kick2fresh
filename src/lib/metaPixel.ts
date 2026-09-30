@@ -11,14 +11,18 @@ declare global {
 }
 
 /** Reports a confirmed booking to Meta as a "Schedule" event (Meta's standard
- *  event for booking an appointment), with the booking total as its value. */
+ *  event for booking an appointment), with the booking total as its value.
+ *  `eventId` (the Square booking id) is shared with the server-side Conversions
+ *  API event for the same booking, so Meta deduplicates the two. */
 export function trackBookingSchedule({
   value,
   currency = "CAD",
+  eventId,
 }: {
   value: number;
   currency?: string;
+  eventId?: string;
 }) {
   if (!META_PIXEL_ID || typeof window === "undefined" || !window.fbq) return;
-  window.fbq("track", "Schedule", { value, currency });
+  window.fbq("track", "Schedule", { value, currency }, eventId ? { eventID: eventId } : undefined);
 }

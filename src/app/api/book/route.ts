@@ -9,6 +9,7 @@ import {
   type PairSelection,
 } from "@/lib/square";
 import { BUSINESS_TIMEZONE, zonedHourToUtcIso } from "@/lib/quebecTime";
+import { sendBookingScheduleCapiEvent } from "@/lib/metaCapi";
 
 const OPEN_HOUR = Number(process.env.BUSINESS_OPEN_HOUR ?? 9);
 const CLOSE_HOUR = Number(process.env.BUSINESS_CLOSE_HOUR ?? 18);
@@ -91,6 +92,17 @@ export async function POST(req: NextRequest) {
       bookingId: booking.id,
       idempotencyKey: idempotencyKey(`order|${seed}`),
     });
+
+    // Fire-and-forget: a Meta reporting hiccup should never fail a real booking.
+    sendBookingScheduleCapiEvent({
+      eventId: booking.id,
+      value: body.total,
+      email: body.email,
+      phone: body.phone,
+      clientIp: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? req.headers.get("x-nf-client-connection-ip") ?? undefined,
+      userAgent: req.headers.get("user-agent") ?? undefined,
+      sourceUrl: req.headers.get("referer") ?? req.nextUrl.origin,
+    }).catch((err) => console.error("Meta Conversions API event failed", err));
 
     return NextResponse.json({ ok: true, bookingId: booking.id, orderId: order.id });
   } catch (err) {
