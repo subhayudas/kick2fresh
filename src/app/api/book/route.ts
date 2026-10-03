@@ -10,6 +10,7 @@ import {
 } from "@/lib/square";
 import { BUSINESS_TIMEZONE, zonedHourToUtcIso } from "@/lib/quebecTime";
 import { sendBookingScheduleCapiEvent } from "@/lib/metaCapi";
+import { notifyOwner } from "@/lib/sms";
 
 const OPEN_HOUR = Number(process.env.BUSINESS_OPEN_HOUR ?? 9);
 const CLOSE_HOUR = Number(process.env.BUSINESS_CLOSE_HOUR ?? 18);
@@ -103,6 +104,15 @@ export async function POST(req: NextRequest) {
       userAgent: req.headers.get("user-agent") ?? undefined,
       sourceUrl: req.headers.get("referer") ?? req.nextUrl.origin,
     }).catch((err) => console.error("Meta Conversions API event failed", err));
+
+    await notifyOwner(
+      [
+        `New booking: ${body.name.trim()}`,
+        `${body.date} at ${body.time}`,
+        `${body.pairs.length} pair${body.pairs.length === 1 ? "" : "s"}, $${body.total} CAD`,
+        body.phone.trim(),
+      ].join("\n"),
+    );
 
     return NextResponse.json({ ok: true, bookingId: booking.id, orderId: order.id });
   } catch (err) {

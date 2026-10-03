@@ -156,6 +156,22 @@ The code is in `src/lib/metaCapi.ts` (helper, called from
    data), or just watch the Overview tab for `Schedule` events tagged
    "Browser + Server" after a real booking.
 
+## Owner SMS alerts
+
+Square sends the *customer* reminders but never tells the shop a booking came
+in, so `/api/book` texts the owner through Twilio right after Square confirms
+the booking (name, date and time, pair count, total, phone). A failed text is
+logged and never fails the booking. The code is in `src/lib/sms.ts`.
+
+1. Create a Twilio account and buy (or verify) a number that can send SMS to
+   Canada. Note the Account SID and Auth Token from the Console dashboard.
+2. Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` (e.g.
+   `+15145550100`) and `OWNER_NOTIFY_PHONE` (who receives the alert, commas
+   for several) in the hosting provider's environment variables. Server-only,
+   no `NEXT_PUBLIC_` prefix. Redeploy after changing them.
+3. Check it: make a test booking and watch for the text; failures show in the
+   function logs as `Owner SMS failed`.
+
 ## GA4 analytics
 
 GA4 loads sitewide (automatic page views) and the booking form fires custom
