@@ -35,7 +35,7 @@ export default function Footer() {
               type="button"
               className={s.link}
               style={{ background: "none", border: "none", cursor: "pointer" }}
-              onClick={() => openBooking()}
+              onClick={() => openBooking({ source: "footer" })}
             >
               {t.footer.bookLabel}
             </button>

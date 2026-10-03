@@ -1,10 +1,10 @@
 import { createHash } from "node:crypto";
 import { META_PIXEL_ID } from "@/lib/metaPixel";
 
-/* Meta Conversions API: sends the same "Schedule" conversion server-side, as a
-   backstop for the browser pixel (ad blockers, Safari ITP, etc. drop a chunk of
-   browser-side events). Events Manager -> Data Sources -> the pixel -> Settings
-   -> Conversions API -> Generate access token gives CAPI_ACCESS_TOKEN.
+/* Meta Conversions API: sends the same conversions server-side, as a backstop
+   for the browser pixel (ad blockers, Safari ITP and in-app browsers drop a
+   chunk of browser-side events). Events Manager -> Data Sources -> the pixel ->
+   Settings -> Conversions API -> Generate access token gives CAPI_ACCESS_TOKEN.
    If either value is unset (local dev, previews) nothing is sent. */
 const CAPI_ACCESS_TOKEN = process.env.META_CAPI_ACCESS_TOKEN;
 const GRAPH_VERSION = "v21.0";
@@ -20,52 +20,54 @@ function normalizePhone(phone: string) {
   return digits.length === 10 ? `1${digits}` : digits;
 }
 
-/** Reports a confirmed booking to Meta via server-side Conversions API. Shares
- *  `eventId` with the browser pixel's `Schedule` event so Meta deduplicates the
- *  two into one conversion. `testEventCode` (from Events Manager -> Test events)
- *  routes the call there instead of into real ad-optimization data - pass it only
- *  when manually verifying the integration, never from the real booking flow. */
-export async function sendBookingScheduleCapiEvent({
-  eventId,
-  value,
-  currency = "CAD",
-  email,
-  phone,
-  clientIp,
-  userAgent,
-  sourceUrl,
-  testEventCode,
-}: {
+export type CapiEvent = {
+  eventName: "Lead" | "Schedule" | "InitiateCheckout" | "Contact";
+  /** Shared with the browser pixel event so Meta deduplicates the pair. */
   eventId: string;
-  value: number;
+  value?: number;
   currency?: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
+  name?: string;
+  /** Meta browser cookies - the strongest signal for matching to the ad click. */
+  fbp?: string;
+  fbc?: string;
   clientIp?: string;
   userAgent?: string;
   sourceUrl: string;
+  /** From Events Manager -> Test events. Never pass from the real flow. */
   testEventCode?: string;
-}) {
+};
+
+export async function sendMetaCapiEvent(e: CapiEvent) {
   if (!META_PIXEL_ID || !CAPI_ACCESS_TOKEN) return;
 
+  const [first, ...rest] = (e.name ?? "").trim().toLowerCase().split(/\s+/).filter(Boolean);
   const payload = {
     data: [
       {
-        event_name: "Schedule",
+        event_name: e.eventName,
         event_time: Math.floor(Date.now() / 1000),
-        event_id: eventId,
-        event_source_url: sourceUrl,
+        event_id: e.eventId,
+        event_source_url: e.sourceUrl,
         action_source: "website",
         user_data: {
-          em: [sha256(email.trim().toLowerCase())],
-          ph: [sha256(normalizePhone(phone))],
-          ...(clientIp && { client_ip_address: clientIp }),
-          ...(userAgent && { client_user_agent: userAgent }),
+          ...(e.email && { em: [sha256(e.email.trim().toLowerCase())] }),
+          ...(e.phone && { ph: [sha256(normalizePhone(e.phone))] }),
+          ...(first && { fn: [sha256(first)] }),
+          ...(rest.length && { ln: [sha256(rest.join(" "))] }),
+          country: [sha256("ca")],
+          ...(e.fbp && { fbp: e.fbp }),
+          ...(e.fbc && { fbc: e.fbc }),
+          ...(e.clientIp && { client_ip_address: e.clientIp }),
+          ...(e.userAgent && { client_user_agent: e.userAgent }),
         },
-        custom_data: { value, currency },
+        ...(e.value !== undefined && {
+          custom_data: { value: e.value, currency: e.currency ?? "CAD" },
+        }),
       },
     ],
-    ...(testEventCode && { test_event_code: testEventCode }),
+    ...(e.testEventCode && { test_event_code: e.testEventCode }),
   };
 
   const res = await fetch(
@@ -78,6 +80,6 @@ export async function sendBookingScheduleCapiEvent({
   );
 
   if (!res.ok) {
-    throw new Error(`Meta CAPI event failed: ${res.status} ${await res.text()}`);
+    throw new Error(`Meta CAPI ${e.eventName} failed: ${res.status} ${await res.text()}`);
   }
 }

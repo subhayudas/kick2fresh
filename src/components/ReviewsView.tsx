@@ -3,7 +3,7 @@
 import { LocaleProvider } from "./LocaleProvider";
 import { BookingProvider, useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
-import LanguagePicker from "./LanguagePicker";
+import Booking from "./Booking";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import StickyMobileCta from "./StickyMobileCta";
@@ -88,7 +88,7 @@ function ReviewsBody() {
           )}
 
           <Reveal className={s.ctaRow}>
-            <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking()}>
+            <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking({ source: "reviews_page" })}>
               {t.reviewsPage.cta}
               <ArrowRight className="btn-arrow" size={15} />
             </button>
@@ -102,12 +102,12 @@ function ReviewsBody() {
 export default function ReviewsView() {
   return (
     <LocaleProvider>
-      <LanguagePicker />
       <BookingProvider>
         <Navbar />
         <ReviewsBody />
         <Footer />
         <StickyMobileCta />
+        <Booking />
       </BookingProvider>
     </LocaleProvider>
   );

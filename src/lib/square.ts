@@ -49,7 +49,7 @@ export type PairSelection = {
 };
 
 /** Finds an existing customer by email, or creates one. Returns the Square customer id. */
-export async function findOrCreateCustomer(input: { name: string; email: string; phone: string }) {
+export async function findOrCreateCustomer(input: { name: string; email: string; phone: string; note?: string }) {
   const [givenName, ...rest] = input.name.trim().split(/\s+/);
   const familyName = rest.join(" ") || undefined;
 
@@ -68,6 +68,7 @@ export async function findOrCreateCustomer(input: { name: string; email: string;
       family_name: familyName,
       email_address: input.email,
       phone_number: input.phone,
+      ...(input.note && { note: input.note.slice(0, 500) }),
     }),
   });
   return created.customer.id as string;

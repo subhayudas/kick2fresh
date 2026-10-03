@@ -1,142 +1,82 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 import s from "./Hero.module.css";
-import { ArrowRight, IconShield, Star } from "./Icons";
+import { ArrowRight, Check, Star } from "./Icons";
 import { useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
-import Reveal from "./Reveal";
+import ContactLinks from "./ContactLinks";
 
+/* Above the fold on a phone: promise, price, one primary button, proof that it
+   works (real before/after) - no video, no entrance animation, so the LCP image
+   and the CTA are painted immediately. */
 export default function Hero() {
   const { openBooking } = useBooking();
   const { t } = useLocale();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoReady, setVideoReady] = useState(false);
-
-  /* The loop only loads once the hero is on screen and motion is welcome. */
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          v.load();
-          v.play().catch(() => {});
-          io.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
 
   return (
     <section className={s.hero} id="top">
-      {/* ---------- Right-side background: the sneaker loop, blended into the ivory ---------- */}
-      <div className={s.media} aria-hidden>
-        <Image
-          src="/media/hero-loop-poster-detail.jpg"
-          alt=""
-          fill
-          priority
-          sizes="(max-width: 1060px) 78vw, 54vw"
-          className={s.mediaImage}
-        />
-        <video
-          ref={videoRef}
-          className={s.mediaVideo}
-          muted
-          loop
-          playsInline
-          preload="none"
-          poster="/media/hero-loop-poster-detail.jpg"
-          data-ready={videoReady}
-          onPlaying={() => setVideoReady(true)}
-        >
-          <source src="/media/hero-loop-detail.mp4" type="video/mp4" />
-        </video>
-      </div>
-
-      {/* ---------- Floating before/after result card ---------- */}
-      <div className={`${s.resultCard} card--float`} aria-hidden>
-        <span className={s.resultThumbs}>
-          <span className={s.resultThumb}>
-            <Image src="/paire-01-avant.jpg" alt="" width={92} height={92} />
-          </span>
-          <span className={s.resultThumb}>
-            <Image src="/paire-01-apres.jpg" alt="" width={92} height={92} />
-          </span>
-        </span>
-        <span className={s.resultLabel}>
-          {t.hero.realResult}
-          <span>{t.hero.beforeAfterLabel}</span>
-        </span>
-      </div>
-
-      <div className="shell-wide">
-        {/* ---------- Left: editorial copy ---------- */}
+      <div className={`shell ${s.grid}`}>
         <div className={s.copy}>
-          <Reveal>
-            <span className="eyebrow eyebrow--bare">
-              <span className={s.liveDot} aria-hidden />
-              {t.hero.eyebrow}
+          <p className={s.rating}>
+            <span className={s.stars} aria-hidden>
+              {[0, 1, 2, 3, 4].map((n) => <Star key={n} size={13} />)}
             </span>
-          </Reveal>
+            {t.hero.eyebrow}
+          </p>
 
-          <Reveal delay={80}>
-            <h1 className={s.headline}>{t.hero.headline}</h1>
-          </Reveal>
+          <h1 className={s.headline}>{t.hero.headline}</h1>
+          <p className={s.sub}>{t.hero.tagline}</p>
 
-          <Reveal delay={160}>
-            <p className={s.sub}>{t.hero.tagline}</p>
-          </Reveal>
+          <div className={s.actions}>
+            <button
+              type="button"
+              className="btn btn--blue btn--lg btn--block"
+              onClick={() => openBooking({ source: "hero" })}
+            >
+              {t.hero.ctaPrimary}
+              <ArrowRight className="btn-arrow" size={16} />
+            </button>
+            <ContactLinks location="hero" />
+          </div>
 
-          <Reveal delay={220}>
-            <div className={s.badges}>
-              <span className={s.badge}>
-                <IconShield size={14} />
-                {t.hero.badge1}
-              </span>
-              <span className={s.badge}>
-                <IconShield size={14} />
-                {t.hero.badge2}
-              </span>
-              <span className={s.badge}>
-                <Star size={13} />
-                {t.hero.badge3}
-              </span>
-            </div>
-          </Reveal>
-
-          <Reveal delay={280}>
-            <div className={s.actions}>
-              <button
-                type="button"
-                className="btn btn--blue btn--lg"
-                onClick={() => openBooking()}
-              >
-                {t.hero.ctaPrimary}
-                <ArrowRight className="btn-arrow" size={15} />
-              </button>
-              <a href="#results" className="btn btn--bare">
-                {t.hero.ctaSecondary}
-                <ArrowRight className="btn-arrow" size={14} />
-                <span className="btn-underline" aria-hidden />
-              </a>
-            </div>
-          </Reveal>
-
-          <Reveal delay={340}>
-            <div className={s.cue}>
-              <span className={s.cueRail} aria-hidden />
-              {t.hero.scrollCue}
-            </div>
-          </Reveal>
+          <ul className={s.points}>
+            {[t.hero.point1, t.hero.point2, t.hero.point3].map((p) => (
+              <li key={p}>
+                <Check size={14} />
+                {p}
+              </li>
+            ))}
+          </ul>
         </div>
+
+        <figure className={s.proof}>
+          <div className={s.pair}>
+            <div className={s.shot}>
+              <Image
+                src="/paire-01-avant.jpg"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 900px) 48vw, 330px"
+                className={s.img}
+              />
+              <span className={s.tag}>{t.hero.before}</span>
+            </div>
+            <div className={s.shot}>
+              <Image
+                src="/paire-01-apres.jpg"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 900px) 48vw, 330px"
+                className={s.img}
+              />
+              <span className={`${s.tag} ${s.tagAfter}`}>{t.hero.after}</span>
+            </div>
+          </div>
+          <figcaption className={s.caption}>{t.hero.realResult}</figcaption>
+        </figure>
       </div>
     </section>
   );

@@ -73,16 +73,51 @@ Nothing here fabricates customers, partners, addresses or bookings.
 
 ## Booking flow
 
-Two steps, by design, the previous four-step quote funnel was the main source
-of friction:
+One booking sheet (`src/components/Booking.tsx`) that **every** CTA opens: hero,
+sticky bar, nav, pricing cards, reviews, final CTA, footer. It is full-screen on
+phones, can be deep-linked (`/#book` or `/?book=1` lands with it open - point ad
+URLs here), and the phone's Back button closes it.
 
-1. **Choose service**: three tiers with prices on screen, plus add-ons. A
-   running total updates live.
-2. **Your details**: name, email, phone, preferred date/time, number of pairs,
-   notes. The total stays visible.
+1. **Service**: pairs (1-6, or 7+ for a custom quote), tier, add-ons. Total always visible.
+2. **Contact**: name, mobile, email. **The lead is captured here**, before a time is
+   chosen (`/api/lead`), so abandoned bookings are still follow-up-able leads and
+   Meta/Google get a conversion signal.
+3. **Time**: calendar + hourly slots from Square, confirm.
 
-Selection state lives in `BookingProvider` and is shared with the pricing
-section, so toggling an add-on in either place updates both.
+7+ pairs: service -> contact + pickup preference -> quote request (also via `/api/lead`).
+
+Add-ons and tier apply to every pair (one choice instead of one screen per pair).
+State lives in `BookingProvider`.
+
+## Conversion setup (do this once, in this order)
+
+Everything below is wired in code; it only needs env vars (see `.env.example`) and
+the matching conversion actions in each ad platform.
+
+| Event | When | Meta | Google Ads | GA4 |
+|---|---|---|---|---|
+| Booking sheet opened | any CTA | `ViewContent` | - | `booking_opened`, `cta_click` (with `source`) |
+| Service chosen | step 1 -> 2 | `InitiateCheckout` | - | `begin_checkout` |
+| **Lead** | contact submitted | `Lead` (pixel + CAPI, same `event_id`) | `LEAD_LABEL` conversion | `generate_lead` |
+| Call / text tap | contact buttons | `Contact` | - | `contact_click` |
+| **Booking confirmed** | Square accepts | `Schedule` (pixel + CAPI) | `BOOKING_LABEL` conversion | `booking_confirmed` |
+
+* **Optimise campaigns for `Lead`, not `Schedule`.** Meta needs ~50 optimisation
+  events per ad set per week to leave the learning phase; confirmed bookings alone are
+  too rare. Use `Schedule` as the value/quality signal and report on it.
+* **Google Ads:** make Lead a *Secondary* goal and Booking the *Primary* goal, or
+  start Smart Bidding on Lead until booking volume is high enough.
+* **Click IDs and UTMs** (`gclid`, `gbraid`, `wbraid`, `fbclid`, `utm_*`) are captured on
+  landing (`src/lib/attribution.ts`), stored, and sent with the lead and booking (also
+  written into the Square booking's seller note as `Source: ...`). Meta's `_fbp`/`_fbc`
+  cookies go to the Conversions API for better match quality. Enhanced conversions
+  (hashed email/phone) are sent with the Google Ads conversions.
+* Use UTM-tagged ad URLs, e.g. `https://kicks2fresh.ca/?utm_source=facebook&utm_medium=paid&utm_campaign=...#book`.
+* **Call / Text / WhatsApp:** set `NEXT_PUBLIC_CONTACT_PHONE` (and optionally
+  `NEXT_PUBLIC_CONTACT_WHATSAPP`). Buttons only render when set.
+* **Lead delivery:** `/api/lead` writes the lead to the server log, creates a Square
+  customer with the request in its note (when Square is configured), and POSTs it to
+  `LEAD_WEBHOOK_URL` if set. Set the webhook so leads reach you in Slack/Sheets/CRM.
 
 ## Google Ads conversion tracking
 
@@ -108,6 +143,24 @@ nothing. The code is in `src/lib/googleAds.ts` (helper), `src/app/layout.tsx`
 
 Note: the tag sets cookies, so if visitors from Quebec/EU need consent (Law 25, GDPR),
 add a consent banner and gate the tag on it.
+
+## Owner SMS alerts
+
+Square sends the *customer* reminders but never tells the shop a booking came
+in, so `/api/book` texts the owner through Twilio right after Square confirms
+the booking (name, date and time, pair count, total, phone). 7+ pair quote
+requests from `/api/lead` are texted too; ordinary booking leads are not, to
+avoid a text for every abandoned form. A failed text is logged and never fails
+the booking. The code is in `src/lib/sms.ts`.
+
+1. Create a Twilio account and buy (or verify) a number that can send SMS to
+   Canada. Note the Account SID and Auth Token from the Console dashboard.
+2. Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` (e.g.
+   `+15145550100`) and `OWNER_NOTIFY_PHONE` (who receives the alert, commas
+   for several) in the hosting provider's environment variables. Server-only,
+   no `NEXT_PUBLIC_` prefix. Redeploy after changing them.
+3. Check it: make a test booking and watch for the text; failures show in the
+   function logs as `Owner SMS failed`.
 
 ## Meta Pixel tracking
 

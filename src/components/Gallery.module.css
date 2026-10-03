@@ -237,9 +237,23 @@
 
 .ctaRow { margin-top: clamp(24px, 3vw, 36px); display: flex; justify-content: center; }
 
+/* Phones: the extra results are a swipeable rail, not a 12-card vertical stack. */
 @media (max-width: 780px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 480px) {
-  .grid { grid-template-columns: 1fr; }
+  .grid {
+    display: flex;
+    gap: 12px;
+    margin-inline: calc(var(--gut) * -1);
+    padding: 4px var(--gut) 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gut);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .grid::-webkit-scrollbar { display: none; }
+  .grid > * { flex: 0 0 min(80vw, 340px); scroll-snap-align: start; }
+  .hint { display: none; }
+  .headRight .btn { display: none; } /* the CTA under the results is enough */
+  .ctaRow .btn { width: 100%; }
+  .tileTag { font-size: 10px; }
 }

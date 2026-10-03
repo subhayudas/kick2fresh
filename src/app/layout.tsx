@@ -5,6 +5,7 @@ import { GOOGLE_ADS_ID } from "@/lib/googleAds";
 import { META_PIXEL_ID } from "@/lib/metaPixel";
 import { GA4_MEASUREMENT_ID } from "@/lib/analytics";
 import { CLARITY_PROJECT_ID } from "@/lib/clarity";
+import AttributionCapture from "@/components/AttributionCapture";
 import "./globals.css";
 
 const sans = Inter({
@@ -54,6 +55,7 @@ export const viewport: Viewport = {
   themeColor: "#EEF2FA",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 /* Structured data. Only facts the business has actually established:
@@ -86,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a className="skip-link" href="#main">Skip to content</a>
         {children}
+        <AttributionCapture />
         {(GOOGLE_ADS_ID || GA4_MEASUREMENT_ID) && (
           <>
             <Script
@@ -97,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
 gtag('js', new Date());
-${GOOGLE_ADS_ID ? `gtag('config', '${GOOGLE_ADS_ID}');` : ""}
+${GOOGLE_ADS_ID ? `gtag('config', '${GOOGLE_ADS_ID}', { allow_enhanced_conversions: true });` : ""}
 ${GA4_MEASUREMENT_ID ? `gtag('config', '${GA4_MEASUREMENT_ID}');` : ""}`}
             </Script>
           </>

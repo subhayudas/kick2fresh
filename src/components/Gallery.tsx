@@ -62,7 +62,7 @@ export default function Gallery() {
 
           <Reveal className={s.headRight} delay={90}>
             <p className="lede">{t.gallery.subtitle}</p>
-            <button type="button" className="btn btn--ghost" onClick={() => openBooking("essential")}>
+            <button type="button" className="btn btn--ghost" onClick={() => openBooking({ tier: "essential", source: "gallery" })}>
               {t.gallery.cta}
               <ArrowRight className="btn-arrow" size={14} />
             </button>
@@ -164,7 +164,7 @@ export default function Gallery() {
         </Reveal>
 
         <div className={s.ctaRow}>
-          <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking()}>
+          <button type="button" className="btn btn--blue btn--lg" onClick={() => openBooking({ source: "gallery_cta" })}>
             {t.gallery.cta}
             <ArrowRight className="btn-arrow" size={15} />
           </button>

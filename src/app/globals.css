@@ -72,7 +72,8 @@
   /* --- Rhythm ------------------------------------------------------------ */
   --shell: 1320px;
   --gut: clamp(20px, 4vw, 48px);
-  --section-y: clamp(72px, 9vw, 148px);
+  --section-y: clamp(52px, 9vw, 148px);
+  --bar-h: 76px; /* sticky mobile CTA bar */
 
   /* --- Motion ------------------------------------------------------------ */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -222,10 +223,12 @@ section { position: relative; }
   align-items: center;
   gap: 10px;
   padding: 12px 20px;
+  min-height: 48px;
+  justify-content: center;
   border: none;
   border-radius: var(--r-pill);
-  font-size: 13.5px;
-  font-weight: 550;
+  font-size: 15px;
+  font-weight: 600;
   letter-spacing: -0.012em;
   cursor: pointer;
   white-space: nowrap;
@@ -334,8 +337,9 @@ section { position: relative; }
 .btn--onDark:hover { transform: translateY(-1.5px); background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1)); }
 .btn--onDark:active { transform: translateY(1px); }
 
-.btn--lg { padding: 15px 26px; font-size: 14.5px; }
-.btn--sm { padding: 9px 15px; font-size: 12.5px; }
+.btn--lg { padding: 15px 26px; font-size: 16px; min-height: 56px; }
+.btn--sm { padding: 9px 15px; font-size: 13px; min-height: 44px; }
+.btn--block { width: 100%; }
 
 .btn-arrow { transition: transform 0.3s var(--ease); }
 .btn:hover .btn-arrow { transform: translateX(3px); }
@@ -394,8 +398,8 @@ section { position: relative; }
 
 .reveal {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+  transform: translateY(14px);
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
   transition-delay: var(--rd, 0ms);
 }
 .reveal.is-in { opacity: 1; transform: none; }
@@ -433,3 +437,10 @@ section { position: relative; }
 .skip-link:focus { top: 16px; }
 
 .noscroll { overflow: hidden; }
+
+/* Mobile: leave room so the sticky CTA bar never covers the footer, and kill
+   tap flash / double-tap zoom delay on every interactive element. */
+a, button, summary, label, input, select, textarea { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+@media (max-width: 720px) {
+  body { padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px)); }
+}

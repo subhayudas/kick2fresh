@@ -177,8 +177,12 @@
   .bar { grid-template-columns: 1fr auto; padding-left: 16px; }
 }
 
-@media (max-width: 480px) {
-  .langToggle span:not([data-on="true"]) { display: none; }
+@media (max-width: 720px) {
+  .navBook { display: none; } /* the sticky bottom bar owns the CTA on phones */
+  .wrap { padding-top: 8px; }
+  .bar { background: rgba(247, 250, 253, 0.92); box-shadow: 0 0 0 1px rgba(18, 20, 31, 0.07), 0 8px 24px -14px rgba(18, 20, 31, 0.3); }
+  .langToggle { min-height: 44px; }
+  .burger { width: 44px; height: 44px; }
 }
 
 @media (min-width: 1001px) { .sheet { display: none; } }

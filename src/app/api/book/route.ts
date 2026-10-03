@@ -9,7 +9,8 @@ import {
   type PairSelection,
 } from "@/lib/square";
 import { BUSINESS_TIMEZONE, zonedHourToUtcIso } from "@/lib/quebecTime";
-import { sendBookingScheduleCapiEvent } from "@/lib/metaCapi";
+import { sendMetaCapiEvent } from "@/lib/metaCapi";
+import { notifyOwner } from "@/lib/sms";
 
 const OPEN_HOUR = Number(process.env.BUSINESS_OPEN_HOUR ?? 9);
 const CLOSE_HOUR = Number(process.env.BUSINESS_CLOSE_HOUR ?? 18);
@@ -23,6 +24,8 @@ type BookRequest = {
   time: string; // "HH:00", Quebec local
   pairs: PairSelection[];
   total: number;
+  eventId?: string;
+  attribution?: Record<string, string | undefined>;
 };
 
 function isValid(body: Partial<BookRequest>): body is BookRequest {
@@ -74,7 +77,13 @@ export async function POST(req: NextRequest) {
       (p) =>
         `Pair ${p.pairNum}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}, $${p.subtotal} CAD`,
     );
-    const sellerNote = [...noteLines, `Total: $${body.total} CAD`].join("\n");
+    const src = Object.entries(body.attribution ?? {})
+      .filter(([k, v]) => v && k !== "fbp" && k !== "fbc")
+      .map(([k, v]) => `${k}=${String(v).slice(0, 80)}`)
+      .join(" ");
+    const sellerNote = [...noteLines, `Total: $${body.total} CAD`, src && `Source: ${src}`]
+      .filter(Boolean)
+      .join("\n");
     const customerNote = body.notes?.trim() || undefined;
 
     const seed = `${body.date}|${body.time}|${body.email.trim().toLowerCase()}`;
@@ -94,15 +103,28 @@ export async function POST(req: NextRequest) {
     });
 
     // Fire-and-forget: a Meta reporting hiccup should never fail a real booking.
-    sendBookingScheduleCapiEvent({
+    sendMetaCapiEvent({
+      eventName: "Schedule",
       eventId: booking.id,
       value: body.total,
       email: body.email,
       phone: body.phone,
+      name: body.name,
+      fbp: body.attribution?.fbp,
+      fbc: body.attribution?.fbc,
       clientIp: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? req.headers.get("x-nf-client-connection-ip") ?? undefined,
       userAgent: req.headers.get("user-agent") ?? undefined,
       sourceUrl: req.headers.get("referer") ?? req.nextUrl.origin,
     }).catch((err) => console.error("Meta Conversions API event failed", err));
+
+    await notifyOwner(
+      [
+        `New booking: ${body.name.trim()}`,
+        `${body.date} at ${body.time}`,
+        `${body.pairs.length} pair${body.pairs.length === 1 ? "" : "s"}, $${body.total} CAD`,
+        body.phone.trim(),
+      ].join("\n"),
+    );
 
     return NextResponse.json({ ok: true, bookingId: booking.id, orderId: order.id });
   } catch (err) {

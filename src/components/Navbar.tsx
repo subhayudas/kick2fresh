@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import s from "./Navbar.module.css";
+
 import { useLocalizedNav } from "@/lib/useLocalizedContent";
 import { ArrowRight, ArrowUpRight } from "./Icons";
 import { useBooking } from "./BookingProvider";
@@ -36,7 +37,7 @@ export default function Navbar() {
       <header className={s.wrap} data-stuck={stuck}>
         <div className="shell-wide">
           <div className={s.bar}>
-            <a href="/#top" className={s.logo} aria-label="Kicks2Fresh home">
+            <a href="/" className={s.logo} aria-label="Kicks2Fresh home">
               <img src="/LOGO-Kicks2Fresh.png" alt="Kicks2Fresh" className={s.mark} />
             </a>
 
@@ -53,7 +54,7 @@ export default function Navbar() {
                 type="button"
                 className={s.langToggle}
                 onClick={toggleLocale}
-                aria-label="Toggle language"
+                aria-label="English / Français"
               >
                 <span data-on={locale === "en"}>EN</span>
                 <span aria-hidden>/</span>
@@ -61,8 +62,8 @@ export default function Navbar() {
               </button>
               <button
                 type="button"
-                className="btn btn--solid btn--sm"
-                onClick={() => openBooking()}
+                className={`btn btn--solid btn--sm ${s.navBook}`}
+                onClick={() => openBooking({ source: "nav" })}
               >
                 {t.nav.bookNow}
                 <ArrowRight className="btn-arrow" size={14} />
@@ -121,7 +122,7 @@ export default function Navbar() {
               tabIndex={menu ? 0 : -1}
               onClick={() => {
                 setMenu(false);
-                openBooking();
+                openBooking({ source: "menu" });
               }}
             >
               {t.nav.bookNow}

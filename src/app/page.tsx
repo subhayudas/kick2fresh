@@ -1,36 +1,39 @@
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { BookingProvider } from "@/components/BookingProvider";
-import LanguagePicker from "@/components/LanguagePicker";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ProofStrip from "@/components/ProofStrip";
-import ServiceSelection from "@/components/ServiceSelection";
 import Gallery from "@/components/Gallery";
+import ServiceSelection from "@/components/ServiceSelection";
 import TrustStack from "@/components/TrustStack";
 import Process from "@/components/Process";
 import Faq from "@/components/Faq";
+import FinalCta from "@/components/FinalCta";
 import Booking from "@/components/Booking";
 import Footer from "@/components/Footer";
 import StickyMobileCta from "@/components/StickyMobileCta";
 
+/* Order follows the ad-click decision path: promise + proof (hero, numbers,
+   real results) -> price -> reviews -> how it works -> objections (FAQ) -> CTA.
+   Every CTA opens the same booking sheet. */
 export default function Page() {
   return (
     <LocaleProvider>
-      <LanguagePicker />
       <BookingProvider>
         <Navbar />
         <main id="main">
           <Hero />
           <ProofStrip />
-          <ServiceSelection />
           <Gallery />
+          <ServiceSelection />
           <TrustStack />
           <Process />
           <Faq />
-          <Booking />
+          <FinalCta />
         </main>
         <Footer />
         <StickyMobileCta />
+        <Booking />
       </BookingProvider>
     </LocaleProvider>
   );

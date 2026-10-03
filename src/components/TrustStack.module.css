@@ -1,123 +1,72 @@
-.sec { padding-block: var(--section-y); }
+.sec { padding-block: var(--section-y); overflow: clip; }
 
-.head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
-  gap: clamp(20px, 4vw, 56px);
-  align-items: end;
-  margin-bottom: clamp(30px, 3.6vw, 48px);
-}
-.title { margin-top: 18px; }
-.title em { font-style: italic; font-weight: 400; }
-.headRight { padding-bottom: 6px; }
-
-/* --- Score block ----------------------------------------------------------- */
+.head { display: grid; gap: 12px; margin-bottom: 22px; max-width: 56ch; }
+.title { margin-top: 4px; }
 
 .score {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: clamp(28px, 3vw, 44px);
-  padding: 18px 22px;
-  border-radius: var(--r-lg);
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 13px;
+  color: var(--ink-muted);
 }
-.scoreNum { font-size: clamp(2.2rem, 3.4vw, 2.8rem); font-weight: 550; letter-spacing: -0.04em; line-height: 1; }
-.scoreRight { display: flex; flex-direction: column; gap: 5px; }
-.stars { display: inline-flex; gap: 3px; color: var(--blue); }
-.scoreMeta { font-size: 12.5px; color: var(--ink-muted); }
+.score b { font-size: 1.6rem; font-weight: 650; letter-spacing: -0.03em; color: var(--ink); }
+.stars { display: inline-flex; gap: 1px; color: #F2A81D; }
 
-/* --- Review cards ------------------------------------------------------- */
-
-.reviews {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(12px, 1.6vw, 20px);
-  margin-bottom: clamp(20px, 2.4vw, 32px);
-}
-.reviewCard { padding: 20px 22px; }
-.reviewTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.placeholder {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 8px; border-radius: 6px;
-  background: rgba(18, 20, 31,0.05);
-  box-shadow: inset 0 0 0 1px var(--hairline-2);
-  font-family: var(--f-mono);
-  font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase;
-  color: var(--ink-faint);
-}
-.reviewQuote {
-  margin-top: 14px;
-  font-size: 13.5px;
-  line-height: 1.55;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  min-height: 4.6em;
-}
-.reviewFoot {
-  margin-top: 16px; padding-top: 14px;
-  box-shadow: inset 0 1px 0 var(--hairline-2);
-  display: flex; align-items: center; gap: 10px;
-}
-.avatar {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(160deg, #C7D0E3, #A3AEC7);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(18, 20, 31,0.15);
-  display: grid; place-items: center;
-  font-size: 10px; font-weight: 700; color: rgba(18, 20, 31,0.5);
-  flex: none;
-}
-.who { font-size: 12.5px; font-weight: 550; letter-spacing: -0.015em; }
-.meta { display: block; font-size: 10.5px; color: var(--ink-muted); margin-top: 1px; }
-
-.viewAllRow { display: flex; justify-content: center; margin-bottom: clamp(40px, 4.6vw, 64px); }
-
-/* --- Materials grid -------------------------------------------------------- */
-
-.materialsIntro { margin-bottom: clamp(20px, 2.4vw, 30px); max-width: 52ch; }
-.materialsTitle { font-size: clamp(1.3rem, 2vw, 1.7rem); font-weight: 500; letter-spacing: -0.035em; }
-.materialsCopy { margin-top: 10px; font-size: 13px; line-height: 1.55; color: var(--ink-muted); }
-
-.materials {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(10px, 1.4vw, 16px);
-}
-
-.mTile {
-  position: relative;
-  border-radius: var(--r-md);
-  overflow: hidden;
-  aspect-ratio: 1 / 1;
+/* Swipeable row, bleeds to the screen edge so it reads as scrollable. */
+.rail {
   display: flex;
-  align-items: flex-end;
+  gap: 12px;
+  padding: 4px var(--gut) 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gut);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.mTile--photo img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%; object-fit: cover;
+.rail::-webkit-scrollbar { display: none; }
+
+.reviewCard {
+  flex: 0 0 min(84vw, 340px);
+  scroll-snap-align: start;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  margin: 0;
+  padding: 20px;
 }
-.mTile--photo::after {
-  content: "";
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(10, 11, 18,0) 40%, rgba(10, 11, 18,0.75) 100%);
-}
-.mTile--plain {
+.reviewQuote { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+.who { display: grid; font-size: 14px; font-weight: 650; }
+.who span { font-size: 12.5px; font-weight: 400; color: var(--ink-faint); }
+
+.viewAll {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 14px;
-  background: linear-gradient(180deg, var(--paper-lift), var(--paper));
+  gap: 8px;
+  min-height: 48px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue);
 }
-.mBody { position: relative; z-index: 1; padding: 14px; }
-.mTile--plain .mBody { padding: 0; }
-.mLabel { font-size: 13px; font-weight: 550; letter-spacing: -0.02em; color: #F5F8FF; }
-.mTile--plain .mLabel { color: var(--ink); }
-.mCopy { margin-top: 3px; font-size: 10.5px; line-height: 1.35; color: rgba(245, 248, 255,0.75); }
-.mTile--plain .mCopy { color: var(--ink-muted); }
 
-.ctaRow { margin-top: clamp(28px, 3.2vw, 44px); display: flex; justify-content: center; }
+.materialsTitle { margin-top: 18px; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip {
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  background: var(--paper-lift);
+  box-shadow: 0 0 0 1px var(--hairline), var(--lift-1);
+  font-size: 13.5px;
+  font-weight: 550;
+}
 
-@media (max-width: 940px) {
-  .head { grid-template-columns: 1fr; gap: 18px; }
-  .reviews { grid-template-columns: 1fr; }
-  .materials { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cta { margin-top: 28px; }
+
+@media (min-width: 900px) {
+  .rail {
+    padding-inline: max(var(--gut), calc((100vw - var(--shell)) / 2 + var(--gut)));
+  }
+  .reviewCard { flex-basis: 360px; }
+  .cta { width: auto; }
 }

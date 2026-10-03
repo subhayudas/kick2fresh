@@ -1,218 +1,105 @@
+/* Mobile-first: single column, thumb-reachable CTA, real proof in the first screen. */
 .hero {
-  position: relative;
-  padding-top: clamp(112px, 13vw, 156px);
-  padding-bottom: clamp(48px, 7vw, 96px);
-  overflow: clip;
+  padding-top: calc(76px + 12px);
+  padding-bottom: 28px;
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(37, 104, 232, 0.09), transparent 70%),
+    transparent;
 }
 
-/* --- Right-side background: the sneaker loop fills the full height, blended in --- */
+.grid { display: grid; gap: 22px; }
 
-.media {
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: clamp(320px, 56vw, 800px);
-  z-index: 0;
-  /* Alpha-fade the edges to true transparency, lets the page show through
-     underneath instead of painting a colour over it, so it always matches
-     regardless of what's behind it (no banding, no colour mismatch). */
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent 0%, #000 32%),
-    linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
-  -webkit-mask-composite: source-in, source-over;
-  mask-image:
-    linear-gradient(90deg, transparent 0%, #000 32%),
-    linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
-  mask-composite: intersect;
-}
-.mediaImage, .mediaVideo {
-  position: absolute;
-  inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 50% 42%;
-}
-.mediaVideo {
-  opacity: 0;
-  transition: opacity 1.1s var(--ease);
-}
-.mediaVideo[data-ready="true"] { opacity: 1; }
+.copy { display: flex; flex-direction: column; gap: 14px; }
 
-/* --- Left column --------------------------------------------------------- */
-
-.copy {
-  position: relative;
-  z-index: 1;
-  padding-top: clamp(8px, 3vw, 42px);
-  max-width: 34rem;
-}
-
-.headline {
-  margin-top: 20px;
-  font-size: clamp(2.65rem, 5.6vw, 4.35rem);
-  font-weight: 500;
-  letter-spacing: -0.045em;
-  line-height: 0.96;
-}
-.headline .line2 { display: block; }
-.headline em {
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-}
-.headline .blueDot { color: var(--blue); }
-
-.sub {
-  margin-top: 22px;
-  max-width: 38ch;
-  font-size: clamp(0.95rem, 1.15vw, 1.0625rem);
-  line-height: 1.62;
+.rating {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 12.5px;
+  font-weight: 600;
   color: var(--ink-muted);
 }
+.stars { display: inline-flex; gap: 1px; color: #F2A81D; }
 
-.liveDot {
-  position: relative;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #3D9A5C;
-  box-shadow: 0 0 0 3px rgba(61, 154, 92, 0.16);
+.headline {
+  font-size: clamp(2.05rem, 9.2vw, 3.6rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.sub {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  max-width: 42ch;
+}
+
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+
+.points {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--ink-soft);
+}
+.points li { display: flex; align-items: center; gap: 9px; }
+.points svg {
   flex: none;
-}
-.liveDot::after {
-  content: "";
-  position: absolute; inset: -3px;
+  width: 20px; height: 20px;
+  padding: 4px;
   border-radius: 50%;
-  border: 1px solid rgba(61, 154, 92, 0.4);
-  animation: pulse 2.2s var(--ease-soft) infinite;
-}
-@keyframes pulse {
-  0% { transform: scale(0.7); opacity: 0.8; }
-  100% { transform: scale(1.8); opacity: 0; }
+  background: var(--blue-wash);
+  color: var(--blue);
 }
 
-.badges {
-  margin-top: 30px;
-  display: flex;
-  flex-wrap: wrap;
+/* --- Before / after ------------------------------------------------------ */
+.proof { margin: 0; }
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border-radius: var(--r-pill);
-  background: linear-gradient(180deg, var(--paper-lift), var(--paper));
-  box-shadow: 0 0 0 1px var(--hairline), var(--lift-1);
-  font-size: 12px;
-  font-weight: 550;
-  color: var(--ink);
-  white-space: nowrap;
+.shot {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--ivory-deep);
+  box-shadow: 0 0 0 1px var(--hairline-2), var(--lift-3);
 }
-.badge svg { color: var(--blue); flex: none; }
-
-.actions {
-  margin-top: 30px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-/* --- Floating result card, over the media panel --------------------------- */
-
-.resultCard {
+.img { object-fit: cover; object-position: 40% 50%; }
+.tag {
   position: absolute;
-  right: clamp(16px, 4vw, 56px);
-  bottom: clamp(28px, 6vw, 64px);
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border-radius: var(--r-lg);
-}
-.resultThumbs {
-  display: flex;
-  align-items: center;
-}
-.resultThumb {
-  width: 46px; height: 46px;
-  border-radius: var(--r-xs);
-  overflow: hidden;
-  box-shadow: 0 0 0 2px var(--paper-lift), var(--lift-1);
-  position: relative;
-}
-.resultThumb + .resultThumb { margin-left: -12px; }
-.resultThumb img { width: 100%; height: 100%; object-fit: cover; }
-.resultLabel {
-  padding-right: 6px;
+  left: 10px; bottom: 10px;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  background: rgba(14, 23, 48, 0.78);
+  color: #fff;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
-.resultLabel span { display: block; color: var(--ink-muted); font-weight: 500; font-size: 10.5px; }
-
-@media (max-width: 640px) {
-  .resultCard { display: none; }
-}
-
-/* --- Scroll cue ---------------------------------------------------------- */
-
-.cue {
-  margin-top: 44px;
-  display: inline-flex; align-items: center; gap: 10px;
+.tagAfter { background: var(--blue); }
+.caption {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
   color: var(--ink-faint);
-  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-}
-.cueRail {
-  position: relative;
-  width: 44px; height: 1px;
-  background: var(--hairline);
-  overflow: hidden;
-}
-.cueRail::after {
-  content: "";
-  position: absolute; inset: 0;
-  background: var(--blue);
-  animation: sweep 2.6s var(--ease-soft) infinite;
-}
-@keyframes sweep {
-  0%   { transform: translateX(-100%); }
-  60%  { transform: translateX(100%); }
-  100% { transform: translateX(100%); }
 }
 
-/* --- Responsive ---------------------------------------------------------- */
-
-@media (max-width: 1060px) {
-  .copy { max-width: 60%; }
-  .media {
-    width: 62vw;
-    -webkit-mask-image:
-      linear-gradient(90deg, transparent 0%, #000 34%),
-      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
-    mask-image:
-      linear-gradient(90deg, transparent 0%, #000 34%),
-      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
-  }
-  .cue { display: none; }
-}
-
-@media (max-width: 640px) {
-  .hero { padding-top: 104px; }
-  .headline { font-size: clamp(2.35rem, 11vw, 3rem); }
-  .media {
-    width: 58vw;
-    -webkit-mask-image:
-      linear-gradient(90deg, transparent 0%, #000 46%),
-      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
-    mask-image:
-      linear-gradient(90deg, transparent 0%, #000 46%),
-      linear-gradient(180deg, transparent 0%, #000 14%, #000 88%, transparent 100%);
-  }
-  .copy { max-width: 66vw; }
-  .sub { max-width: 30ch; }
-  .actions .btn { flex: 1 1 auto; justify-content: center; }
+/* --- Wider screens ------------------------------------------------------- */
+@media (min-width: 900px) {
+  .hero { padding-top: 140px; padding-bottom: 64px; }
+  .grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+  .actions { flex-direction: row; align-items: center; flex-wrap: wrap; }
+  .actions :global(.btn--block) { width: auto; }
+  .shot { aspect-ratio: 3 / 4; }
 }
