@@ -61,7 +61,7 @@ export default function ServiceSelection() {
                   className={`btn btn--block ${tr.featured ? "btn--blue" : "btn--solid"}`}
                   onClick={() => openBooking({ tier: tr.id, source: `tier_${tr.id}` })}
                 >
-                  {t.services.cta}
+                  {tr.cta}
                   <ArrowRight className="btn-arrow" size={15} />
                 </button>
               </div>

@@ -6,6 +6,7 @@ import {
   findOrCreateCustomer,
   isSlotStillAvailable,
   isSquareConfigured,
+  pairTitle,
   type PairSelection,
 } from "@/lib/square";
 import { BUSINESS_TIMEZONE, zonedHourToUtcIso } from "@/lib/quebecTime";
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     const noteLines = body.pairs.map(
       (p) =>
-        `Pair ${p.pairNum}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}, $${p.subtotal} CAD`,
+        `${pairTitle(p)}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}, $${p.subtotal} CAD`,
     );
     const src = Object.entries(body.attribution ?? {})
       .filter(([k, v]) => v && k !== "fbp" && k !== "fbc")

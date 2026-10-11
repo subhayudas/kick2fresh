@@ -18,7 +18,9 @@ export function useLocalizedTiers() {
       TIERS.map((t) => ({
         ...t,
         name: pick(t.name, locale),
+        shortName: pick(t.shortName, locale),
         tagline: pick(t.tagline, locale),
+        cta: pick(t.cta, locale),
         bestFor: pick(t.bestFor, locale),
         blurb: pick(t.blurb, locale),
         idealFor: pick(t.idealFor, locale),

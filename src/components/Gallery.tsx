@@ -63,7 +63,7 @@ export default function Gallery() {
           <Reveal className={s.headRight} delay={90}>
             <p className="lede">{t.gallery.subtitle}</p>
             <button type="button" className="btn btn--ghost" onClick={() => openBooking({ tier: "essential", source: "gallery" })}>
-              {t.gallery.cta}
+              {t.gallery.ctaPeek}
               <ArrowRight className="btn-arrow" size={14} />
             </button>
           </Reveal>

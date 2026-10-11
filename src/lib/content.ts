@@ -11,9 +11,13 @@ export type Tier = {
   id: "essential" | "premium" | "expert";
   index: string;
   name: Bi;
+  /** One word, for tight spots like the booking pair tabs. */
+  shortName: Bi;
   price: number;
   priceLabel: string;
   tagline: Bi;
+  /** First-person button label on the tier card, matched to who the tier is for. */
+  cta: Bi;
   bestFor: Bi;
   blurb: Bi;
   idealFor: Bi;
@@ -28,9 +32,11 @@ export const TIERS: Tier[] = [
     id: "essential",
     index: "01",
     name: { en: "Essential Clean", fr: "Nettoyage Essentiel" },
+    shortName: { en: "Essential", fr: "Essentiel" },
     price: 65,
     priceLabel: "$65",
     tagline: { en: "Perfect for regular maintenance.", fr: "Parfait pour l'entretien régulier." },
+    cta: { en: "Freshen up my daily pair", fr: "Rafraîchir ma paire du quotidien" },
     bestFor: { en: "Best for everyday sneakers", fr: "Idéal pour les sneakers du quotidien" },
     blurb: {
       en: "A full reset for the pairs you actually wear. Uppers, midsoles, outsoles and laces, cleaned by hand and deodorised inside.",
@@ -55,9 +61,11 @@ export const TIERS: Tier[] = [
     id: "premium",
     index: "02",
     name: { en: "Premium Restoration", fr: "Restauration Premium" },
+    shortName: { en: "Premium", fr: "Premium" },
     price: 95,
     priceLabel: "$95",
     tagline: { en: "For your most valuable pairs.", fr: "Pour vos paires les plus précieuses." },
+    cta: { en: "Restore my favourite pair", fr: "Restaurer ma paire préférée" },
     bestFor: { en: "Best for designer and delicate sneakers", fr: "Idéal pour les sneakers de designer et délicats" },
     blurb: {
       en: "Everything in Essential, plus material-specific treatment for suede, nubuck and leather, targeted stain work and a protective finish.",
@@ -84,9 +92,11 @@ export const TIERS: Tier[] = [
     id: "expert",
     index: "03",
     name: { en: "Expert Restoration", fr: "Restauration Experte" },
+    shortName: { en: "Expert", fr: "Expert" },
     price: 150,
     priceLabel: "$150",
     tagline: { en: "Bring your shoes back to life.", fr: "Redonnez vie à vos chaussures." },
+    cta: { en: "Bring my pair back to life", fr: "Redonner vie à ma paire" },
     bestFor: { en: "Best for serious damage and restoration", fr: "Idéal pour les dommages sérieux et la restauration" },
     blurb: {
       en: "A bench job. We assess the pair, write a treatment plan, then repair, re-glue and re-dye using premium materials and techniques.",

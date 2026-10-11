@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     email,
     phone,
     notes: clip(raw?.notes, 1000),
-    summary: clip(raw?.summary, 600),
+    summary: clip(raw?.summary, 1500),
     total: typeof raw?.total === "number" ? raw.total : undefined,
     pairs: typeof raw?.pairs === "number" ? raw.pairs : undefined,
     attribution,

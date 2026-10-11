@@ -14,7 +14,7 @@ import Footer from "@/components/Footer";
 import StickyMobileCta from "@/components/StickyMobileCta";
 
 /* Order follows the ad-click decision path: promise + proof (hero, numbers,
-   real results) -> price -> reviews -> how it works -> objections (FAQ) -> CTA.
+   real results) -> reviews -> price -> how it works -> objections (FAQ) -> CTA.
    Every CTA opens the same booking sheet. */
 export default function Page() {
   return (
@@ -25,8 +25,8 @@ export default function Page() {
           <Hero />
           <ProofStrip />
           <Gallery />
-          <ServiceSelection />
           <TrustStack />
+          <ServiceSelection />
           <Process />
           <Faq />
           <FinalCta />

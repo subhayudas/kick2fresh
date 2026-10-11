@@ -4,79 +4,95 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { trackEvent } from "@/lib/analytics";
 
 const DEFAULT_TIER = "premium";
+/** 7+ is a custom quote; the stepper stops here (more goes in the notes). */
+export const MAX_PAIRS = 15;
+
+/** What one pair of shoes gets. Every pair is chosen independently. */
+export type PairChoice = { tier: string; addOns: string[]; nickname: string };
+
+const newPair = (tier = DEFAULT_TIER): PairChoice => ({ tier, addOns: [], nickname: "" });
 
 type Ctx = {
   /** The one booking flow every CTA on the site opens. */
   isOpen: boolean;
-  tier: string | null;
-  addOns: string[];
   pairs: number;
-  pairTiers: string[];
-  pairAddOns: string[][];
+  /** One entry per pair, always `pairs` long. */
+  pairChoices: PairChoice[];
   /** `source` = which CTA was tapped (hero, sticky, nav...), for GA4. */
   openBooking: (opts?: { tier?: string; addOn?: string; source?: string }) => void;
   closeBooking: () => void;
-  setTier: (id: string) => void;
-  /** Add-ons apply to every pair - one choice, not one screen per pair. */
-  toggleAddOn: (id: string) => void;
+  /** Grows with default pairs or trims from the end; existing pairs are untouched. */
   setPairs: (n: number) => void;
+  setPairTier: (index: number, id: string) => void;
+  togglePairAddOn: (index: number, id: string) => void;
+  setPairNickname: (index: number, nickname: string) => void;
+  /** Copies one pair's service + add-ons to every other pair (nicknames stay). */
+  applyToAllPairs: (index: number) => void;
 };
 
 const BookingCtx = createContext<Ctx | null>(null);
 
-/** Pairs beyond 6 ("7+") are a custom quote, so they share a single slot. */
-function groupSizeFor(pairs: number) {
-  return pairs <= 6 ? pairs : 1;
-}
-
-function resize<T>(prev: T[], pairs: number, make: () => T) {
-  const next = prev.slice(0, groupSizeFor(pairs));
-  while (next.length < groupSizeFor(pairs)) next.push(make());
-  return next;
-}
-
 export function BookingProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [tier, setTierState] = useState<string | null>(DEFAULT_TIER);
-  const [pairs, setPairsState] = useState(1);
-  const [pairTiers, setPairTiers] = useState<string[]>([DEFAULT_TIER]);
-  const [pairAddOns, setPairAddOns] = useState<string[][]>([[]]);
+  const [pairChoices, setPairChoices] = useState<PairChoice[]>([newPair()]);
+  const pairs = pairChoices.length;
 
-  const setTier = useCallback((id: string) => {
-    setTierState(id);
-    setPairTiers((prev) => prev.map(() => id));
+  const updatePair = useCallback((index: number, fn: (p: PairChoice) => PairChoice) => {
+    setPairChoices((prev) => prev.map((p, i) => (i === index ? fn(p) : p)));
   }, []);
 
-  const setPairs = useCallback(
-    (n: number) => {
-      setPairsState(n);
-      const fallback = tier ?? DEFAULT_TIER;
-      setPairTiers((prev) => resize(prev, n, () => prev[0] ?? fallback));
-      setPairAddOns((prev) => resize(prev, n, () => [...(prev[0] ?? [])]));
-    },
-    [tier],
-  );
-
-  const toggleAddOn = useCallback((id: string) => {
-    setPairAddOns((prev) => {
-      const on = (prev[0] ?? []).includes(id);
-      return prev.map((arr) => (on ? arr.filter((a) => a !== id) : arr.includes(id) ? arr : [...arr, id]));
+  const setPairs = useCallback((n: number) => {
+    const count = Math.min(MAX_PAIRS, Math.max(1, Math.round(n)));
+    setPairChoices((prev) => {
+      const next = prev.slice(0, count);
+      while (next.length < count) next.push(newPair());
+      return next;
     });
   }, []);
 
-  const openBooking = useCallback(
-    (opts?: { tier?: string; addOn?: string; source?: string }) => {
-      if (opts?.tier) setTier(opts.tier);
-      if (opts?.addOn) {
-        setPairAddOns((prev) => prev.map((arr) => (arr.includes(opts.addOn!) ? arr : [...arr, opts.addOn!])));
-      }
-      trackEvent("cta_click", { source: opts?.source ?? "unknown", tier: opts?.tier });
-      setIsOpen(true);
-      // A history entry means the phone's Back button closes the sheet instead of leaving the site.
-      if (window.location.hash !== "#book") window.history.pushState({ k2fBook: true }, "", "#book");
-    },
-    [setTier],
+  const setPairTier = useCallback(
+    (index: number, id: string) => updatePair(index, (p) => ({ ...p, tier: id })),
+    [updatePair],
   );
+
+  const togglePairAddOn = useCallback(
+    (index: number, id: string) =>
+      updatePair(index, (p) => ({
+        ...p,
+        addOns: p.addOns.includes(id) ? p.addOns.filter((a) => a !== id) : [...p.addOns, id],
+      })),
+    [updatePair],
+  );
+
+  const setPairNickname = useCallback(
+    (index: number, nickname: string) => updatePair(index, (p) => ({ ...p, nickname })),
+    [updatePair],
+  );
+
+  const applyToAllPairs = useCallback((index: number) => {
+    setPairChoices((prev) => {
+      const src = prev[index];
+      if (!src) return prev;
+      return prev.map((p) => ({ ...p, tier: src.tier, addOns: [...src.addOns] }));
+    });
+  }, []);
+
+  const openBooking = useCallback((opts?: { tier?: string; addOn?: string; source?: string }) => {
+    // A CTA tied to a service or add-on (e.g. a pricing card) pre-selects it on every pair.
+    if (opts?.tier || opts?.addOn) {
+      setPairChoices((prev) =>
+        prev.map((p) => ({
+          ...p,
+          tier: opts.tier ?? p.tier,
+          addOns: opts.addOn && !p.addOns.includes(opts.addOn) ? [...p.addOns, opts.addOn] : p.addOns,
+        })),
+      );
+    }
+    trackEvent("cta_click", { source: opts?.source ?? "unknown", tier: opts?.tier });
+    setIsOpen(true);
+    // A history entry means the phone's Back button closes the sheet instead of leaving the site.
+    if (window.location.hash !== "#book") window.history.pushState({ k2fBook: true }, "", "#book");
+  }, []);
 
   const closeBooking = useCallback(() => {
     setIsOpen(false);
@@ -102,14 +118,12 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const addOns = pairAddOns[0] ?? [];
-
   const value = useMemo(
     () => ({
-      isOpen, tier, addOns, pairs, pairTiers, pairAddOns,
-      openBooking, closeBooking, setTier, toggleAddOn, setPairs,
+      isOpen, pairs, pairChoices,
+      openBooking, closeBooking, setPairs, setPairTier, togglePairAddOn, setPairNickname, applyToAllPairs,
     }),
-    [isOpen, tier, addOns, pairs, pairTiers, pairAddOns, openBooking, closeBooking, setTier, toggleAddOn, setPairs],
+    [isOpen, pairs, pairChoices, openBooking, closeBooking, setPairs, setPairTier, togglePairAddOn, setPairNickname, applyToAllPairs],
   );
 
   return <BookingCtx.Provider value={value}>{children}</BookingCtx.Provider>;

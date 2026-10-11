@@ -41,8 +41,16 @@ async function squareFetch(path: string, init: RequestInit = {}) {
   return body;
 }
 
+/** "Pair 2 (White AF1s)" - how a pair is named on the order and in notes. */
+export function pairTitle(p: Pick<PairSelection, "pairNum" | "nickname">) {
+  const nick = p.nickname?.trim().slice(0, 40);
+  return `Pair ${p.pairNum}${nick ? ` (${nick})` : ""}`;
+}
+
 export type PairSelection = {
   pairNum: number;
+  /** Optional customer label for the pair, e.g. "White AF1s". */
+  nickname?: string;
   tierName: string;
   addonNames: string[];
   subtotal: number;
@@ -160,7 +168,7 @@ export async function createDropoffOrder(input: {
   idempotencyKey: string;
 }) {
   const lineItems = input.pairs.map((p) => ({
-    name: `Pair ${p.pairNum}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}`,
+    name: `${pairTitle(p)}: ${p.tierName}${p.addonNames.length ? ` + ${p.addonNames.join(", ")}` : ""}`,
     quantity: "1",
     base_price_money: { amount: Math.round(p.subtotal * 100), currency: "CAD" },
   }));

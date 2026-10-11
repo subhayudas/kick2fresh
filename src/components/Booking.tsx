@@ -9,10 +9,11 @@ import { trackEvent } from "@/lib/analytics";
 import { getAttribution, newEventId } from "@/lib/attribution";
 import { CONTACT } from "@/lib/contact";
 import { ArrowRight, Check, Chevron } from "./Icons";
-import { useBooking } from "./BookingProvider";
+import { MAX_PAIRS, useBooking } from "./BookingProvider";
 import { useLocale } from "./LocaleProvider";
 
 const PAIR_BUTTONS = [1, 2, 3, 4, 5, 6];
+const NICKNAME_MAX = 40;
 
 type Step = "service" | "contact" | "schedule" | "quote";
 
@@ -104,8 +105,10 @@ function Calendar({
 const leadKey = (f: { email: string; phone: string }) => `${f.email.trim().toLowerCase()}|${f.phone.replace(/\D/g, "")}`;
 
 export default function Booking() {
-  const { isOpen, closeBooking, pairs, setPairs, tier, setTier, addOns, toggleAddOn, pairTiers, pairAddOns } =
-    useBooking();
+  const {
+    isOpen, closeBooking, pairs, pairChoices, setPairs,
+    setPairTier, togglePairAddOn, setPairNickname, applyToAllPairs,
+  } = useBooking();
   const { t, locale } = useLocale();
   const tiers = useLocalizedTiers();
   const addons = useLocalizedAddons();
@@ -120,7 +123,9 @@ export default function Booking() {
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState(false);
 
-  const [quotePairCount, setQuotePairCount] = useState(7);
+  const [activePair, setActivePair] = useState(0);
+  const [appliedAll, setAppliedAll] = useState(false);
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [quotePickup, setQuotePickup] = useState<"pickup" | "dropoff">("pickup");
 
   const [submitting, setSubmitting] = useState(false);
@@ -137,16 +142,56 @@ export default function Booking() {
   const totalSteps = stepOrder.length;
 
   // ---------- price ----------
-  const pairSummaries = useMemo(() => {
-    if (isQuote) return [];
-    return Array.from({ length: pairs }, (_, i) => {
-      const tr = tiers.find((x) => x.id === pairTiers[i]) ?? tiers[1];
-      const items = addons.filter((a) => (pairAddOns[i] ?? []).includes(a.id));
-      return { pairNum: i + 1, tier: tr, items, subtotal: tr.price + items.reduce((n, a) => n + a.price, 0) };
-    });
-  }, [isQuote, pairs, tiers, addons, pairTiers, pairAddOns]);
+  // Priced for 7+ too: there it's an estimate shown alongside the custom quote request.
+  const pairSummaries = useMemo(
+    () =>
+      pairChoices.map((c, i) => {
+        const tr = tiers.find((x) => x.id === c.tier) ?? tiers[1];
+        const items = addons.filter((a) => c.addOns.includes(a.id));
+        const nickname = c.nickname.trim().slice(0, NICKNAME_MAX);
+        return {
+          pairNum: i + 1,
+          nickname,
+          label: nickname || `${t.booking.pairLabel} ${i + 1}`,
+          tier: tr,
+          items,
+          subtotal: tr.price + items.reduce((n, a) => n + a.price, 0),
+        };
+      }),
+    [pairChoices, tiers, addons, t.booking.pairLabel],
+  );
   const total = pairSummaries.reduce((n, p) => n + p.subtotal, 0);
-  const chosenTier = tiers.find((x) => x.id === (tier ?? "premium")) ?? tiers[1];
+  const multi = pairs > 1;
+  // A shrinking pair count can leave the active tab behind; fall back to the last one.
+  const active = Math.min(activePair, pairs - 1);
+  const activeChoice = pairChoices[active];
+  const pairCountLabel = `${pairs} ${pairs === 1 ? t.booking.pairWord : t.booking.pairsWord}`;
+
+  function changePairs(n: number) {
+    setPairs(n);
+    setActivePair((a) => Math.min(a, Math.min(MAX_PAIRS, n) - 1));
+    setAppliedAll(false);
+  }
+
+  // Keep the active pair tab visible in the scrolling row (matters on phones with many pairs).
+  const tabsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const row = tabsRef.current;
+    const tab = row?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!row || !tab) return;
+    const left = tab.offsetLeft; // row is position: relative, so this is row-relative
+    const right = left + tab.offsetWidth;
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    if (left < row.scrollLeft) row.scrollTo({ left: left - 16, behavior });
+    else if (right > row.scrollLeft + row.clientWidth) row.scrollTo({ left: right - row.clientWidth + 16, behavior });
+  }, [active, pairs, step, isOpen]);
+
+  // "Applied to all" confirmation fades back into the button after a moment.
+  useEffect(() => {
+    if (!appliedAll) return;
+    const id = window.setTimeout(() => setAppliedAll(false), 2200);
+    return () => window.clearTimeout(id);
+  }, [appliedAll]);
 
   // ---------- availability ----------
   const refreshSlots = useCallback((forDate: string, { resetTime = true } = {}) => {
@@ -183,7 +228,7 @@ export default function Booking() {
     if (!isOpen) return;
     document.body.classList.add("noscroll");
     trackEvent("booking_opened");
-    trackMeta("ViewContent", { content_name: "booking", currency: "CAD", value: chosenTier?.price });
+    trackMeta("ViewContent", { content_name: "booking", currency: "CAD", value: pairSummaries[0]?.tier.price });
     // Page behind the sheet is inert: no tab/focus/screen-reader access to it.
     const dialog = document.querySelector('[role="dialog"]');
     const inerted: Element[] = [];
@@ -224,6 +269,8 @@ export default function Booking() {
     setSlots([]);
     setSubmitError(false);
     setSlotTaken(false);
+    setActivePair(0);
+    setBreakdownOpen(false);
     leadSent.current = null;
   }
 
@@ -242,10 +289,13 @@ export default function Booking() {
     leadSent.current = { key, eventId };
     const value = kind === "booking" ? total : undefined;
     const attribution = getAttribution();
+    const perPair = pairSummaries
+      .map((p) => `${p.label}: ${p.tier.name}${p.items.length ? ` + ${p.items.map((a) => a.name).join(", ")}` : ""}`)
+      .join("; ");
     const summary =
       kind === "booking"
-        ? `${pairs}x ${chosenTier.name}${addOns.length ? ` + ${addons.filter((a) => addOns.includes(a.id)).map((a) => a.name).join(", ")}` : ""} = $${total} CAD`
-        : `${quotePairCount} pairs, ${quotePickup}`;
+        ? `${perPair} = $${total} CAD`
+        : `${pairs} pairs, ${quotePickup}. ${perPair} (est. $${total} CAD)`;
 
     trackMeta("Lead", { ...(value !== undefined && { value, currency: "CAD" }), content_name: kind }, eventId);
     trackLeadConversion({ transactionId: eventId, value, user: { email: fields.email, phone: fields.phone } });
@@ -260,7 +310,7 @@ export default function Booking() {
         ...fields,
         summary,
         total: value,
-        pairs: kind === "quote" ? quotePairCount : pairs,
+        pairs,
         eventId,
         attribution,
       }),
@@ -285,6 +335,7 @@ export default function Booking() {
           time,
           pairs: pairSummaries.map((p) => ({
             pairNum: p.pairNum,
+            nickname: p.nickname || undefined,
             tierName: p.tier.name,
             addonNames: p.items.map((i) => i.name),
             subtotal: p.subtotal,
@@ -434,7 +485,7 @@ export default function Booking() {
             <>
               <h2 className={s.title} ref={titleRef} tabIndex={-1}>{titles[step]}</h2>
 
-              {/* ----- step 1: pairs + service + add-ons ----- */}
+              {/* ----- step 1: pairs + per-pair service + add-ons ----- */}
               {step === "service" && (
                 <>
                   <p className={s.sectionLabel}>{t.booking.pairsLabel}</p>
@@ -448,7 +499,7 @@ export default function Booking() {
                         aria-pressed={pairs === n}
                         onClick={() => {
                           trackEvent("booking_pairs_selected", { pairs: n });
-                          setPairs(n);
+                          changePairs(n);
                         }}
                       >
                         {n}
@@ -460,54 +511,112 @@ export default function Booking() {
                       data-on={isQuote}
                       aria-pressed={isQuote}
                       onClick={() => {
+                        if (isQuote) return;
                         trackEvent("booking_quote_started");
-                        setPairs(7);
+                        changePairs(7);
                       }}
                     >
                       {t.booking.moreThan6}
                     </button>
                   </div>
 
-                  {isQuote ? (
+                  {isQuote && (
                     <>
-                      <p className={s.sectionLabel}>{t.booking.quoteCountLabel}</p>
-                      <div className={s.stepper}>
-                        <button
-                          type="button"
-                          className={s.stepperBtn}
-                          aria-label={t.booking.quoteCountDecrease}
-                          disabled={quotePairCount <= 7}
-                          onClick={() => setQuotePairCount((n) => Math.max(7, n - 1))}
-                        >
-                          −
-                        </button>
-                        <span className={s.stepperValue}>{quotePairCount}</span>
-                        <button
-                          type="button"
-                          className={s.stepperBtn}
-                          aria-label={t.booking.quoteCountIncrease}
-                          onClick={() => setQuotePairCount((n) => n + 1)}
-                        >
-                          +
-                        </button>
+                      <div className={s.miniStepper}>
+                        <span className={s.miniStepperLabel}>{t.booking.quoteCountLabel}</span>
+                        <div className={s.miniStepperCtl}>
+                          <button
+                            type="button"
+                            className={s.miniStepperBtn}
+                            aria-label={t.booking.quoteCountDecrease}
+                            disabled={pairs <= 7}
+                            onClick={() => changePairs(pairs - 1)}
+                          >
+                            −
+                          </button>
+                          <span className={s.miniStepperValue} aria-live="polite">{pairs}</span>
+                          <button
+                            type="button"
+                            className={s.miniStepperBtn}
+                            aria-label={t.booking.quoteCountIncrease}
+                            disabled={pairs >= MAX_PAIRS}
+                            onClick={() => changePairs(pairs + 1)}
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                       <p className={s.note}>{t.booking.quoteCountNote}</p>
                     </>
-                  ) : (
-                    <>
-                      <p className={s.sectionLabel}>{t.booking.serviceLabel}</p>
-                      <div className={s.options} role="radiogroup" aria-label={t.booking.serviceLabel}>
-                        {tiers.map((tr) => (
+                  )}
+
+                  <p className={s.sectionLabel}>{t.booking.serviceLabel}</p>
+
+                  {multi && (
+                    <div className={s.tabs} ref={tabsRef} role="tablist" aria-label={t.booking.pairTabsLabel}>
+                      {pairSummaries.map((p, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          role="tab"
+                          id={`pair-tab-${i}`}
+                          aria-controls="pair-panel"
+                          aria-selected={i === active}
+                          tabIndex={i === active ? 0 : -1}
+                          className={s.tab}
+                          data-on={i === active}
+                          onClick={() => setActivePair(i)}
+                          onKeyDown={(e) => {
+                            const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+                            if (!d) return;
+                            e.preventDefault();
+                            const next = (i + d + pairs) % pairs;
+                            setActivePair(next);
+                            document.getElementById(`pair-tab-${next}`)?.focus();
+                          }}
+                        >
+                          <span className={s.tabName}>{p.label}</span>
+                          <span className={s.tabMeta}>
+                            {p.tier.shortName} · ${p.subtotal}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div
+                    id="pair-panel"
+                    {...(multi && { role: "tabpanel", "aria-labelledby": `pair-tab-${active}` })}
+                  >
+                    {multi && (
+                      <label className={s.nickname}>
+                        <span className={s.label}>{t.booking.nicknameLabel}</span>
+                        <input
+                          className={s.input}
+                          type="text"
+                          maxLength={NICKNAME_MAX}
+                          autoComplete="off"
+                          placeholder={t.booking.nicknamePlaceholder}
+                          value={activeChoice.nickname}
+                          onChange={(e) => setPairNickname(active, e.target.value)}
+                        />
+                      </label>
+                    )}
+
+                    <div className={s.options} role="radiogroup" aria-label={t.booking.serviceLabel}>
+                      {tiers.map((tr) => {
+                        const on = activeChoice.tier === tr.id;
+                        return (
                           <button
                             key={tr.id}
                             type="button"
                             role="radio"
-                            aria-checked={tier === tr.id}
+                            aria-checked={on}
                             className={s.option}
-                            data-on={tier === tr.id}
+                            data-on={on}
                             onClick={() => {
-                              trackEvent("booking_service_selected", { tier: tr.id });
-                              setTier(tr.id);
+                              trackEvent("booking_service_selected", { tier: tr.id, pair: active + 1 });
+                              setPairTier(active, tr.id);
                             }}
                           >
                             <span className={s.radio} aria-hidden><Check size={12} /></span>
@@ -520,36 +629,57 @@ export default function Booking() {
                             </span>
                             <span className={s.optPrice}>{tr.priceLabel}</span>
                           </button>
-                        ))}
-                      </div>
+                        );
+                      })}
+                    </div>
 
-                      <p className={s.sectionLabel}>
-                        {t.booking.addonsLabel}
-                        <span>{t.booking.addonsNote}</span>
-                      </p>
-                      <div className={s.chips}>
-                        {addons.map((a) => {
-                          const on = addOns.includes(a.id);
-                          return (
-                            <button
-                              key={a.id}
-                              type="button"
-                              className={s.chip}
-                              data-on={on}
-                              aria-pressed={on}
-                              onClick={() => {
-                                trackEvent("booking_addon_toggled", { addon: a.id, on: !on });
-                                toggleAddOn(a.id);
-                              }}
-                            >
-                              {on && <Check size={12} />}
-                              {a.name} <b>+${a.price}</b>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
+                    <p className={s.sectionLabel}>
+                      {t.booking.addonsLabel}
+                      <span>{multi ? t.booking.addonsNotePerPair : t.booking.addonsNote}</span>
+                    </p>
+                    <div className={s.chips}>
+                      {addons.map((a) => {
+                        const on = activeChoice.addOns.includes(a.id);
+                        return (
+                          <button
+                            key={a.id}
+                            type="button"
+                            className={s.chip}
+                            data-on={on}
+                            aria-pressed={on}
+                            onClick={() => {
+                              trackEvent("booking_addon_toggled", { addon: a.id, on: !on, pair: active + 1 });
+                              togglePairAddOn(active, a.id);
+                            }}
+                          >
+                            {on && <Check size={12} />}
+                            {a.name} <b>+${a.price}</b>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {multi && (
+                      <button
+                        type="button"
+                        className={s.linkBtn}
+                        data-done={appliedAll}
+                        onClick={() => {
+                          trackEvent("booking_apply_all", { pairs, from_pair: active + 1 });
+                          applyToAllPairs(active);
+                          setAppliedAll(true);
+                        }}
+                      >
+                        {appliedAll ? (
+                          <>
+                            <Check size={14} /> {t.booking.appliedToAll}
+                          </>
+                        ) : (
+                          t.booking.applyToAll
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </>
               )}
 
@@ -576,7 +706,7 @@ export default function Booking() {
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (!contactValid) return;
-                    trackEvent("booking_quote_submitted", { pairs: quotePairCount, pickup: quotePickup });
+                    trackEvent("booking_quote_submitted", { pairs, pickup: quotePickup });
                     submitLead("quote");
                     setDone("quote");
                   }}
@@ -662,14 +792,38 @@ export default function Booking() {
             </button>
           ) : (
             <>
-              {!isQuote && (
-                <div className={s.total}>
-                  <span>
-                    {pairs} {pairs === 1 ? t.booking.pairWord : t.booking.pairsWord} · {chosenTier.name}
-                  </span>
-                  <b>${total} CAD</b>
-                </div>
+              {breakdownOpen && (
+                <ul className={s.breakdown} id="price-breakdown">
+                  {pairSummaries.map((p) => (
+                    <li key={p.pairNum}>
+                      <span className={s.breakdownText}>
+                        <b>{p.label}</b>
+                        {p.tier.name}
+                        {p.items.length > 0 && ` + ${p.items.map((a) => a.name).join(", ")}`}
+                      </span>
+                      <span className={s.breakdownPrice}>${p.subtotal}</span>
+                    </li>
+                  ))}
+                </ul>
               )}
+              <button
+                type="button"
+                className={s.total}
+                aria-expanded={breakdownOpen}
+                aria-controls="price-breakdown"
+                aria-label={`${breakdownOpen ? t.booking.hideBreakdown : t.booking.showBreakdown}: ${pairCountLabel}, $${total} CAD`}
+                onClick={() => {
+                  if (!breakdownOpen) trackEvent("booking_breakdown_opened", { pairs });
+                  setBreakdownOpen((o) => !o);
+                }}
+              >
+                <span className={s.totalLabel}>
+                  {pairCountLabel}
+                  {isQuote ? ` · ${t.booking.estimatedTotal}` : !multi && ` · ${pairSummaries[0].tier.name}`}
+                  <Chevron size={14} className={s.totalChevron} />
+                </span>
+                <b>${total} CAD</b>
+              </button>
 
               {step === "service" && (
                 <button
