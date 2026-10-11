@@ -1,16 +1,30 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond } from "next/font/google";
 import SalesLetter from "@/components/SalesLetter";
 
-/* Paid-traffic sales letter. Kept out of the index so it doesn't compete with
-   the homepage for "sneaker cleaning Montreal"; canonical points home. */
+/* Display serif for the collector letter only; the rest of the site stays Inter. */
+const serif = Cormorant_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-serif",
+  weight: ["500", "600"],
+  style: ["normal", "italic"],
+});
+
+/* Paid-traffic collector letter. Kept out of the index so it doesn't compete
+   with the homepage in search; canonical points home. */
 export const metadata: Metadata = {
-  title: "Don't Replace Your Sneakers. Restore Them. | Kicks2Fresh Montreal",
+  title: "Private Sneaker Restoration for Collectors | Kicks2Fresh Montreal",
   description:
-    "Hand-cleaned and restored in Montreal from $65 a pair. 1000+ pairs, 5.0 on Google from 52 reviews, nothing to pay until you approve your quote, and a free redo if you're not happy.",
+    "The private restoration atelier Montreal collectors trust with luxury pairs and full collections. White-glove pickup, a diagnostic on every pair, over $500K in collections preserved, zero pairs damaged.",
   alternates: { canonical: "https://kicks2fresh.ca/" },
   robots: { index: false, follow: true },
 };
 
 export default function LetterPage() {
-  return <SalesLetter />;
+  return (
+    <div className={serif.variable}>
+      <SalesLetter />
+    </div>
+  );
 }
