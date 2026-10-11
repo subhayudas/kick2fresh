@@ -6,7 +6,7 @@ import s from "./SalesLetter.module.css";
 import { LocaleProvider, useLocale } from "./LocaleProvider";
 import ContactLinks from "./ContactLinks";
 import Reveal from "./Reveal";
-import { ArrowRight, Check, Star } from "./Icons";
+import { ArrowRight, Check, IconShield, Star } from "./Icons";
 import { hasDirectContact } from "@/lib/contact";
 import { LETTER } from "@/lib/letterCopy";
 import { ALL_REVIEWS, GALLERY } from "@/lib/content";
@@ -42,7 +42,7 @@ function goToForm(source: string) {
   document.getElementById(ASSESS_ID)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function Stars({ size = 12 }: { size?: number }) {
+function Stars({ size = 13 }: { size?: number }) {
   return (
     <span className={s.stars} aria-hidden>
       {[0, 1, 2, 3, 4].map((n) => <Star key={n} size={size} />)}
@@ -50,10 +50,10 @@ function Stars({ size = 12 }: { size?: number }) {
   );
 }
 
-function Cta({ label, source, micro, light }: { label: string; source: string; micro?: string; light?: boolean }) {
+function Cta({ label, source, micro }: { label: string; source: string; micro?: string }) {
   return (
     <div className={s.ctaBlock}>
-      <button type="button" className={`${s.cta} ${light ? s.ctaOnLight : ""}`} onClick={() => goToForm(source)}>
+      <button type="button" className={`btn btn--blue btn--lg ${s.ctaBtn}`} onClick={() => goToForm(source)}>
         {label}
         <ArrowRight className="btn-arrow" size={16} />
       </button>
@@ -65,7 +65,7 @@ function Cta({ label, source, micro, light }: { label: string; source: string; m
 /* ------------------------------------------------------------------------- */
 /* Assessment application: 3 short steps, easy questions first, contact last. */
 
-function Choice({ text, on, onPick, multi }: { id: string; text: string; on: boolean; onPick: () => void; multi?: boolean }) {
+function Choice({ text, on, onPick, multi }: { text: string; on: boolean; onPick: () => void; multi?: boolean }) {
   return (
     <button
       type="button"
@@ -153,7 +153,7 @@ function AssessmentForm() {
 
   if (done) {
     return (
-      <div className={s.formCard}>
+      <div className={`${s.formCard} card`}>
         <span className={s.doneMark} aria-hidden><Check size={22} /></span>
         <h3 className={s.formTitle}>{f.doneTitle}</h3>
         <p className={s.formSub}>{f.doneCopy}</p>
@@ -167,7 +167,7 @@ function AssessmentForm() {
   }
 
   return (
-    <form className={s.formCard} onSubmit={submit} noValidate>
+    <form className={`${s.formCard} card`} onSubmit={submit} noValidate>
       <div className={s.progress} aria-hidden>
         {[0, 1, 2].map((n) => <span key={n} data-on={n <= step || undefined} />)}
       </div>
@@ -178,7 +178,7 @@ function AssessmentForm() {
           <fieldset className={s.q}>
             <legend>{f.q1}</legend>
             <div className={s.choices} role="radiogroup">
-              {f.sizes.map((o) => <Choice key={o.id} id={o.id} text={o.label} on={size === o.id} onPick={() => setSize(o.id)} />)}
+              {f.sizes.map((o) => <Choice key={o.id} text={o.label} on={size === o.id} onPick={() => setSize(o.id)} />)}
             </div>
           </fieldset>
           <fieldset className={s.q}>
@@ -187,7 +187,6 @@ function AssessmentForm() {
               {f.kinds.map((o) => (
                 <Choice
                   key={o.id}
-                  id={o.id}
                   multi
                   text={o.label}
                   on={kinds.includes(o.id)}
@@ -204,13 +203,13 @@ function AssessmentForm() {
           <fieldset className={s.q}>
             <legend>{f.q3}</legend>
             <div className={s.choices} role="radiogroup">
-              {f.goals.map((o) => <Choice key={o.id} id={o.id} text={o.label} on={goal === o.id} onPick={() => setGoal(o.id)} />)}
+              {f.goals.map((o) => <Choice key={o.id} text={o.label} on={goal === o.id} onPick={() => setGoal(o.id)} />)}
             </div>
           </fieldset>
           <fieldset className={s.q}>
             <legend>{f.q4}</legend>
             <div className={`${s.choices} ${s.choicesWrap}`} role="radiogroup">
-              {f.timing.map((o) => <Choice key={o.id} id={o.id} text={o.label} on={timing === o.id} onPick={() => setTiming(o.id)} />)}
+              {f.timing.map((o) => <Choice key={o.id} text={o.label} on={timing === o.id} onPick={() => setTiming(o.id)} />)}
             </div>
           </fieldset>
         </>
@@ -221,7 +220,7 @@ function AssessmentForm() {
           <fieldset className={s.q}>
             <legend>{f.q5}</legend>
             <div className={`${s.choices} ${s.choicesWrap}`} role="radiogroup">
-              {f.handoff.map((o) => <Choice key={o.id} id={o.id} text={o.label} on={handoff === o.id} onPick={() => setHandoff(o.id)} />)}
+              {f.handoff.map((o) => <Choice key={o.id} text={o.label} on={handoff === o.id} onPick={() => setHandoff(o.id)} />)}
             </div>
           </fieldset>
           <div className={s.fields}>
@@ -249,17 +248,17 @@ function AssessmentForm() {
 
       <div className={s.formNav}>
         {step > 0 && (
-          <button type="button" className={s.backBtn} onClick={() => setStep(step - 1)}>{f.back}</button>
+          <button type="button" className="btn btn--ghost btn--lg" onClick={() => setStep(step - 1)}>{f.back}</button>
         )}
         {step < 2 ? (
-          <button type="button" className={`${s.cta} ${s.formBtn}`} disabled={!canNext} onClick={() => setStep(step + 1)}>
+          <button type="button" className={`btn btn--blue btn--lg ${s.formBtn}`} disabled={!canNext} onClick={() => setStep(step + 1)}>
             {f.next}
             <ArrowRight className="btn-arrow" size={16} />
           </button>
         ) : (
           <button
             type="submit"
-            className={`${s.cta} ${s.formBtn}`}
+            className={`btn btn--blue btn--lg ${s.formBtn}`}
             disabled={sending || !fields.name || !fields.email || !phoneOk}
           >
             {sending ? f.submitting : f.submit}
@@ -280,8 +279,9 @@ function Letter() {
   const [past, setPast] = useState(false);
   const [formInView, setFormInView] = useState(false);
 
+  // Mobile sticky CTA: held back until the hero button scrolls away, hidden while the form is on screen.
   useEffect(() => {
-    const onScroll = () => setPast(window.scrollY > 520);
+    const onScroll = () => setPast(window.scrollY > 380);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     const el = document.getElementById(ASSESS_ID);
@@ -294,7 +294,7 @@ function Letter() {
   }, []);
 
   return (
-    <div className={s.page}>
+    <>
       <header className={s.top}>
         <div className={s.topInner}>
           {/* Not a link: on a paid landing page the logo shouldn't be an exit. */}
@@ -309,7 +309,7 @@ function Letter() {
               <span aria-hidden>/</span>
               <span data-on={locale === "fr"}>FR</span>
             </button>
-            <button type="button" className={s.topCta} onClick={() => goToForm("letter_top")}>
+            <button type="button" className={`btn btn--solid btn--sm ${s.topCta}`} onClick={() => goToForm("letter_top")}>
               {c.topCta}
             </button>
           </div>
@@ -319,67 +319,79 @@ function Letter() {
       <main id="main">
         {/* ---------- Promise ---------- */}
         <section className={s.hero}>
-          <div className={s.heroGrid}>
-            <div className={s.heroText}>
-              <p className={s.eyebrow}>{c.hero.eyebrow}</p>
-              <h1 className={s.headline}>{c.hero.headline}</h1>
-              <p className={s.sub}>{c.hero.sub}</p>
-              <Cta label={c.hero.cta} source="letter_hero" micro={c.hero.micro} />
-            </div>
-            <figure className={s.heroPair}>
-              <div className={s.pairGrid}>
-                <div className={s.pairImg}>
-                  <Image src={HERO.before} alt={HERO.alt[locale]} fill priority sizes="(max-width: 900px) 50vw, 300px" />
-                  <span className={s.tag}>{c.hero.before}</span>
-                </div>
-                <div className={s.pairImg}>
-                  <Image src={HERO.after} alt={HERO.alt[locale]} fill priority sizes="(max-width: 900px) 50vw, 300px" />
-                  <span className={`${s.tag} ${s.tagAfter}`}>{c.hero.after}</span>
-                </div>
-              </div>
-              <figcaption className={s.caption}>Louis Vuitton Trainer · {c.hero.caption}</figcaption>
-            </figure>
+          <div className={s.col}>
+            <p className={s.eyebrow}>{c.hero.eyebrow}</p>
+            <h1 className={s.headline}>{c.hero.headline}</h1>
+            <p className={s.sub}>{c.hero.sub}</p>
+            <Cta label={c.hero.cta} source="letter_hero" micro={c.hero.micro} />
           </div>
+
+          <figure className={s.heroPair}>
+            <div className={s.pairGrid}>
+              <div className={s.pairImg}>
+                <Image src={HERO.before} alt={HERO.alt[locale]} fill priority sizes="(max-width: 720px) 50vw, 380px" />
+                <span className={s.tag}>{c.hero.before}</span>
+              </div>
+              <div className={s.pairImg}>
+                <Image src={HERO.after} alt={HERO.alt[locale]} fill priority sizes="(max-width: 720px) 50vw, 380px" />
+                <span className={`${s.tag} ${s.tagAfter}`}>{c.hero.after}</span>
+              </div>
+            </div>
+            <figcaption className={s.caption}>Louis Vuitton Trainer · {c.hero.caption}</figcaption>
+          </figure>
         </section>
 
-        {/* ---------- The letter ---------- */}
-        <section className={s.paper}>
+        {/* ---------- Story ---------- */}
+        <section className={s.prose}>
           <div className={s.col}>
             <p className={s.salute}>{c.open.salute}</p>
             {c.open.paras.map((p) => <p key={p}>{p}</p>)}
-            <blockquote className={s.pull}>{c.open.pull}</blockquote>
+            <Reveal as="blockquote" className={s.pull}>
+              <p>{c.open.pull}</p>
+            </Reveal>
+          </div>
+        </section>
 
+        {/* ---------- Cost of inaction ---------- */}
+        <section className={s.prose}>
+          <div className={s.col}>
             <h2 className={s.h2}>{c.decay.title}</h2>
             <p>{c.decay.intro}</p>
-            <ul className={s.decay}>
+            <ul className={s.mistakes}>
               {c.decay.items.map((m, i) => (
                 <li key={m.title}>
-                  <span className={s.decayN}>0{i + 1}</span>
+                  <span className={s.x} aria-hidden>{i + 1}</span>
                   <span><strong>{m.title}.</strong> {m.copy}</span>
                 </li>
               ))}
             </ul>
-            <p className={s.emph}>{c.decay.outro}</p>
+            <p className={s.turn}>{c.decay.outro}</p>
+          </div>
+        </section>
 
+        {/* ---------- Trust ---------- */}
+        <section className={s.prose}>
+          <div className={s.col}>
             <h2 className={s.h2}>{c.trust.title}</h2>
-            {c.trust.paras.map((p) => <p key={p}>{p}</p>)}
+            {c.trust.paras.slice(0, 2).map((p) => <p key={p}>{p}</p>)}
+            <p className={s.zero}>{c.trust.paras[2]}</p>
           </div>
 
-          <div className={s.trustMedia}>
+          <div className={s.solutionMedia}>
             <Reveal as="figure" className={s.portrait}>
               <div className={s.portraitImg}>
                 <Image
                   src="/nils devant une collection complete de sneakers.jpg"
                   alt={locale === "fr" ? "Une collection complète de sneakers alignés au sol, prête pour l'atelier" : "A full sneaker collection laid out on the ground, ready for the workshop"}
                   fill
-                  sizes="(max-width: 720px) 100vw, 340px"
+                  sizes="(max-width: 720px) 100vw, 360px"
                   loading="lazy"
                 />
               </div>
             </Reveal>
             <dl className={s.stats}>
               {c.stats.map((st) => (
-                <div key={st.label} className={s.stat}>
+                <div key={st.label} className={`${s.stat} card`}>
                   <dt>{st.value}</dt>
                   <dd>{st.label}</dd>
                 </div>
@@ -389,42 +401,44 @@ function Letter() {
         </section>
 
         {/* ---------- Mechanism ---------- */}
-        <section className={s.protocol}>
+        <section className={s.band}>
           <div className={s.colWide}>
-            <p className={s.eyebrowDark}>{c.protocol.eyebrow}</p>
-            <h2 className={`${s.h2} ${s.h2Dark}`}>{c.protocol.title}</h2>
-            <p className={s.darkSub}>{c.protocol.intro}</p>
-            <ol className={s.steps}>
+            <p className={`${s.eyebrow}`}>{c.protocol.eyebrow}</p>
+            <h2 className={`${s.h2} ${s.center}`}>{c.protocol.title}</h2>
+            <p className={`${s.bandSub} ${s.center}`}>{c.protocol.intro}</p>
+            <ol className={s.protocol}>
               {c.protocol.steps.map((st, i) => (
-                <Reveal as="li" key={st.title} delay={(i % 3) * 60} className={s.step}>
+                <Reveal as="li" key={st.title} delay={(i % 3) * 60} className={`${s.protoStep} card`}>
                   <span className={s.stepN}>0{i + 1}</span>
                   <h3>{st.title}</h3>
                   <p>{st.copy}</p>
                 </Reveal>
               ))}
             </ol>
-            <Cta label={c.hero.cta} source="letter_protocol" />
+            <div className={s.center}>
+              <Cta label={c.hero.cta} source="letter_protocol" />
+            </div>
           </div>
         </section>
 
         {/* ---------- Proof: portfolio ---------- */}
-        <section className={s.paper}>
+        <section className={s.prose}>
           <div className={s.colWide}>
             <h2 className={`${s.h2} ${s.center}`}>{c.portfolio.title}</h2>
-            <p className={`${s.lightSub} ${s.center}`}>{c.portfolio.sub}</p>
-            <div className={s.portfolio}>
+            <p className={`${s.bandSub} ${s.center}`}>{c.portfolio.sub}</p>
+            <div className={s.results}>
               {PORTFOLIO.map(({ i, label }, n) => {
                 const g = GALLERY[i];
                 if (!g) return null;
                 return (
                   <Reveal as="figure" key={g.before} delay={(n % 2) * 60} className={s.work}>
-                    <div className={s.workPair}>
+                    <div className={s.result}>
                       <div className={s.pairImg}>
-                        <Image src={g.before} alt={`${label}, ${c.hero.before.toLowerCase()}`} fill sizes="(max-width: 720px) 50vw, 250px" loading="lazy" />
+                        <Image src={g.before} alt={`${label}, ${c.hero.before.toLowerCase()}`} fill sizes="(max-width: 720px) 50vw, 230px" loading="lazy" />
                         <span className={s.tag}>{c.hero.before}</span>
                       </div>
                       <div className={s.pairImg}>
-                        <Image src={g.after} alt={`${label}, ${c.hero.after.toLowerCase()}`} fill sizes="(max-width: 720px) 50vw, 250px" loading="lazy" />
+                        <Image src={g.after} alt={`${label}, ${c.hero.after.toLowerCase()}`} fill sizes="(max-width: 720px) 50vw, 230px" loading="lazy" />
                         <span className={`${s.tag} ${s.tagAfter}`}>{c.hero.after}</span>
                       </div>
                     </div>
@@ -437,20 +451,20 @@ function Letter() {
           </div>
         </section>
 
-        {/* ---------- Proof: voices ---------- */}
-        <section className={s.voicesSec}>
+        {/* ---------- Proof: reviews ---------- */}
+        <section className={s.prose}>
           <div className={s.colWide}>
             <h2 className={`${s.h2} ${s.center}`}>{c.voices.title}</h2>
-            <p className={`${s.lightSub} ${s.center}`}>{c.voices.sub}</p>
-            <div className={s.voices}>
+            <p className={`${s.bandSub} ${s.center}`}>{c.voices.sub}</p>
+            <div className={s.reviews}>
               {VOICES.map((i, n) => {
                 const r = ALL_REVIEWS[i];
                 if (!r) return null;
                 return (
-                  <Reveal key={r.who.en} delay={(n % 3) * 60} className={s.voice}>
-                    <Stars />
+                  <Reveal key={r.who.en} delay={(n % 3) * 60} className={`${s.review} card`}>
+                    <Stars size={12} />
                     <p>&ldquo;{r.quote[locale]}&rdquo;</p>
-                    <span>{r.who[locale]} · Google</span>
+                    <span className={s.reviewWho}>{r.who[locale]} · Google</span>
                   </Reveal>
                 );
               })}
@@ -461,50 +475,56 @@ function Letter() {
           </div>
         </section>
 
-        {/* ---------- Fit, pricing logic, standard ---------- */}
-        <section className={s.paper}>
+        {/* ---------- Fit + why no price ---------- */}
+        <section className={s.prose}>
           <div className={s.col}>
             <h2 className={s.h2}>{c.fit.title}</h2>
             <div className={s.fit}>
-              <div>
+              <div className={`${s.fitCard} card`}>
                 <h3>{c.fit.forTitle}</h3>
-                <ul className={s.fitYes}>
+                <ul className={s.includes}>
                   {c.fit.forItems.map((x) => <li key={x}><Check size={14} />{x}</li>)}
                 </ul>
               </div>
-              <div>
+              <div className={`${s.fitCard} card`}>
                 <h3>{c.fit.notTitle}</h3>
-                <ul className={s.fitNo}>
-                  {c.fit.notItems.map((x) => <li key={x}><span aria-hidden>—</span>{x}</li>)}
+                <ul className={s.notList}>
+                  {c.fit.notItems.map((x) => <li key={x}><span aria-hidden>✕</span>{x}</li>)}
                 </ul>
               </div>
             </div>
 
-            <h2 className={s.h2}>{c.pricing.title}</h2>
+            <h2 className={`${s.h2} ${s.spaced}`}>{c.pricing.title}</h2>
             {c.pricing.paras.map((p) => <p key={p}>{p}</p>)}
+          </div>
+        </section>
 
-            <div className={s.standard}>
-              <h2 className={s.standardTitle}>{c.guarantee.title}</h2>
-              <ul>
-                {c.guarantee.items.map((g) => (
+        {/* ---------- Risk reversal ---------- */}
+        <section className={s.prose}>
+          <div className={s.col}>
+            <div className={`${s.guarantee} card--dark`}>
+              <span className={s.seal} aria-hidden><IconShield size={26} /></span>
+              <h2 className={s.h2}>{c.guarantee.title}</h2>
+              <ol className={s.gList}>
+                {c.guarantee.items.map((g, i) => (
                   <li key={g.title}>
-                    <strong>{g.title}</strong>
-                    <span>{g.copy}</span>
+                    <span className={s.gNum}>{i + 1}</span>
+                    <span><strong>{g.title}.</strong> {g.copy}</span>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </div>
           </div>
         </section>
 
         {/* ---------- Application ---------- */}
-        <section className={s.apply} id={ASSESS_ID}>
+        <section className={s.band} id={ASSESS_ID}>
           <div className={s.applyGrid}>
             <div className={s.applyText}>
-              <p className={s.eyebrowDark}>{c.form.eyebrow}</p>
-              <h2 className={`${s.h2} ${s.h2Dark}`}>{c.form.title}</h2>
-              <p className={s.darkSub}>{c.form.sub}</p>
-              <ul className={s.applyPoints}>
+              <p className={s.eyebrowLeft}>{c.form.eyebrow}</p>
+              <h2 className={s.h2}>{c.form.title}</h2>
+              <p className={s.applySub}>{c.form.sub}</p>
+              <ul className={s.includes}>
                 {c.form.doneSteps.map((d) => <li key={d}><Check size={14} />{d}</li>)}
               </ul>
               {hasDirectContact && (
@@ -519,11 +539,13 @@ function Letter() {
         </section>
 
         {/* ---------- Close ---------- */}
-        <section className={s.paper}>
+        <section className={s.closeSec}>
           <div className={s.col}>
-            <h2 className={s.h2}>{c.close.title}</h2>
-            <p>{c.close.copy}</p>
-            <Cta label={c.close.cta} source="letter_final" light />
+            <h2 className={`${s.h2} ${s.center}`}>{c.close.title}</h2>
+            <p className={`${s.bandSub} ${s.center}`}>{c.close.copy}</p>
+            <div className={s.center}>
+              <Cta label={c.close.cta} source="letter_final" />
+            </div>
 
             <div className={s.signoff}>
               <p>{c.signoff.line}</p>
@@ -541,20 +563,18 @@ function Letter() {
       </main>
 
       <footer className={s.foot}>
-        <p>
-          <span>© {new Date().getFullYear()} {c.footer.rights}</span>
-          <a href="/">{c.footer.site}</a>
-        </p>
-        <p className={s.footNote}>{c.footer.brands}</p>
+        <span>© {new Date().getFullYear()} {c.footer.rights}</span>
+        <a href="/">{c.footer.site}</a>
+        <span className={s.footNote}>{c.footer.brands}</span>
       </footer>
 
       <div className={s.sticky} data-show={(past && !formInView) || undefined}>
-        <button type="button" className={`${s.cta} ${s.stickyBtn}`} onClick={() => goToForm("sticky")}>
+        <button type="button" className={`btn btn--blue btn--lg ${s.stickyBtn}`} onClick={() => goToForm("sticky")}>
           {c.hero.cta}
           <ArrowRight className="btn-arrow" size={16} />
         </button>
       </div>
-    </div>
+    </>
   );
 }
 

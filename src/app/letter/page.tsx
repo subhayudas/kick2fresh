@@ -1,15 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond } from "next/font/google";
 import SalesLetter from "@/components/SalesLetter";
-
-/* Display serif for the collector letter only; the rest of the site stays Inter. */
-const serif = Cormorant_Garamond({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-serif",
-  weight: ["500", "600"],
-  style: ["normal", "italic"],
-});
 
 /* Paid-traffic collector letter. Kept out of the index so it doesn't compete
    with the homepage in search; canonical points home. */
@@ -22,9 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function LetterPage() {
-  return (
-    <div className={serif.variable}>
-      <SalesLetter />
-    </div>
-  );
+  return <SalesLetter />;
 }
